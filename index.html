@@ -69,6 +69,7 @@
       <button id="back-to-tree" class="back-btn">← 返回</button>
       <div class="lesson-nav">
         <button id="prev-lesson" class="nav-btn" disabled>◀</button>
+        <button id="quiz-btn" class="nav-btn" title="练习题">📝</button>
         <button id="next-lesson" class="nav-btn">▶</button>
       </div>
     </div>
@@ -77,6 +78,17 @@
     </div>
     <div class="lesson-footer">
       <button id="mark-complete" class="complete-btn">标记为完成</button>
+    </div>
+  </div>
+
+  <!-- 练习模式弹窗 -->
+  <div id="quiz-modal" class="modal hidden">
+    <div class="modal-content quiz-modal-content">
+      <h2 id="quiz-title">练习题</h2>
+      <div id="quiz-container">
+        <!-- 动态生成练习题 -->
+      </div>
+      <button class="modal-close" onclick="closeQuiz()">关闭</button>
     </div>
   </div>
 
@@ -115,6 +127,7 @@
   <script src="js/storage.js"></script>
   <script src="js/content.js"></script>
   <script src="js/progress.js"></script>
+  <script src="js/quiz.js"></script>
   <script src="js/skill-tree.js"></script>
   <script src="js/dependency.js"></script>
   <script src="js/lesson.js"></script>

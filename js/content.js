@@ -12,7 +12,7 @@ const Content = {
     this.activePack = pack;
 
     try {
-      const response = await fetch(`content/${pack}/chapters.json`);
+      const response = await fetch(`content/${pack}/chapters.json?t=${Date.now()}`);
       if (!response.ok) throw new Error('内容加载失败');
 
       const data = await response.json();
@@ -25,10 +25,7 @@ const Content = {
       return this.chapters;
     } catch (error) {
       console.error('加载内容失败:', error);
-      // 使用内置的默认内容
-      this.chapters = this.getDefaultContent();
-      window.CONTENT_DATA = { pack, chapters: this.chapters };
-      return this.chapters;
+      throw error;
     }
   },
 
@@ -127,6 +124,11 @@ const Content = {
     }
   },
 
+  // 获取课程元数据（不含 content）
+  getLessonMeta(lessonId) {
+    return this.getLesson(lessonId);
+  },
+
   // 获取章节进度
   getChapterProgress(chapter) {
     const lessons = chapter.lessons || [];
@@ -160,128 +162,6 @@ const Content = {
     };
   },
 
-  // 默认内容（当外部内容不可用时）
-  getDefaultContent() {
-    return [
-      {
-        id: 'ch01',
-        title: '向量',
-        order: 1,
-        description: '向量空间、大小、方向、范数、度量',
-        lessons: [
-          {
-            id: 'ch01-l01',
-            title: '向量空间',
-            order: 1,
-            file: '01. vector spaces.md',
-            estimatedMinutes: 15,
-            prerequisites: []
-          },
-          {
-            id: 'ch01-l02',
-            title: '向量属性',
-            order: 2,
-            file: '02. vector properties.md',
-            estimatedMinutes: 10,
-            prerequisites: ['ch01-l01']
-          },
-          {
-            id: 'ch01-l03',
-            title: '范数与度量',
-            order: 3,
-            file: '03. norms and metrics.md',
-            estimatedMinutes: 12,
-            prerequisites: ['ch01-l01']
-          },
-          {
-            id: 'ch01-l04',
-            title: '向量积',
-            order: 4,
-            file: '04. products.md',
-            estimatedMinutes: 15,
-            prerequisites: ['ch01-l01']
-          },
-          {
-            id: 'ch01-l05',
-            title: '基与对偶',
-            order: 5,
-            file: '05. basis and duality.md',
-            estimatedMinutes: 15,
-            prerequisites: ['ch01-l02', 'ch01-l03']
-          }
-        ]
-      },
-      {
-        id: 'ch02',
-        title: '矩阵',
-        order: 2,
-        description: '矩阵属性、类型、运算、线性变换、分解',
-        lessons: [
-          {
-            id: 'ch02-l01',
-            title: '矩阵属性',
-            order: 1,
-            file: '01. matrix properties.md',
-            estimatedMinutes: 15,
-            prerequisites: ['ch01-l01']
-          },
-          {
-            id: 'ch02-l02',
-            title: '矩阵类型',
-            order: 2,
-            file: '02. matrix types.md',
-            estimatedMinutes: 10,
-            prerequisites: ['ch02-l01']
-          }
-        ]
-      },
-      {
-        id: 'ch14',
-        title: '数据结构与算法',
-        order: 3,
-        description: '基础、数组、链表、树、图、排序',
-        lessons: [
-          {
-            id: 'ch14-l00',
-            title: '基础：Big O、递归、回溯、动态规划',
-            order: 0,
-            file: '00. foundations.md',
-            estimatedMinutes: 30,
-            prerequisites: []
-          },
-          {
-            id: 'ch14-l01',
-            title: '数组与哈希表',
-            order: 1,
-            file: '01. arrays and hashing.md',
-            estimatedMinutes: 20,
-            prerequisites: ['ch14-l00']
-          }
-        ]
-      }
-    ];
-  },
-
-  // 获取所有依赖关系
-  getAllDependencies() {
-    const dependencies = [];
-
-    for (const chapter of this.chapters) {
-      for (const lesson of (chapter.lessons || [])) {
-        if (lesson.prerequisites && lesson.prerequisites.length > 0) {
-          for (const prereq of lesson.prerequisites) {
-            dependencies.push({
-              from: prereq,
-              to: lesson.id
-            });
-          }
-        }
-      }
-    }
-
-    return dependencies;
-  },
-
   // 内容包列表
   getPacks() {
     return [
@@ -291,7 +171,6 @@ const Content = {
         description: '数学、计算机科学、人工智能完整路线',
         chapters: 20
       }
-      // 未来可以添加更多内容包
     ];
   }
 };

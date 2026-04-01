@@ -4,6 +4,7 @@ const LessonViewer = {
   // 当前课程
   currentLesson: null,
   currentContent: null,
+  currentQuizIndex: 0,
 
   // 打开课程
   async open(lessonId) {
@@ -14,6 +15,7 @@ const LessonViewer = {
     }
 
     this.currentLesson = lesson;
+    this.currentQuizIndex = 0;
     const viewer = document.getElementById('lesson-viewer');
     const contentDiv = document.getElementById('lesson-content');
 
@@ -44,6 +46,23 @@ const LessonViewer = {
 
     // 更新完成按钮状态
     this.updateCompleteButton(lessonId);
+
+    // 绑定练习按钮
+    this.bindQuizButton(lessonId);
+  },
+
+  // 绑定练习按钮
+  bindQuizButton(lessonId) {
+    const quizBtn = document.getElementById('quiz-btn');
+    const quiz = QuizData.getQuiz(lessonId);
+
+    if (quiz) {
+      quizBtn.disabled = false;
+      quizBtn.onclick = () => openQuiz(lessonId);
+    } else {
+      quizBtn.disabled = true;
+      quizBtn.title = '暂无练习题';
+    }
   },
 
   // 渲染 Markdown 内容

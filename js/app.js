@@ -8,6 +8,9 @@ const App = {
   async init() {
     console.log('应用初始化...');
 
+    // 初始化练习题数据
+    QuizData.init();
+
     // 加载内容
     await Content.load('maths-cs-ai');
 
@@ -375,6 +378,175 @@ function showToast(message) {
 function closeModal(modalId) {
   document.getElementById(modalId)?.classList.add('hidden');
 }
+
+// 打开练习弹窗
+function openQuiz(lessonId) {
+  const quiz = QuizData.getQuiz(lessonId);
+  const modal = document.getElementById('quiz-modal');
+  const container = document.getElementById('quiz-container');
+  const title = document.getElementById('quiz-title');
+
+  if (!quiz) {
+    container.innerHTML = `
+      <div class="no-quiz-hint">
+        <div class="no-quiz-hint-icon">📝</div>
+        <div>暂无练习题</div>
+        <div style="color: var(--gray-500); font-size: 14px; margin-top: 8px;">
+          学完其他课程后再来看看
+        </div>
+      </div>
+    `;
+    title.textContent = '练习题';
+  } else {
+    title.textContent = `${quiz.lessonTitle} - 练习题`;
+    LessonViewer.currentQuizIndex = 0;
+    renderQuizQuestion(lessonId, 0);
+  }
+
+  modal?.classList.remove('hidden');
+}
+
+// 渲染练习题目
+function renderQuizQuestion(lessonId, index) {
+  const quiz = QuizData.getQuiz(lessonId);
+  const container = document.getElementById('quiz-container');
+
+  if (!quiz || index >= quiz.questions.length) {
+    // 所有题目已完成
+    container.innerHTML = `
+      <div class="empty-state" style="padding: 32px;">
+        <div class="empty-state-icon">🎉</div>
+        <div class="empty-state-title">太棒了！</div>
+        <div class="empty-state-description">已完成所有练习题</div>
+      </div>
+    `;
+    return;
+  }
+
+  const question = quiz.questions[index];
+  const progress = document.getElementById('quiz-progress');
+
+  let html = `
+    <div class="quiz-progress">
+      <span class="quiz-progress-text">第 ${index + 1} / ${quiz.questions.length} 题</span>
+    </div>
+    <div class="quiz-question" data-question-index="${index}">
+      <div class="quiz-question-title">${index + 1}. ${question.question}</div>
+  `;
+
+  if (question.type === 'choice') {
+    html += `
+      <div class="quiz-options">
+        ${question.options.map((opt, i) => `
+          <div class="quiz-option" data-option="${i}">
+            <input type="radio" name="quiz-answer" class="quiz-option-input" value="${i}">
+            <span>${opt}</span>
+          </div>
+        `).join('')}
+      </div>
+      <button class="quiz-check-btn" onclick="checkChoiceAnswer('${lessonId}', ${index})">提交答案</button>
+    `;
+  } else if (question.type === 'fill') {
+    html += `
+      <div class="quiz-answer-area">
+        <input type="text" class="quiz-input" id="fill-answer-${index}" placeholder="输入你的答案">
+        <button class="quiz-check-btn" onclick="checkFillAnswer('${lessonId}', ${index})">提交答案</button>
+      </div>
+    `;
+  }
+
+  html += `</div>`;
+  container.innerHTML = html;
+
+  // 绑定选项点击事件
+  container.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.addEventListener('click', (e) => {
+      if (e.target.classList.contains('quiz-option-input')) return;
+      const input = opt.querySelector('.quiz-option-input');
+      input.checked = true;
+      container.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+    });
+  });
+}
+
+// 检查选择题答案
+function checkChoiceAnswer(lessonId, questionIndex) {
+  const selected = document.querySelector(`.quiz-question[data-question-index="${questionIndex}"] input[name="quiz-answer"]:checked`);
+
+  if (!selected) {
+    showToast('请先选择一个答案');
+    return;
+  }
+
+  const userAnswer = parseInt(selected.value);
+  const result = QuizData.checkAnswer(lessonId, questionIndex, userAnswer);
+
+  showAnswerResult(questionIndex, result, userAnswer);
+}
+
+// 检查填空题答案
+function checkFillAnswer(lessonId, questionIndex) {
+  const input = document.getElementById(`fill-answer-${questionIndex}`);
+  const userAnswer = input.value.trim();
+
+  if (!userAnswer) {
+    showToast('请输入答案');
+    return;
+  }
+
+  const result = QuizData.checkAnswer(lessonId, questionIndex, userAnswer);
+  showAnswerResult(questionIndex, result, userAnswer);
+}
+
+// 显示答案结果
+function showAnswerResult(questionIndex, result, userAnswer) {
+  const container = document.getElementById('quiz-container');
+  const currentQuestion = container.querySelector(`[data-question-index="${questionIndex}"]`);
+
+  // 禁用提交按钮
+  currentQuestion.querySelector('.quiz-check-btn').disabled = true;
+
+  // 标记选项
+  if (result.correct) {
+    currentQuestion.querySelector('.quiz-option-input:checked')?.closest('.quiz-option')?.classList.add('correct');
+  } else {
+    currentQuestion.querySelector('.quiz-option-input:checked')?.closest('.quiz-option')?.classList.add('incorrect');
+  }
+
+  // 添加解释
+  const explanationHtml = `
+    <div class="quiz-explanation ${result.correct ? 'correct' : 'incorrect'}">
+      <div class="quiz-explanation-title">${result.correct ? '✓ 回答正确！' : '✗ 不太对哦'}</div>
+      ${!result.correct ? `<div style="margin-bottom: 8px; color: var(--gray-600);">正确答案：${result.correctAnswer}</div>` : ''}
+      <div style="color: var(--gray-700); font-size: 14px;">${result.explanation}</div>
+    </div>
+    <button class="btn btn-primary" style="width: 100%; margin-top: 12px;" onclick="nextQuizQuestion()">
+      ${questionIndex < (QuizData.getQuiz(LessonViewer.currentLesson?.id)?.questions.length || 1) - 1 ? '下一题' : '完成练习'}
+    </button>
+  `;
+
+  currentQuestion.insertAdjacentHTML('beforeend', explanationHtml);
+}
+
+// 下一题
+function nextQuizQuestion() {
+  LessonViewer.currentQuizIndex++;
+  renderQuizQuestion(LessonViewer.currentLesson?.id, LessonViewer.currentQuizIndex);
+}
+
+// 关闭练习弹窗
+function closeQuiz() {
+  document.getElementById('quiz-modal')?.classList.add('hidden');
+}
+
+// 导出到全局
+window.openQuiz = openQuiz;
+window.closeQuiz = closeQuiz;
+window.renderQuizQuestion = renderQuizQuestion;
+window.checkChoiceAnswer = checkChoiceAnswer;
+window.checkFillAnswer = checkFillAnswer;
+window.nextQuizQuestion = nextQuizQuestion;
 
 // 导出到全局
 window.App = App;
