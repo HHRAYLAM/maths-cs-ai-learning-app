@@ -212,6 +212,108 @@ const QuizData = {
           }
         ]
       },
+      'ch02-l03': {
+        lessonTitle: '矩阵运算',
+        questions: [
+          {
+            type: 'choice',
+            question: '两个 2×3 矩阵相加，结果是几维矩阵？',
+            options: ['2×3', '3×2', '6×1', '无法相加'],
+            answer: 0,
+            explanation: '矩阵加法要求维度相同，2×3 + 2×3 = 2×3，对应位置元素相加。'
+          },
+          {
+            type: 'choice',
+            question: '矩阵 A 是 2×3，矩阵 B 是 3×2，它们能相乘吗？结果是什么维度？',
+            options: [
+              '不能相乘',
+              '能，2×2',
+              '能，3×3',
+              '能，2×3'
+            ],
+            answer: 1,
+            explanation: '矩阵乘法要求第一个矩阵的列数等于第二个矩阵的行数。2×3 × 3×2 = 2×2。'
+          },
+          {
+            type: 'fill',
+            question: '矩阵乘____满足交换律（填"法"或"不"）。',
+            answer: '不',
+            explanation: '矩阵乘法不满足交换律，即 AB ≠ BA（一般情况下）。'
+          },
+          {
+            type: 'choice',
+            question: '单位矩阵 I 与任何同维矩阵 A 相乘，结果是？',
+            options: ['0', 'I', 'A', 'Aᵀ'],
+            answer: 2,
+            explanation: '单位矩阵是乘法的单位元：AI = IA = A。'
+          }
+        ]
+      },
+      'ch02-l04': {
+        lessonTitle: '线性变换',
+        questions: [
+          {
+            type: 'choice',
+            question: '线性变换必须满足什么性质？',
+            options: [
+              '保持加法和标量乘法',
+              '保持长度不变',
+              '保持角度不变',
+              '必须是可逆的'
+            ],
+            answer: 0,
+            explanation: '线性变换的定义：T(u+v) = T(u)+T(v) 且 T(cv) = cT(v)。'
+          },
+          {
+            type: 'choice',
+            question: '旋转变换是线性变换吗？',
+            options: ['是', '否', '有时是有时不是', '无法判断'],
+            answer: 0,
+            explanation: '旋转变换保持加法和标量乘法，是线性变换。可以用矩阵表示。'
+          },
+          {
+            type: 'fill',
+            question: '二维平面绕原点逆时针旋转θ角的变换矩阵是 [[cosθ, -sinθ], [____, ____]]。',
+            answer: 'sinθ,cosθ,sin,cos',
+            explanation: '旋转矩阵：[[cosθ, -sinθ], [sinθ, cosθ]]'
+          }
+        ]
+      },
+      'ch02-l05': {
+        lessonTitle: '矩阵分解',
+        questions: [
+          {
+            type: 'choice',
+            question: 'LU 分解将矩阵分解为？',
+            options: [
+              '下三角矩阵和上三角矩阵的乘积',
+              '两个对称矩阵的乘积',
+              '正交矩阵和对角矩阵的乘积',
+              '两个正交矩阵的乘积'
+            ],
+            answer: 0,
+            explanation: 'LU 分解：A = LU，其中 L 是下三角矩阵，U 是上三角矩阵。'
+          },
+          {
+            type: 'choice',
+            question: '特征值分解要求矩阵必须是？',
+            options: [
+              '任意矩阵',
+              '方阵',
+              '对称矩阵',
+              '正定矩阵'
+            ],
+            answer: 1,
+            explanation: '特征值分解只能对方阵进行，因为只有方阵才有特征值和特征向量。'
+          },
+          {
+            type: 'fill',
+            question: '奇异值分解（SVD）可以将____矩阵分解（填"任意"或"方"）。',
+            answer: '任意',
+            explanation: 'SVD 的强大之处在于它可以对任意 m×n 矩阵进行分解：A = UΣVᵀ。'
+          }
+        ]
+      },
 
       // ============ 第 14 章：数据结构与算法 ============
       'ch14-l00': {

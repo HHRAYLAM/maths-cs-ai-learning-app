@@ -1,29 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <!-- 背景 -->
-  <rect width="200" height="200" fill="#f8f9fa"/>
-
-  <!-- 坐标轴 -->
-  <line x1="20" y1="180" x2="180" y2="180" stroke="#666" stroke-width="2"/>
-  <line x1="20" y1="180" x2="20" y2="20" stroke="#666" stroke-width="2"/>
-  <line x1="20" y1="180" x2="100" y2="100" stroke="#666" stroke-width="2"/>
-
-  <!-- X 轴标签 -->
-  <text x="185" y="175" font-size="12" fill="#333">x</text>
-  <text x="25" y="15" font-size="12" fill="#333">y</text>
-  <text x="105" y="95" font-size="12" fill="#333">z</text>
-
-  <!-- 向量 -->
-  <line x1="20" y1="180" x2="140" y2="60" stroke="#4A90D9" stroke-width="3"/>
-  <circle cx="140" cy="60" r="4" fill="#4A90D9"/>
-
-  <!-- 向量标签 -->
-  <text x="145" y="55" font-size="14" font-weight="bold" fill="#4A90D9">a</text>
-
-  <!-- 投影线 -->
-  <line x1="140" y1="60" x2="140" y2="180" stroke="#999" stroke-width="1" stroke-dasharray="4"/>
-  <line x1="140" y1="180" x2="20" y2="180" stroke="#999" stroke-width="1" stroke-dasharray="4"/>
-
-  <!-- 坐标值 -->
-  <text x="80" y="195" font-size="10" fill="#666">x=3</text>
-  <text x="5" y="120" font-size="10" fill="#666">y=2</text>
+<svg width="300" height="280" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow-ax" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="#999"/>
+    </marker>
+    <marker id="arrow-vec" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="#e74c3c"/>
+    </marker>
+  </defs>
+  <!-- x-axis -->
+  <line x1="140" y1="200" x2="40" y2="250" stroke="#999" stroke-width="1.5" marker-end="url(#arrow-ax)"/>
+  <text x="25" y="265" fill="#999" font-size="13" font-style="italic">x</text>
+  <!-- y-axis -->
+  <line x1="140" y1="200" x2="280" y2="200" stroke="#999" stroke-width="1.5" marker-end="url(#arrow-ax)"/>
+  <text x="285" y="205" fill="#999" font-size="13" font-style="italic">y</text>
+  <!-- z-axis -->
+  <line x1="140" y1="200" x2="140" y2="40" stroke="#999" stroke-width="1.5" marker-end="url(#arrow-ax)"/>
+  <text x="145" y="35" fill="#999" font-size="13" font-style="italic">z</text>
+  <!-- dashed projections -->
+  <line x1="140" y1="200" x2="100" y2="220" stroke="#ccc" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="100" y1="220" x2="190" y2="220" stroke="#ccc" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="140" y1="200" x2="230" y2="200" stroke="#ccc" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="230" y1="200" x2="190" y2="220" stroke="#ccc" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="190" y1="220" x2="190" y2="100" stroke="#ccc" stroke-width="1" stroke-dasharray="4,3"/>
+  <!-- vector a -->
+  <line x1="140" y1="200" x2="190" y2="100" stroke="#e74c3c" stroke-width="2.5" marker-end="url(#arrow-vec)"/>
+  <!-- point -->
+  <circle cx="190" cy="100" r="4" fill="#e74c3c"/>
+  <!-- label -->
+  <text x="198" y="95" fill="#e74c3c" font-size="14" font-weight="bold">a = (3, 2, 4)</text>
+  <!-- origin -->
+  <circle cx="140" cy="200" r="3" fill="#333"/>
+  <text x="145" y="215" fill="#333" font-size="12">O</text>
 </svg>
