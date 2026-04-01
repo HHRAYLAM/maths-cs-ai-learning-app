@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- 背景 -->
+  <rect width="200" height="200" fill="#f8f9fa"/>
+
+  <!-- 坐标轴 -->
+  <line x1="20" y1="180" x2="180" y2="180" stroke="#666" stroke-width="2"/>
+  <line x1="20" y1="180" x2="20" y2="20" stroke="#666" stroke-width="2"/>
+  <line x1="20" y1="180" x2="100" y2="100" stroke="#666" stroke-width="2"/>
+
+  <!-- X 轴标签 -->
+  <text x="185" y="175" font-size="12" fill="#333">x</text>
+  <text x="25" y="15" font-size="12" fill="#333">y</text>
+  <text x="105" y="95" font-size="12" fill="#333">z</text>
+
+  <!-- 向量 -->
+  <line x1="20" y1="180" x2="140" y2="60" stroke="#4A90D9" stroke-width="3"/>
+  <circle cx="140" cy="60" r="4" fill="#4A90D9"/>
+
+  <!-- 向量标签 -->
+  <text x="145" y="55" font-size="14" font-weight="bold" fill="#4A90D9">a</text>
+
+  <!-- 投影线 -->
+  <line x1="140" y1="60" x2="140" y2="180" stroke="#999" stroke-width="1" stroke-dasharray="4"/>
+  <line x1="140" y1="180" x2="20" y2="180" stroke="#999" stroke-width="1" stroke-dasharray="4"/>
+
+  <!-- 坐标值 -->
+  <text x="80" y="195" font-size="10" fill="#666">x=3</text>
+  <text x="5" y="120" font-size="10" fill="#666">y=2</text>
+</svg>

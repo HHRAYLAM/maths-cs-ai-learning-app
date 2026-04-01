@@ -1,0 +1,387 @@
+// 主应用逻辑
+
+const App = {
+  // 当前页面
+  currentPage: 'skill-tree',
+
+  // 初始化
+  async init() {
+    console.log('应用初始化...');
+
+    // 加载内容
+    await Content.load('maths-cs-ai');
+
+    // 绑定导航事件
+    this.bindNavigation();
+
+    // 绑定弹窗事件
+    this.bindModals();
+
+    // 监听进度更新
+    window.addEventListener('progress-updated', () => {
+      this.refreshCurrentPage();
+    });
+
+    // 监听进度重置
+    window.addEventListener('progress-reset', () => {
+      this.refreshCurrentPage();
+      showToast('进度已重置');
+    });
+
+    // 渲染默认页面
+    this.navigateTo('skill-tree');
+
+    console.log('应用初始化完成');
+  },
+
+  // 绑定底部导航
+  bindNavigation() {
+    const navItems = document.querySelectorAll('.nav-item');
+
+    navItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = item.dataset.page;
+        if (page) {
+          this.navigateTo(page);
+        }
+      });
+    });
+
+    // 处理 hash 变化
+    window.addEventListener('hashchange', () => {
+      const hash = window.location.hash.slice(1);
+      if (hash && ['dashboard', 'skill-tree', 'dependency', 'progress'].includes(hash)) {
+        this.navigateTo(hash);
+      }
+    });
+  },
+
+  // 绑定弹窗
+  bindModals() {
+    // 内容包按钮
+    document.getElementById('content-pack-btn')?.addEventListener('click', () => {
+      this.showContentPackModal();
+    });
+
+    // 设置按钮
+    document.getElementById('settings-btn')?.addEventListener('click', () => {
+      document.getElementById('settings-modal')?.classList.remove('hidden');
+    });
+
+    // 重置进度按钮
+    document.getElementById('reset-progress')?.addEventListener('click', () => {
+      if (confirm('确定要重置所有学习进度吗？此操作不可恢复！')) {
+        Storage.resetAllProgress();
+        document.getElementById('settings-modal')?.classList.add('hidden');
+      }
+    });
+  },
+
+  // 导航到指定页面
+  navigateTo(page) {
+    this.currentPage = page;
+
+    // 更新导航状态
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.page === page);
+    });
+
+    // 更新标题
+    const titles = {
+      'dashboard': '学习概览',
+      'skill-tree': '知识框架',
+      'dependency': '依赖关系',
+      'progress': '学习进度'
+    };
+    document.getElementById('page-title').textContent = titles[page] || '知识框架';
+
+    // 渲染页面内容
+    const app = document.getElementById('app');
+    app.innerHTML = '';
+
+    switch (page) {
+      case 'dashboard':
+        this.renderDashboard(app);
+        break;
+      case 'skill-tree':
+        SkillTree.render(app);
+        break;
+      case 'dependency':
+        DependencyGraph.render(app);
+        break;
+      case 'progress':
+        this.renderProgress(app);
+        break;
+    }
+
+    // 更新 hash
+    window.location.hash = page;
+  },
+
+  // 刷新当前页面
+  refreshCurrentPage() {
+    const app = document.getElementById('app');
+    if (!app) return;
+
+    switch (this.currentPage) {
+      case 'dashboard':
+        this.renderDashboard(app);
+        break;
+      case 'skill-tree':
+        SkillTree.refresh();
+        break;
+      case 'dependency':
+        DependencyGraph.render(app);
+        break;
+      case 'progress':
+        this.renderProgress(app);
+        break;
+    }
+  },
+
+  // 渲染概览页面
+  renderDashboard(container) {
+    const summary = ProgressManager.getSummary();
+    const stats = Storage.getStats();
+    const dueReviews = Storage.getLessonsDueForReview();
+
+    container.innerHTML = `
+      <div class="dashboard-container">
+        <!-- 统计卡片 -->
+        <div class="dashboard-section">
+          <h2 class="dashboard-section-title">学习统计</h2>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value">${summary.completionRate}</div>
+              <div class="stat-label">完成率</div>
+            </div>
+            <div class="stat-card green">
+              <div class="stat-value">${summary.completedLessons}/${summary.totalLessons}</div>
+              <div class="stat-label">已完成</div>
+            </div>
+            <div class="stat-card orange">
+              <div class="stat-value">${summary.masteredLessons}</div>
+              <div class="stat-label">已精通</div>
+            </div>
+            <div class="stat-card purple">
+              <div class="stat-value">${summary.dueForReview}</div>
+              <div class="stat-label">待复习</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 总学习时长 -->
+        <div class="dashboard-section">
+          <h2 class="dashboard-section-title">学习时长</h2>
+          <div class="card">
+            <div style="text-align: center;">
+              <div style="font-size: 36px; font-weight: 700; color: var(--primary-color);">
+                ${summary.totalTime}
+              </div>
+              <div style="color: var(--gray-500); margin-top: 8px;">累计学习</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 待复习课程 -->
+        ${dueReviews.length > 0 ? `
+          <div class="dashboard-section">
+            <h2 class="dashboard-section-title">待复习课程</h2>
+            <div class="recent-lessons">
+              ${dueReviews.slice(0, 5).map(item => {
+                const lesson = Content.getLesson(item.lessonId);
+                return `
+                  <div class="recent-lesson-item" style="cursor: pointer;" onclick="LessonViewer.open('${item.lessonId}')">
+                    <div class="recent-lesson-icon">📚</div>
+                    <div class="recent-lesson-info">
+                      <div class="recent-lesson-title">${lesson?.title || item.lessonId}</div>
+                      <div class="recent-lesson-time">已逾期 ${item.daysOverdue} 天</div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- 继续学习 -->
+        <div class="dashboard-section">
+          <h2 class="dashboard-section-title">继续学习</h2>
+          <div class="card">
+            <button class="btn btn-primary" style="width: 100%;" onclick="App.continueLearning()">
+              开始学习
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  // 渲染进度页面
+  renderProgress(container) {
+    const stats = Storage.getStats();
+    const chapters = Content.getChapters();
+
+    container.innerHTML = `
+      <div class="dashboard-container">
+        <!-- 总体进度 -->
+        <div class="dashboard-section">
+          <h2 class="dashboard-section-title">总体进度</h2>
+          <div class="card">
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+              <div style="flex: 1;">
+                <div class="progress-bar" style="height: 12px;">
+                  <div class="progress-bar-fill" style="width: ${stats.completionRate}%"></div>
+                </div>
+              </div>
+              <div style="font-size: 24px; font-weight: 700; color: var(--primary-color);">
+                ${stats.completionRate}%
+              </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; color: var(--gray-500); font-size: 14px;">
+              <span>已完成：${stats.completed + stats.mastered}</span>
+              <span>总计：${stats.totalLessons}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 章节进度 -->
+        <div class="dashboard-section">
+          <h2 class="dashboard-section-title">章节进度</h2>
+          ${chapters.map(chapter => {
+            const progress = Content.getChapterProgress(chapter);
+            return `
+              <div class="card" style="padding: 12px 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <span style="font-weight: 600;">${chapter.order}. ${chapter.title}</span>
+                  <span style="color: var(--primary-color); font-weight: 600;">${progress}%</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-bar-fill" style="width: ${progress}%"></div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <!-- 掌握度分布 -->
+        <div class="dashboard-section">
+          <h2 class="dashboard-section-title">掌握度分布</h2>
+          <div class="stats-grid">
+            <div class="stat-card" style="background: var(--gray-200);">
+              <div class="stat-value" style="color: var(--gray-600);">${stats.notStarted}</div>
+              <div class="stat-label">未开始</div>
+            </div>
+            <div class="stat-card" style="background: var(--primary-color);">
+              <div class="stat-value">${stats.learning}</div>
+              <div class="stat-label">学习中</div>
+            </div>
+            <div class="stat-card green">
+              <div class="stat-value">${stats.completed}</div>
+              <div class="stat-label">已完成</div>
+            </div>
+            <div class="stat-card orange">
+              <div class="stat-value">${stats.mastered}</div>
+              <div class="stat-label">已精通</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 学习时长 -->
+        <div class="dashboard-section">
+          <h2 class="dashboard-section-title">学习时长</h2>
+          <div class="card">
+            <div style="text-align: center;">
+              <div style="font-size: 32px; font-weight: 700; color: var(--primary-color);">
+                ${ProgressManager.formatTime(stats.totalTimeSeconds)}
+              </div>
+              <div style="color: var(--gray-500); margin-top: 8px;">累计学习时长</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 复习次数 -->
+        <div class="dashboard-section">
+          <h2 class="dashboard-section-title">复习统计</h2>
+          <div class="card">
+            <div style="text-align: center;">
+              <div style="font-size: 32px; font-weight: 700; color: var(--primary-color);">
+                ${stats.totalReviews}
+              </div>
+              <div style="color: var(--gray-500); margin-top: 8px;">累计复习次数</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  // 显示内容包选择弹窗
+  showContentPackModal() {
+    const modal = document.getElementById('content-pack-modal');
+    const list = document.getElementById('content-pack-list');
+
+    const packs = Content.getPacks();
+    list.innerHTML = packs.map(pack => `
+      <div class="pack-item ${Content.activePack === pack.id ? 'active' : ''}" onclick="App.switchContentPack('${pack.id}')">
+        <div style="font-weight: 600; font-size: 16px;">${pack.name}</div>
+        <div style="color: var(--gray-500); font-size: 13px;">${pack.description}</div>
+        <div style="color: var(--gray-400); font-size: 12px; margin-top: 4px;">${pack.chapters} 章节</div>
+      </div>
+    `).join('');
+
+    modal?.classList.remove('hidden');
+  },
+
+  // 切换内容包
+  async switchContentPack(packId) {
+    await Content.load(packId);
+    document.getElementById('content-pack-modal')?.classList.add('hidden');
+    this.refreshCurrentPage();
+    showToast(`已切换到 ${packId}`);
+  },
+
+  // 继续学习
+  continueLearning() {
+    const currentLesson = Storage.getCurrentLesson();
+    if (currentLesson) {
+      LessonViewer.open(currentLesson);
+    } else {
+      // 从第一章第一节课开始
+      const chapters = Content.getChapters();
+      const firstLesson = chapters[0]?.lessons?.[0];
+      if (firstLesson) {
+        LessonViewer.open(firstLesson.id);
+      } else {
+        showToast('暂无可学习内容');
+      }
+    }
+  }
+};
+
+// 全局辅助函数
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  if (toast) {
+    toast.textContent = message;
+    toast.classList.remove('hidden');
+    setTimeout(() => {
+      toast.classList.add('hidden');
+    }, 2000);
+  }
+}
+
+function closeModal(modalId) {
+  document.getElementById(modalId)?.classList.add('hidden');
+}
+
+// 导出到全局
+window.App = App;
+window.showToast = showToast;
+window.closeModal = closeModal;
+
+// DOM 加载完成后初始化
+document.addEventListener('DOMContentLoaded', () => {
+  App.init();
+});

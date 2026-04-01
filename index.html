@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#4A90D9">
+  <meta name="description" content="数学、计算机、AI 知识学习应用">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+
+  <!-- iOS 状态栏 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <title>Maths CS AI 学习</title>
+
+  <!-- 样式 -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/skill-tree.css">
+  <link rel="stylesheet" href="css/lesson.css">
+
+  <!-- KaTeX 公式渲染 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+  <!-- Marked Markdown 解析 -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/lib/marked.umd.js"></script>
+</head>
+<body>
+  <!-- 顶部导航栏 -->
+  <header class="top-nav">
+    <h1 id="page-title">知识框架</h1>
+    <div class="header-actions">
+      <button id="content-pack-btn" class="icon-btn" title="切换内容包">📚</button>
+      <button id="settings-btn" class="icon-btn" title="设置">⚙️</button>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main id="app" class="main-content">
+    <!-- 动态渲染内容 -->
+  </main>
+
+  <!-- 底部导航栏 -->
+  <nav class="bottom-nav">
+    <a href="#dashboard" class="nav-item" data-page="dashboard">
+      <span class="icon">📊</span>
+      <span class="label">概览</span>
+    </a>
+    <a href="#skill-tree" class="nav-item active" data-page="skill-tree">
+      <span class="icon">🌳</span>
+      <span class="label">知识树</span>
+    </a>
+    <a href="#dependency" class="nav-item" data-page="dependency">
+      <span class="icon">🔗</span>
+      <span class="label">依赖图</span>
+    </a>
+    <a href="#progress" class="nav-item" data-page="progress">
+      <span class="icon">📈</span>
+      <span class="label">进度</span>
+    </a>
+  </nav>
+
+  <!-- 课程阅读页面（全屏覆盖） -->
+  <div id="lesson-viewer" class="lesson-viewer hidden">
+    <div class="lesson-header">
+      <button id="back-to-tree" class="back-btn">← 返回</button>
+      <div class="lesson-nav">
+        <button id="prev-lesson" class="nav-btn" disabled>◀</button>
+        <button id="next-lesson" class="nav-btn">▶</button>
+      </div>
+    </div>
+    <div class="lesson-content" id="lesson-content">
+      <!-- Markdown 内容渲染于此 -->
+    </div>
+    <div class="lesson-footer">
+      <button id="mark-complete" class="complete-btn">标记为完成</button>
+    </div>
+  </div>
+
+  <!-- 内容包选择弹窗 -->
+  <div id="content-pack-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>选择学习内容</h2>
+      <div id="content-pack-list" class="pack-list">
+        <!-- 动态生成 -->
+      </div>
+      <button class="modal-close" onclick="closeModal('content-pack-modal')">关闭</button>
+    </div>
+  </div>
+
+  <!-- 设置弹窗 -->
+  <div id="settings-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>设置</h2>
+      <div class="settings-section">
+        <h3>学习进度</h3>
+        <button id="reset-progress" class="setting-btn danger">重置所有进度</button>
+      </div>
+      <div class="settings-section">
+        <h3>关于</h3>
+        <p>基于 <a href="https://github.com/HenryNdubuaku/maths-cs-ai-compendium" target="_blank">maths-cs-ai-compendium</a> 构建</p>
+        <p>版本：1.0.0</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('settings-modal')">关闭</button>
+    </div>
+  </div>
+
+  <!-- Toast 提示 -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- 脚本 -->
+  <script src="js/storage.js"></script>
+  <script src="js/content.js"></script>
+  <script src="js/progress.js"></script>
+  <script src="js/skill-tree.js"></script>
+  <script src="js/dependency.js"></script>
+  <script src="js/lesson.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/service-worker-register.js"></script>
+</body>
+</html>

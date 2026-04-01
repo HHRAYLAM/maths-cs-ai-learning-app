@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- APP 图标 - 书本形状 -->
+  <rect x="20" y="25" width="60" height="50" rx="4" fill="#4A90D9"/>
+  <rect x="25" y="30" width="50" height="40" rx="2" fill="#ffffff"/>
+  <line x1="30" y1="38" x2="70" y2="38" stroke="#4A90D9" stroke-width="2"/>
+  <line x1="30" y1="46" x2="70" y2="46" stroke="#4A90D9" stroke-width="2"/>
+  <line x1="30" y1="54" x2="55" y2="54" stroke="#4A90D9" stroke-width="2"/>
+  <path d="M 20 25 Q 10 25 10 35 L 10 65 Q 10 75 20 75" stroke="#357ABD" stroke-width="3" fill="none"/>
+</svg>
