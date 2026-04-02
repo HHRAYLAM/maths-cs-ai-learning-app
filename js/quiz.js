@@ -317,7 +317,7 @@ const QuizData = {
 
       // ============ 第 3 章：微积分 ============
       'ch03-l01': {
-        lessonTitle: '微分 calculus',
+        lessonTitle: '微分学',
         questions: [
           {
             type: 'choice',
@@ -359,7 +359,7 @@ const QuizData = {
         ]
       },
       'ch03-l02': {
-        lessonTitle: '积分 calculus',
+        lessonTitle: '积分学',
         questions: [
           {
             type: 'choice',
@@ -1419,7 +1419,7 @@ const QuizData = {
         ]
       },
       'ch11-l03': {
-        lessonTitle: '视觉 - 语言 - 动作模型',
+        lessonTitle: '视觉-语言-动作模型',
         questions: [
           {
             type: 'choice',

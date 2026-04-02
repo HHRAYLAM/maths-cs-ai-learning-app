@@ -1,6 +1,6 @@
 {
-  "name": "Maths CS AI 学习",
-  "short_name": "MathsAI",
+  "name": "数学/计算机/AI 学习",
+  "short_name": "数学AI",
   "description": "数学、计算机、AI 知识学习应用",
   "start_url": "/",
   "display": "standalone",
