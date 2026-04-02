@@ -1,20 +1,23 @@
 // Service Worker - 离线缓存支持
-const CACHE_NAME = 'maths-cs-ai-learning-v1';
+const CACHE_NAME = 'math-cs-ai-learning-v1';
+const BASE_PATH = '/maths-cs-ai-learning-app';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/css/main.css',
-  '/css/skill-tree.css',
-  '/css/lesson.css',
-  '/js/storage.js',
-  '/js/content.js',
-  '/js/progress.js',
-  '/js/skill-tree.js',
-  '/js/dependency.js',
-  '/js/lesson.js',
-  '/js/app.js',
-  '/content/chapters.json'
+  `${BASE_PATH}/`,
+  `${BASE_PATH}/index.html`,
+  `${BASE_PATH}/manifest.json`,
+  `${BASE_PATH}/css/main.css`,
+  `${BASE_PATH}/css/skill-tree.css`,
+  `${BASE_PATH}/css/lesson.css`,
+  `${BASE_PATH}/js/storage.js`,
+  `${BASE_PATH}/js/content.js`,
+  `${BASE_PATH}/js/progress.js`,
+  `${BASE_PATH}/js/skill-tree.js`,
+  `${BASE_PATH}/js/dependency.js`,
+  `${BASE_PATH}/js/lesson.js`,
+  `${BASE_PATH}/js/app.js`,
+  `${BASE_PATH}/js/quiz.js`,
+  `${BASE_PATH}/js/service-worker-register.js`,
+  `${BASE_PATH}/content/math-cs-ai/chapters.json`
 ];
 
 // 安装事件 - 缓存资源

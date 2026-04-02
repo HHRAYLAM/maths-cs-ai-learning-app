@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Create Icons</title>
+</head>
+<body>
+  <h1>Creating icons...</h1>
+  <canvas id="canvas192" width="192" height="192"></canvas>
+  <canvas id="canvas512" width="512" height="512"></canvas>
+
+  <script>
+    function createIcon(canvasId, size, fontSize) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+
+      // 背景
+      ctx.fillStyle = '#4A90D9';
+      ctx.fillRect(0, 0, size, size);
+
+      // 文字
+      ctx.fillStyle = 'white';
+      ctx.font = `bold ${fontSize}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('AI', size/2, size/2);
+
+      // 下载
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `icon-${size}.png`;
+        a.click();
+      });
+    }
+
+    createIcon('canvas192', 192, 72);
+    createIcon('canvas512', 512, 192);
+
+    document.body.innerHTML += '<p>Icons downloaded! Please replace the files in images/ folder.</p>';
+  </script>
+</body>
+</html>

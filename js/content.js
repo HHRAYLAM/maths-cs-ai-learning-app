@@ -2,13 +2,13 @@
 
 const Content = {
   // 当前激活的内容包
-  activePack: 'maths-cs-ai',
+  activePack: 'math-cs-ai',
 
   // 内容数据
   chapters: [],
 
   // 加载内容
-  async load(pack = 'maths-cs-ai') {
+  async load(pack = 'math-cs-ai') {
     this.activePack = pack;
 
     try {
