@@ -52,6 +52,11 @@ self.addEventListener('activate', event => {
 
 // 请求拦截 - 优先缓存，其次网络
 self.addEventListener('fetch', event => {
+  // 只处理 HTTP/HTTPS 请求，跳过 chrome-extension 等非标准协议
+  if (!event.request.url.startsWith('http')) {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then(response => {

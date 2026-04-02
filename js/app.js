@@ -12,7 +12,7 @@ const App = {
     QuizData.init();
 
     // 加载内容
-    await Content.load('maths-cs-ai');
+    await Content.load('math-cs-ai');
 
     // 绑定导航事件
     this.bindNavigation();

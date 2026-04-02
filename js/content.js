@@ -166,7 +166,7 @@ const Content = {
   getPacks() {
     return [
       {
-        id: 'maths-cs-ai',
+        id: 'math-cs-ai',
         name: '数学/CS/AI',
         description: '数学、计算机科学、人工智能完整路线',
         chapters: 20
