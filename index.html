@@ -37,6 +37,7 @@
   <header class="top-nav">
     <h1 id="page-title">知识框架</h1>
     <div class="header-actions">
+      <button id="language-btn" class="icon-btn" title="切换语言">🌐</button>
       <button id="content-pack-btn" class="icon-btn" title="切换内容包">📚</button>
       <button id="settings-btn" class="icon-btn" title="设置">⚙️</button>
     </div>
@@ -111,6 +112,14 @@
   <div id="settings-modal" class="modal hidden">
     <div class="modal-content">
       <h2>设置</h2>
+      <div class="settings-section">
+        <h3>语言设置</h3>
+        <div class="language-selector">
+          <button class="language-btn active" data-lang="zh-CN">中文</button>
+          <button class="language-btn" data-lang="en-US">English</button>
+          <button class="language-btn" data-lang="both">中英双语</button>
+        </div>
+      </div>
       <div class="settings-section">
         <h3>学习进度</h3>
         <button id="reset-progress" class="setting-btn danger">重置所有进度</button>

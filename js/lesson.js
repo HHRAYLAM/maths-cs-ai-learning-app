@@ -68,20 +68,53 @@ const LessonViewer = {
   // 渲染 Markdown 内容
   renderContent(markdown) {
     const contentDiv = document.getElementById('lesson-content');
+    const currentLang = Storage.getLanguage();
 
+    // 如果是中英双语模式，需要加载两个版本的内容
+    if (currentLang === 'both') {
+      this.renderBilingualContent(markdown, contentDiv);
+    } else {
+      // 根据语言选择内容版本
+      const lang = currentLang === 'en-US' ? 'en' : 'zh';
+
+      // 使用 marked 解析 Markdown
+      const html = marked.parse(markdown, {
+        breaks: true,
+        gfm: true
+      });
+
+      contentDiv.innerHTML = html;
+
+      // 渲染 KaTeX 公式
+      this.renderMathJax(contentDiv);
+
+      // 处理图片路径
+      this.fixImagePaths(contentDiv);
+    }
+  },
+
+  // 渲染双语内容
+  renderBilingualContent(originalMarkdown, container) {
     // 使用 marked 解析 Markdown
-    const html = marked.parse(markdown, {
+    const html = marked.parse(originalMarkdown, {
       breaks: true,
       gfm: true
     });
 
-    contentDiv.innerHTML = html;
+    container.innerHTML = html;
 
     // 渲染 KaTeX 公式
-    this.renderMathJax(contentDiv);
+    this.renderMathJax(container);
 
     // 处理图片路径
-    this.fixImagePaths(contentDiv);
+    this.fixImagePaths(container);
+
+    // 添加双语标识（未来扩展用）
+    const bilingualHint = document.createElement('div');
+    bilingualHint.className = 'bilingual-hint';
+    bilingualHint.style.cssText = 'padding: 12px; background: #fff3cd; border-radius: 8px; margin-bottom: 16px; font-size: 14px;';
+    bilingualHint.innerHTML = '💡 提示：当前为中英双语模式。如需查看纯中文或纯英文版本，请在设置中切换。';
+    container.insertBefore(bilingualHint, container.firstChild);
   },
 
   // 渲染数学公式

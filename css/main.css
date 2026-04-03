@@ -304,6 +304,36 @@ html, body {
   display: none !important;
 }
 
+/* 语言选择器 */
+.language-selector {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.language-selector .language-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: 2px solid var(--gray-300);
+  background: var(--white);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.language-selector .language-btn:hover {
+  border-color: var(--primary-color);
+  background: var(--gray-100);
+}
+
+.language-selector .language-btn.active {
+  border-color: var(--primary-color);
+  background: var(--primary-color);
+  color: var(--white);
+}
+
 /* 响应式 */
 @media (min-width: 768px) {
   .main-content {

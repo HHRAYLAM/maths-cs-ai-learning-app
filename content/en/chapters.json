@@ -1,0 +1,268 @@
+{
+  "chapters": [
+    {
+      "id": "ch01",
+      "title": "向量",
+      "order": 1,
+      "description": "向量空间、大小、方向、范数、度量",
+      "lessons": [
+        {"id": "ch01-l01", "title": "向量空间", "order": 1, "file": "01. vector spaces.md", "estimatedMinutes": 15, "prerequisites": []},
+        {"id": "ch01-l02", "title": "向量属性", "order": 2, "file": "02. vector properties.md", "estimatedMinutes": 10, "prerequisites": ["ch01-l01"]},
+        {"id": "ch01-l03", "title": "范数与度量", "order": 3, "file": "03. norms and metrics.md", "estimatedMinutes": 12, "prerequisites": ["ch01-l01"]},
+        {"id": "ch01-l04", "title": "向量积", "order": 4, "file": "04. products.md", "estimatedMinutes": 15, "prerequisites": ["ch01-l01"]},
+        {"id": "ch01-l05", "title": "基与对偶", "order": 5, "file": "05. basis and duality.md", "estimatedMinutes": 15, "prerequisites": ["ch01-l02", "ch01-l03"]}
+      ]
+    },
+    {
+      "id": "ch02",
+      "title": "矩阵",
+      "order": 2,
+      "description": "矩阵属性、类型、运算、线性变换、分解",
+      "lessons": [
+        {"id": "ch02-l01", "title": "矩阵属性", "order": 1, "file": "01. matrix properties.md", "estimatedMinutes": 15, "prerequisites": ["ch01-l01"]},
+        {"id": "ch02-l02", "title": "矩阵类型", "order": 2, "file": "02. matrix types.md", "estimatedMinutes": 10, "prerequisites": ["ch02-l01"]},
+        {"id": "ch02-l03", "title": "矩阵运算", "order": 3, "file": "03. operations.md", "estimatedMinutes": 15, "prerequisites": ["ch02-l01"]},
+        {"id": "ch02-l04", "title": "线性变换", "order": 4, "file": "04. linear transformations.md", "estimatedMinutes": 15, "prerequisites": ["ch02-l03"]},
+        {"id": "ch02-l05", "title": "矩阵分解", "order": 5, "file": "05. decompositions.md", "estimatedMinutes": 20, "prerequisites": ["ch02-l04"]}
+      ]
+    },
+    {
+      "id": "ch03",
+      "title": "微积分",
+      "order": 3,
+      "description": "微分、积分、多变量微积分、函数逼近、优化",
+      "lessons": [
+        {"id": "ch03-l01", "title": "微分 calculus", "order": 1, "file": "01. differential calculus.md", "estimatedMinutes": 15, "prerequisites": []},
+        {"id": "ch03-l02", "title": "积分 calculus", "order": 2, "file": "02. integral calculus.md", "estimatedMinutes": 15, "prerequisites": ["ch03-l01"]},
+        {"id": "ch03-l03", "title": "多变量微积分", "order": 3, "file": "03. multivariate calculus.md", "estimatedMinutes": 15, "prerequisites": ["ch03-l02"]},
+        {"id": "ch03-l04", "title": "函数逼近", "order": 4, "file": "04. function approximation.md", "estimatedMinutes": 15, "prerequisites": ["ch03-l03"]},
+        {"id": "ch03-l05", "title": "优化与梯度下降", "order": 5, "file": "05. optimisation.md", "estimatedMinutes": 20, "prerequisites": ["ch03-l04"]}
+      ]
+    },
+    {
+      "id": "ch04",
+      "title": "统计学",
+      "order": 4,
+      "description": "描述统计、抽样、中心极限定理、假设检验、推断",
+      "lessons": [
+        {"id": "ch04-l01", "title": "统计学基础", "order": 1, "file": "01. fundamentals.md", "estimatedMinutes": 10, "prerequisites": []},
+        {"id": "ch04-l02", "title": "统计度量", "order": 2, "file": "02. measures.md", "estimatedMinutes": 12, "prerequisites": ["ch04-l01"]},
+        {"id": "ch04-l03", "title": "抽样分布", "order": 3, "file": "03. sampling.md", "estimatedMinutes": 15, "prerequisites": ["ch04-l02"]},
+        {"id": "ch04-l04", "title": "假设检验", "order": 4, "file": "04. hypothesis testing.md", "estimatedMinutes": 15, "prerequisites": ["ch04-l03"]},
+        {"id": "ch04-l05", "title": "统计推断", "order": 5, "file": "05. inference.md", "estimatedMinutes": 15, "prerequisites": ["ch04-l04"]}
+      ]
+    },
+    {
+      "id": "ch05",
+      "title": "概率论",
+      "order": 5,
+      "description": "计数、条件概率、分布、贝叶斯、信息论",
+      "lessons": [
+        {"id": "ch05-l01", "title": "计数原理", "order": 1, "file": "01. counting.md", "estimatedMinutes": 10, "prerequisites": []},
+        {"id": "ch05-l02", "title": "概率概念", "order": 2, "file": "02. probability concepts.md", "estimatedMinutes": 12, "prerequisites": ["ch05-l01"]},
+        {"id": "ch05-l03", "title": "概率分布", "order": 3, "file": "03. distributions.md", "estimatedMinutes": 15, "prerequisites": ["ch05-l02"]},
+        {"id": "ch05-l04", "title": "贝叶斯方法", "order": 4, "file": "04. bayesian.md", "estimatedMinutes": 15, "prerequisites": ["ch05-l03"]},
+        {"id": "ch05-l05", "title": "信息论基础", "order": 5, "file": "05. information theory.md", "estimatedMinutes": 15, "prerequisites": ["ch05-l04"]}
+      ]
+    },
+    {
+      "id": "ch06",
+      "title": "机器学习",
+      "order": 6,
+      "description": "经典 ML、梯度方法、深度学习、强化学习、分布式训练",
+      "lessons": [
+        {"id": "ch06-l01", "title": "经典机器学习", "order": 1, "file": "01. classical machine learning.md", "estimatedMinutes": 20, "prerequisites": ["ch03-l05", "ch04-l05"]},
+        {"id": "ch06-l02", "title": "梯度机器学习", "order": 2, "file": "02. gradient machine learning.md", "estimatedMinutes": 15, "prerequisites": ["ch06-l01"]},
+        {"id": "ch06-l03", "title": "深度学习", "order": 3, "file": "03. deep learning.md", "estimatedMinutes": 20, "prerequisites": ["ch06-l02"]},
+        {"id": "ch06-l04", "title": "强化学习", "order": 4, "file": "04. reinforcement learning.md", "estimatedMinutes": 15, "prerequisites": ["ch06-l03"]},
+        {"id": "ch06-l05", "title": "分布式深度学习", "order": 5, "file": "05. distributed deep learning.md", "estimatedMinutes": 15, "prerequisites": ["ch06-l04"]}
+      ]
+    },
+    {
+      "id": "ch07",
+      "title": "计算语言学",
+      "order": 7,
+      "description": "语法、语义、语用、NLP、语言模型、Transformer",
+      "lessons": [
+        {"id": "ch07-l01", "title": "语言学基础", "order": 1, "file": "01. linguistic foundations.md", "estimatedMinutes": 15, "prerequisites": []},
+        {"id": "ch07-l02", "title": "文本处理与经典 NLP", "order": 2, "file": "02. text processing and classic NLP.md", "estimatedMinutes": 15, "prerequisites": ["ch07-l01"]},
+        {"id": "ch07-l03", "title": "词嵌入与序列模型", "order": 3, "file": "03. embeddings and sequence models.md", "estimatedMinutes": 15, "prerequisites": ["ch07-l02"]},
+        {"id": "ch07-l04", "title": "Transformer 与语言模型", "order": 4, "file": "04. transformers and language models.md", "estimatedMinutes": 20, "prerequisites": ["ch07-l03"]},
+        {"id": "ch07-l05", "title": "高级文本生成", "order": 5, "file": "05. advanced text generation.md", "estimatedMinutes": 15, "prerequisites": ["ch07-l04"]}
+      ]
+    },
+    {
+      "id": "ch08",
+      "title": "计算机视觉",
+      "order": 8,
+      "description": "图像处理、目标检测、分割、视频处理、ViT、扩散模型",
+      "lessons": [
+        {"id": "ch08-l01", "title": "图像基础", "order": 1, "file": "01. image fundamentals.md", "estimatedMinutes": 12, "prerequisites": []},
+        {"id": "ch08-l02", "title": "卷积网络", "order": 2, "file": "02. convolutional networks.md", "estimatedMinutes": 15, "prerequisites": ["ch08-l01"]},
+        {"id": "ch08-l03", "title": "目标检测与分割", "order": 3, "file": "03. object detection and segmentation.md", "estimatedMinutes": 18, "prerequisites": ["ch08-l02"]},
+        {"id": "ch08-l04", "title": "Vision Transformer 与生成", "order": 4, "file": "04. vision transformers and generation.md", "estimatedMinutes": 18, "prerequisites": ["ch08-l03"]},
+        {"id": "ch08-l05", "title": "视频与 3D 视觉", "order": 5, "file": "05. video and 3D vision.md", "estimatedMinutes": 15, "prerequisites": ["ch08-l04"]}
+      ]
+    },
+    {
+      "id": "ch09",
+      "title": "音频与语音",
+      "order": 9,
+      "description": "DSP、ASR、TTS、语音识别、声纹识别、降噪",
+      "lessons": [
+        {"id": "ch09-l01", "title": "数字信号处理", "order": 1, "file": "01. digital signal processing.md", "estimatedMinutes": 15, "prerequisites": []},
+        {"id": "ch09-l02", "title": "自动语音识别", "order": 2, "file": "02. automatic speech recognition.md", "estimatedMinutes": 15, "prerequisites": ["ch09-l01"]},
+        {"id": "ch09-l03", "title": "文本转语音", "order": 3, "file": "03. text to speech and voice.md", "estimatedMinutes": 15, "prerequisites": ["ch09-l02"]},
+        {"id": "ch09-l04", "title": "说话人与语音分析", "order": 4, "file": "04. speaker and audio analysis.md", "estimatedMinutes": 12, "prerequisites": ["ch09-l03"]},
+        {"id": "ch09-l05", "title": "声源分离与噪声", "order": 5, "file": "05. source separation and noise.md", "estimatedMinutes": 15, "prerequisites": ["ch09-l04"]}
+      ]
+    },
+    {
+      "id": "ch10",
+      "title": "多模态学习",
+      "order": 10,
+      "description": "多模态表示、融合策略、CLIP、VLM、跨模态生成",
+      "lessons": [
+        {"id": "ch10-l01", "title": "多模态表示", "order": 1, "file": "01. multimodal representations.md", "estimatedMinutes": 15, "prerequisites": ["ch07-l04", "ch08-l04"]},
+        {"id": "ch10-l02", "title": "视觉语言模型", "order": 2, "file": "02. vision language models.md", "estimatedMinutes": 15, "prerequisites": ["ch10-l01"]},
+        {"id": "ch10-l03", "title": "图像与视频标记化", "order": 3, "file": "03. image and video tokenisation.md", "estimatedMinutes": 12, "prerequisites": ["ch10-l02"]},
+        {"id": "ch10-l04", "title": "跨模态生成", "order": 4, "file": "04. cross-modal generation.md", "estimatedMinutes": 15, "prerequisites": ["ch10-l03"]},
+        {"id": "ch10-l05", "title": "统一多模态架构", "order": 5, "file": "05. unified multimodal architectures.md", "estimatedMinutes": 15, "prerequisites": ["ch10-l04"]}
+      ]
+    },
+    {
+      "id": "ch11",
+      "title": "自主系统",
+      "order": 11,
+      "description": "感知、机器人学习、VLA、自动驾驶、空间机器人",
+      "lessons": [
+        {"id": "ch11-l01", "title": "感知", "order": 1, "file": "01. perception.md", "estimatedMinutes": 15, "prerequisites": ["ch08-l04"]},
+        {"id": "ch11-l02", "title": "机器人学习", "order": 2, "file": "02. robot learning.md", "estimatedMinutes": 15, "prerequisites": ["ch11-l01"]},
+        {"id": "ch11-l03", "title": "视觉 - 语言 - 动作模型", "order": 3, "file": "03. vision-language-action models.md", "estimatedMinutes": 15, "prerequisites": ["ch11-l02"]},
+        {"id": "ch11-l04", "title": "自动驾驶", "order": 4, "file": "04. self-driving.md", "estimatedMinutes": 15, "prerequisites": ["ch11-l03"]},
+        {"id": "ch11-l05", "title": "空间与极端机器人", "order": 5, "file": "05. space and extreme robotics.md", "estimatedMinutes": 12, "prerequisites": ["ch11-l04"]}
+      ]
+    },
+    {
+      "id": "ch12",
+      "title": "图神经网络",
+      "order": 12,
+      "description": "几何深度学习、图论、GNN、GAT、3D 等变网络",
+      "lessons": [
+        {"id": "ch12-l01", "title": "几何深度学习", "order": 1, "file": "01. geometric deep learning.md", "estimatedMinutes": 15, "prerequisites": ["ch01-l01", "ch06-l03"]},
+        {"id": "ch12-l02", "title": "图论", "order": 2, "file": "02. graph theory.md", "estimatedMinutes": 12, "prerequisites": ["ch12-l01"]},
+        {"id": "ch12-l03", "title": "图神经网络", "order": 3, "file": "03. graph neural networks.md", "estimatedMinutes": 18, "prerequisites": ["ch12-l02"]},
+        {"id": "ch12-l04", "title": "图注意力网络", "order": 4, "file": "04. graph attention networks.md", "estimatedMinutes": 15, "prerequisites": ["ch12-l03"]},
+        {"id": "ch12-l05", "title": "3D 图等变网络", "order": 5, "file": "05. 3d graph networks.md", "estimatedMinutes": 15, "prerequisites": ["ch12-l04"]}
+      ]
+    },
+    {
+      "id": "ch13",
+      "title": "计算与操作系统",
+      "order": 13,
+      "description": "离散数学、计算机架构、操作系统、并发、编程语言",
+      "lessons": [
+        {"id": "ch13-l01", "title": "离散数学", "order": 1, "file": "01. discrete maths.md", "estimatedMinutes": 15, "prerequisites": []},
+        {"id": "ch13-l02", "title": "计算机架构", "order": 2, "file": "02. computer architecture.md", "estimatedMinutes": 15, "prerequisites": ["ch13-l01"]},
+        {"id": "ch13-l03", "title": "操作系统", "order": 3, "file": "03. operating systems.md", "estimatedMinutes": 18, "prerequisites": ["ch13-l02"]},
+        {"id": "ch13-l04", "title": "并发与并行", "order": 4, "file": "04. concurrency and parallelism.md", "estimatedMinutes": 15, "prerequisites": ["ch13-l03"]},
+        {"id": "ch13-l05", "title": "编程语言", "order": 5, "file": "05. programming languages.md", "estimatedMinutes": 12, "prerequisites": ["ch13-l04"]}
+      ]
+    },
+    {
+      "id": "ch14",
+      "title": "数据结构与算法",
+      "order": 14,
+      "description": "Big O、递归、回溯、DP、数组、链表、树、图、排序",
+      "lessons": [
+        {"id": "ch14-l00", "title": "基础：Big O、递归、回溯、动态规划", "order": 0, "file": "00. foundations.md", "estimatedMinutes": 30, "prerequisites": []},
+        {"id": "ch14-l01", "title": "数组与哈希表", "order": 1, "file": "01. arrays and hashing.md", "estimatedMinutes": 20, "prerequisites": ["ch14-l00"]},
+        {"id": "ch14-l02", "title": "链表、栈、队列", "order": 2, "file": "02. linked lists, stacks, and queues.md", "estimatedMinutes": 20, "prerequisites": ["ch14-l01"]},
+        {"id": "ch14-l03", "title": "树", "order": 3, "file": "03. trees.md", "estimatedMinutes": 25, "prerequisites": ["ch14-l02"]},
+        {"id": "ch14-l04", "title": "图", "order": 4, "file": "04. graphs.md", "estimatedMinutes": 25, "prerequisites": ["ch14-l03"]},
+        {"id": "ch14-l05", "title": "排序与搜索", "order": 5, "file": "05. sorting and search.md", "estimatedMinutes": 25, "prerequisites": ["ch14-l04"]}
+      ]
+    },
+    {
+      "id": "ch15",
+      "title": "生产级软件工程",
+      "order": 15,
+      "description": "Linux、Git、代码设计、测试、CI/CD、Docker、MLOps",
+      "lessons": [
+        {"id": "ch15-l01", "title": "Linux 与命令行", "order": 1, "file": "01. linux and CMD.md", "estimatedMinutes": 15, "prerequisites": []},
+        {"id": "ch15-l02", "title": "Git 与仓库管理", "order": 2, "file": "02. git and repository management.md", "estimatedMinutes": 12, "prerequisites": ["ch15-l01"]},
+        {"id": "ch15-l03", "title": "代码库设计", "order": 3, "file": "03. codebase design.md", "estimatedMinutes": 15, "prerequisites": ["ch15-l02"]},
+        {"id": "ch15-l04", "title": "测试与质量保证", "order": 4, "file": "04. testing and quality assurance.md", "estimatedMinutes": 15, "prerequisites": ["ch15-l03"]},
+        {"id": "ch15-l05", "title": "部署与 DevOps", "order": 5, "file": "05. deployment and devops.md", "estimatedMinutes": 18, "prerequisites": ["ch15-l04"]}
+      ]
+    },
+    {
+      "id": "ch16",
+      "title": "SIMD 与 GPU 编程",
+      "order": 16,
+      "description": "C++、硬件基础、ARM NEON、x86 AVX、CUDA、Triton、TPU、WebGPU",
+      "lessons": [
+        {"id": "ch16-l00", "title": "为什么用 C++ 及 ML 框架原理", "order": 0, "file": "00. why C++ and how ML frameworks work.md", "estimatedMinutes": 20, "prerequisites": []},
+        {"id": "ch16-l01", "title": "硬件基础", "order": 1, "file": "01. hardware fundamentals.md", "estimatedMinutes": 15, "prerequisites": ["ch16-l00"]},
+        {"id": "ch16-l02", "title": "ARM 与 NEON", "order": 2, "file": "02. ARM and NEON.md", "estimatedMinutes": 15, "prerequisites": ["ch16-l01"]},
+        {"id": "ch16-l03", "title": "x86 与 AVX", "order": 3, "file": "03. x86 and AVX.md", "estimatedMinutes": 15, "prerequisites": ["ch16-l02"]},
+        {"id": "ch16-l04", "title": "GPU 架构与 CUDA", "order": 4, "file": "04. GPU architecture and CUDA.md", "estimatedMinutes": 20, "prerequisites": ["ch16-l03"]},
+        {"id": "ch16-l05", "title": "Triton、TPU 与 Pallas", "order": 5, "file": "05. triton, TPUs and pallax.md", "estimatedMinutes": 15, "prerequisites": ["ch16-l04"]},
+        {"id": "ch16-l06", "title": "RISC-V 与嵌入式", "order": 6, "file": "06. RISC-V and embedded systems.md", "estimatedMinutes": 15, "prerequisites": ["ch16-l01"]},
+        {"id": "ch16-l07", "title": "Vulkan 计算与跨平台 GPU", "order": 7, "file": "07. vulkan compute and cross-platform GPU.md", "estimatedMinutes": 15, "prerequisites": ["ch16-l04"]}
+      ]
+    },
+    {
+      "id": "ch17",
+      "title": "AI 推理",
+      "order": 17,
+      "description": "量化、高效架构、服务与批处理、边缘推理、扩展与部署",
+      "lessons": [
+        {"id": "ch17-l01", "title": "量化", "order": 1, "file": "01. quantisation.md", "estimatedMinutes": 18, "prerequisites": ["ch16-l04"]},
+        {"id": "ch17-l02", "title": "高效架构", "order": 2, "file": "02. efficient architectures.md", "estimatedMinutes": 15, "prerequisites": ["ch17-l01"]},
+        {"id": "ch17-l03", "title": "服务与批处理", "order": 3, "file": "03. serving and batching.md", "estimatedMinutes": 15, "prerequisites": ["ch17-l02"]},
+        {"id": "ch17-l04", "title": "边缘推理", "order": 4, "file": "04. edge inference.md", "estimatedMinutes": 12, "prerequisites": ["ch17-l03"]},
+        {"id": "ch17-l05", "title": "扩展与部署", "order": 5, "file": "05. scaling and deployment.md", "estimatedMinutes": 15, "prerequisites": ["ch17-l04"]}
+      ]
+    },
+    {
+      "id": "ch18",
+      "title": "ML 系统设计",
+      "order": 18,
+      "description": "系统基础、云计算、大规模基础设施、ML 系统设计、设计示例",
+      "lessons": [
+        {"id": "ch18-l01", "title": "系统设计基础", "order": 1, "file": "01. systems design fundamentals.md", "estimatedMinutes": 18, "prerequisites": []},
+        {"id": "ch18-l02", "title": "云计算", "order": 2, "file": "02. cloud computing.md", "estimatedMinutes": 15, "prerequisites": ["ch18-l01"]},
+        {"id": "ch18-l03", "title": "大规模基础设施", "order": 3, "file": "03. large scale infrastructure.md", "estimatedMinutes": 15, "prerequisites": ["ch18-l02"]},
+        {"id": "ch18-l04", "title": "ML 系统设计", "order": 4, "file": "04. ML systems design.md", "estimatedMinutes": 20, "prerequisites": ["ch18-l03"]},
+        {"id": "ch18-l05", "title": "ML 设计示例", "order": 5, "file": "05. ML design examples.md", "estimatedMinutes": 20, "prerequisites": ["ch18-l04"]}
+      ]
+    },
+    {
+      "id": "ch19",
+      "title": "应用 AI",
+      "order": 19,
+      "description": "AI 在金融、医疗、蛋白质设计、药物发现、智能体系统",
+      "lessons": [
+        {"id": "ch19-l01", "title": "AI 在金融", "order": 1, "file": "01. AI for finance.md", "estimatedMinutes": 15, "prerequisites": ["ch06-l03"]},
+        {"id": "ch19-l02", "title": "蛋白质设计", "order": 2, "file": "02. protein design.md", "estimatedMinutes": 15, "prerequisites": ["ch06-l03"]},
+        {"id": "ch19-l03", "title": "药物发现", "order": 3, "file": "03. drug discovery.md", "estimatedMinutes": 15, "prerequisites": ["ch19-l02"]},
+        {"id": "ch19-l04", "title": "智能体系统", "order": 4, "file": "04. agentic systems.md", "estimatedMinutes": 15, "prerequisites": ["ch11-l03"]},
+        {"id": "ch19-l05", "title": "AI 在医疗", "order": 5, "file": "05. healthcare.md", "estimatedMinutes": 15, "prerequisites": ["ch19-l03"]}
+      ]
+    },
+    {
+      "id": "ch20",
+      "title": "前沿 AI",
+      "order": 20,
+      "description": "量子 ML、神经形态计算、太空数据中心、去中心化 AI、脑机接口",
+      "lessons": [
+        {"id": "ch20-l01", "title": "量子机器学习", "order": 1, "file": "01. quantum machine learning.md", "estimatedMinutes": 18, "prerequisites": ["ch06-l03", "ch05-l04"]},
+        {"id": "ch20-l02", "title": "神经形态计算", "order": 2, "file": "02. neuromorphic computing.md", "estimatedMinutes": 15, "prerequisites": ["ch20-l01"]},
+        {"id": "ch20-l03", "title": "太空数据中心", "order": 3, "file": "03. datacentres in space.md", "estimatedMinutes": 12, "prerequisites": ["ch20-l02"]},
+        {"id": "ch20-l04", "title": "去中心化 AI", "order": 4, "file": "04. decentralised AI.md", "estimatedMinutes": 15, "prerequisites": ["ch20-l03"]},
+        {"id": "ch20-l05", "title": "脑机接口", "order": 5, "file": "05. brain machine interfaces.md", "estimatedMinutes": 15, "prerequisites": ["ch20-l04"]}
+      ]
+    }
+  ]
+}

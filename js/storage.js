@@ -170,6 +170,19 @@ const Storage = {
     return dueLessons;
   },
 
+  // 语言设置
+  getLanguage() {
+    const lang = localStorage.getItem('app-language');
+    return lang || 'zh-CN'; // 默认中文
+  },
+
+  setLanguage(lang) {
+    localStorage.setItem('app-language', lang);
+    window.dispatchEvent(new CustomEvent('language-changed', {
+      detail: { language: lang }
+    }));
+  },
+
   // 获取当前学习的课程
   getCurrentLesson() {
     const progress = this.getProgress();

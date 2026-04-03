@@ -11,8 +11,13 @@ const App = {
     // 初始化练习题数据
     QuizData.init();
 
-    // 加载内容
-    await Content.load('math-cs-ai');
+    // 加载语言设置
+    const currentLang = Storage.getLanguage();
+    console.log('当前语言:', currentLang);
+
+    // 加载内容（根据语言选择）
+    const contentPack = currentLang === 'en-US' ? 'en' : 'math-cs-ai';
+    await Content.load(contentPack);
 
     // 绑定导航事件
     this.bindNavigation();
@@ -62,6 +67,14 @@ const App = {
 
   // 绑定弹窗
   bindModals() {
+    // 语言切换按钮
+    document.getElementById('language-btn')?.addEventListener('click', () => {
+      document.getElementById('settings-modal')?.classList.remove('hidden');
+    });
+
+    // 语言选择器
+    this.bindLanguageSelector();
+
     // 内容包按钮
     document.getElementById('content-pack-btn')?.addEventListener('click', () => {
       this.showContentPackModal();
@@ -335,6 +348,44 @@ const App = {
     `).join('');
 
     modal?.classList.remove('hidden');
+  },
+
+  // 绑定语言选择器
+  bindLanguageSelector() {
+    const buttons = document.querySelectorAll('.language-btn');
+    const currentLang = Storage.getLanguage();
+
+    // 更新 HTML lang 属性\n    document.documentElement.lang = currentLang;
+
+    buttons.forEach(btn => {
+      if (btn.dataset.lang === currentLang) {
+        btn.classList.add('active');
+      }
+      btn.addEventListener('click', async () => {
+        const newLang = btn.dataset.lang;
+        Storage.setLanguage(newLang);
+
+        // 更新 HTML lang 属性
+        document.documentElement.lang = newLang;
+
+        // 更新激活状态
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // 根据语言重新加载内容
+        const contentPack = newLang === 'en-US' ? 'en' : 'math-cs-ai';
+        await Content.load(contentPack);
+
+        // 刷新当前页面
+        this.refreshCurrentPage();
+        // 刷新课程内容
+        if (LessonViewer.currentLesson) {
+          LessonViewer.refresh();
+        }
+
+        showToast(`语言已切换为：${newLang === 'zh-CN' ? '中文' : 'English'}`);
+      });
+    });
   },
 
   // 切换内容包
