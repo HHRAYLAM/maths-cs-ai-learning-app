@@ -28,6 +28,11 @@ const LessonViewer = {
       </div>
     `;
 
+    // 绑定返回按钮
+    document.getElementById('back-to-tree')?.addEventListener('click', () => {
+      this.close();
+    });
+
     // 更新标题
     document.getElementById('page-title').textContent = lesson.title;
 
