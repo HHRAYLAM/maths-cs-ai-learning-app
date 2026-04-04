@@ -28,10 +28,14 @@ const LessonViewer = {
       </div>
     `;
 
-    // 绑定返回按钮
-    document.getElementById('back-to-tree')?.addEventListener('click', () => {
-      this.close();
-    });
+    // 绑定返回按钮（先移除旧监听器，避免重复绑定）
+    const backBtn = document.getElementById('back-to-tree');
+    if (backBtn) {
+      backBtn.replaceWith(backBtn.cloneNode(true));
+      document.getElementById('back-to-tree')?.addEventListener('click', () => {
+        this.close();
+      });
+    }
 
     // 更新标题
     document.getElementById('page-title').textContent = lesson.title;
