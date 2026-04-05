@@ -19,6 +19,26 @@
   --black: #1A1A1A;
 }
 
+/* 暗色模式 */
+[data-theme="dark"] {
+  --primary-color: #5A9FE6;
+  --primary-dark: #4585C7;
+  --success-color: #6BDC12;
+  --success-dark: #55B302;
+  --warning-color: #FFD420;
+  --danger-color: #FF5B5B;
+  --gray-100: #1A1A1A;
+  --gray-200: #2D2D2D;
+  --gray-300: #404040;
+  --gray-400: #666666;
+  --gray-500: #888888;
+  --gray-600: #AAAAAA;
+  --gray-700: #CCCCCC;
+  --gray-800: #E5E5E5;
+  --white: #1E1E1E;
+  --black: #F5F5F5;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -302,6 +322,36 @@ html, body {
 /* 隐藏类 */
 .hidden {
   display: none !important;
+}
+
+/* 主题选择器 */
+.theme-selector {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.theme-selector .theme-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: 2px solid var(--gray-300);
+  background: var(--white);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.theme-selector .theme-btn:hover {
+  border-color: var(--primary-color);
+  background: var(--gray-100);
+}
+
+.theme-selector .theme-btn.active {
+  border-color: var(--primary-color);
+  background: var(--primary-color);
+  color: var(--white);
 }
 
 /* 语言选择器 */

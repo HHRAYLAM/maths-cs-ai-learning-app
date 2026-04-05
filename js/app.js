@@ -19,6 +19,10 @@ const App = {
     const contentPack = currentLang === 'en-US' ? 'en' : 'math-cs-ai';
     await Content.load(contentPack);
 
+    // 应用主题
+    const currentTheme = Storage.getTheme();
+    Storage.applyTheme(currentTheme);
+
     // 绑定导航事件
     this.bindNavigation();
 
@@ -34,6 +38,11 @@ const App = {
     window.addEventListener('progress-reset', () => {
       this.refreshCurrentPage();
       showToast('进度已重置');
+    });
+
+    // 监听主题切换
+    window.addEventListener('theme-changed', (e) => {
+      Storage.applyTheme(e.detail.theme);
     });
 
     // 渲染默认页面
@@ -74,6 +83,9 @@ const App = {
 
     // 语言选择器
     this.bindLanguageSelector();
+
+    // 主题选择器
+    this.bindThemeSelector();
 
     // 内容包按钮
     document.getElementById('content-pack-btn')?.addEventListener('click', () => {
@@ -379,7 +391,8 @@ const App = {
     const buttons = document.querySelectorAll('.language-btn');
     const currentLang = Storage.getLanguage();
 
-    // 更新 HTML lang 属性\n    document.documentElement.lang = currentLang;
+    // 更新 HTML lang 属性
+    document.documentElement.lang = currentLang;
 
     buttons.forEach(btn => {
       if (btn.dataset.lang === currentLang) {
@@ -409,6 +422,37 @@ const App = {
 
         showToast(`语言已切换为：${newLang === 'zh-CN' ? '中文' : 'English'}`);
       });
+    });
+  },
+
+  // 绑定主题选择器
+  bindThemeSelector() {
+    const buttons = document.querySelectorAll('.theme-btn');
+    const currentTheme = Storage.getTheme();
+
+    buttons.forEach(btn => {
+      if (btn.dataset.theme === currentTheme) {
+        btn.classList.add('active');
+      }
+      btn.addEventListener('click', () => {
+        const newTheme = btn.dataset.theme;
+        Storage.setTheme(newTheme);
+        Storage.applyTheme(newTheme);
+
+        // 更新激活状态
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const themeNames = { 'light': '浅色', 'dark': '暗色', 'auto': '跟随系统' };
+        showToast(`主题已切换为：${themeNames[newTheme] || '自动'}`);
+      });
+    });
+
+    // 监听系统主题变化（当设置为自动时）
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (currentTheme === 'auto') {
+        Storage.applyTheme('auto');
+      }
     });
   },
 

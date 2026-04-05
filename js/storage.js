@@ -183,6 +183,34 @@ const Storage = {
     }));
   },
 
+  // 主题设置
+  getTheme() {
+    const theme = localStorage.getItem('app-theme');
+    return theme || 'auto'; // 默认跟随系统
+  },
+
+  setTheme(theme) {
+    localStorage.setItem('app-theme', theme);
+    window.dispatchEvent(new CustomEvent('theme-changed', {
+      detail: { theme }
+    }));
+  },
+
+  // 应用主题
+  applyTheme(theme) {
+    const actualTheme = theme === 'auto'
+      ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+      : theme;
+
+    document.documentElement.setAttribute('data-theme', actualTheme);
+
+    // 更新 PWA 主题色
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', actualTheme === 'dark' ? '#1E1E1E' : '#4A90D9');
+    }
+  },
+
   // 获取当前学习的课程
   getCurrentLesson() {
     const progress = this.getProgress();
