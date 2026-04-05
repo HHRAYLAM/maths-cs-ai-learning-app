@@ -45,6 +45,11 @@ const App = {
       Storage.applyTheme(e.detail.theme);
     });
 
+    // 监听书签变化
+    window.addEventListener('bookmarks-changed', () => {
+      this.refreshCurrentPage();
+    });
+
     // 渲染默认页面
     this.navigateTo('skill-tree');
 
@@ -266,6 +271,53 @@ const App = {
             </div>
           </div>
         ` : ''}
+
+        <!-- 我的收藏 -->
+        <div class="dashboard-section">
+          <h2 class="dashboard-section-title">我的收藏</h2>
+          <div class="card">
+            ${this.renderBookmarksSection()}
+          </div>
+        </div>
+      </div>
+    `;
+
+    // 绑定书签项点击事件
+    container.querySelectorAll('.bookmark-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const lessonId = item.dataset.lessonId;
+        if (lessonId) {
+          LessonViewer.open(lessonId);
+        }
+      });
+    });
+  },
+
+  // 渲染书签区域
+  renderBookmarksSection() {
+    const bookmarks = Storage.getBookmarkedLessons();
+
+    if (bookmarks.length === 0) {
+      return `
+        <div class="bookmarks-empty">
+          <div class="bookmarks-empty-icon">⭐</div>
+          <div class="bookmarks-empty-title">还没有收藏任何课程</div>
+          <div class="bookmarks-empty-description">在课程页面点击星标按钮添加收藏</div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="bookmarks-list">
+        ${bookmarks.map(lesson => `
+          <div class="bookmark-item" data-lesson-id="${lesson.id}" style="cursor: pointer;">
+            <div class="bookmark-star">⭐</div>
+            <div class="bookmark-info">
+              <div class="bookmark-title">${lesson.title}</div>
+              <div class="bookmark-chapter">📚 ${Content.getChapter(lesson.chapterId)?.title || ''}</div>
+            </div>
+          </div>
+        `).join('')}
       </div>
     `;
   },

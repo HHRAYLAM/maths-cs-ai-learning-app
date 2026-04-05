@@ -235,6 +235,68 @@ const Storage = {
     }
 
     return null;
+  },
+
+  // 书签功能
+  getBookmarks() {
+    const bookmarks = localStorage.getItem('app-bookmarks');
+    return bookmarks ? JSON.parse(bookmarks) : [];
+  },
+
+  addBookmark(lessonId) {
+    const bookmarks = this.getBookmarks();
+    if (!bookmarks.includes(lessonId)) {
+      bookmarks.push(lessonId);
+      localStorage.setItem('app-bookmarks', JSON.stringify(bookmarks));
+      window.dispatchEvent(new CustomEvent('bookmarks-changed', {
+        detail: { bookmarks }
+      }));
+      return true;
+    }
+    return false;
+  },
+
+  removeBookmark(lessonId) {
+    const bookmarks = this.getBookmarks();
+    const index = bookmarks.indexOf(lessonId);
+    if (index > -1) {
+      bookmarks.splice(index, 1);
+      localStorage.setItem('app-bookmarks', JSON.stringify(bookmarks));
+      window.dispatchEvent(new CustomEvent('bookmarks-changed', {
+        detail: { bookmarks }
+      }));
+      return true;
+    }
+    return false;
+  },
+
+  toggleBookmark(lessonId) {
+    if (this.isBookmarked(lessonId)) {
+      this.removeBookmark(lessonId);
+      return false;
+    } else {
+      this.addBookmark(lessonId);
+      return true;
+    }
+  },
+
+  isBookmarked(lessonId) {
+    const bookmarks = this.getBookmarks();
+    return bookmarks.includes(lessonId);
+  },
+
+  getBookmarkedLessons() {
+    const bookmarks = this.getBookmarks();
+    const lessons = [];
+
+    for (const lessonId of bookmarks) {
+      const lesson = Content.getLesson(lessonId);
+      if (lesson) {
+        lessons.push(lesson);
+      }
+    }
+
+    return lessons;
   }
 };
 

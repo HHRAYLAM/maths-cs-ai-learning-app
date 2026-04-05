@@ -58,6 +58,36 @@ const LessonViewer = {
 
     // 绑定练习按钮
     this.bindQuizButton(lessonId);
+
+    // 绑定书签按钮
+    this.bindBookmarkButton(lessonId);
+  },
+
+  // 绑定书签按钮
+  bindBookmarkButton(lessonId) {
+    const bookmarkBtn = document.getElementById('bookmark-btn');
+    if (!bookmarkBtn) return;
+
+    // 更新书签状态
+    this.updateBookmarkButton(lessonId);
+
+    // 绑定点击事件
+    bookmarkBtn.replaceWith(bookmarkBtn.cloneNode(true));
+    document.getElementById('bookmark-btn')?.addEventListener('click', () => {
+      const isBookmarked = Storage.toggleBookmark(lessonId);
+      this.updateBookmarkButton(lessonId);
+      showToast(isBookmarked ? '已添加书签' : '已移除书签');
+    });
+  },
+
+  // 更新书签按钮状态
+  updateBookmarkButton(lessonId) {
+    const bookmarkBtn = document.getElementById('bookmark-btn');
+    if (!bookmarkBtn) return;
+
+    const isBookmarked = Storage.isBookmarked(lessonId);
+    bookmarkBtn.textContent = isBookmarked ? '⭐' : '☆';
+    bookmarkBtn.style.opacity = isBookmarked ? '1' : '0.6';
   },
 
   // 绑定练习按钮
