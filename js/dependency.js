@@ -3,10 +3,10 @@
 const DependencyGraph = {
   // 配置
   config: {
-    nodeWidth: 180,
-    nodeHeight: 80,
-    layerHeight: 120,
-    padding: 40
+    nodeWidth: 160,
+    nodeHeight: 70,
+    layerHeight: 140,
+    padding: 60
   },
 
   // 渲染依赖图
@@ -185,101 +185,101 @@ const DependencyGraph = {
 
     // 构建 SVG 内容
     let svgContent = `
-      <svg class="dependency-svg" width="${svgWidth}" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}">
-        <defs>
-          <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-            <polygon points="0 0, 10 3, 0 6" fill="#999" />
-          </marker>
-          <marker id="arrowhead-highlight" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-            <polygon points="0 0, 10 3, 0 6" fill="#4A90D9" />
-          </marker>
-          <!-- 渐变定义 -->
-          ${nodes.map(node => `
-            <linearGradient id="grad-${node.id}" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:${this.getNodeColor(node.status, true)}" />
-              <stop offset="100%" style="stop-color:${this.getNodeColor(node.status, false)}" />
-            </linearGradient>
-          `).join('')}
-        </defs>
+      <div class="svg-container" style="overflow: auto; max-height: calc(100vh - 180px);">
+        <svg class="dependency-svg" width="${svgWidth}" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}">
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <polygon points="0 0, 10 3, 0 6" fill="#999" />
+            </marker>
+            <marker id="arrowhead-highlight" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <polygon points="0 0, 10 3, 0 6" fill="#4A90D9" />
+            </marker>
+            <!-- 渐变定义 -->
+            ${nodes.map(node => `
+              <linearGradient id="grad-${node.id}" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:${this.getNodeColor(node.status, true)}" />
+                <stop offset="100%" style="stop-color:${this.getNodeColor(node.status, false)}" />
+              </linearGradient>
+            `).join('')}
+          </defs>
 
-        <!-- 边（连接线） -->
-        <g class="edges">
-          ${edges.map(edge => {
-            const source = nodePositions.get(edge.source);
-            const target = nodePositions.get(edge.target);
-            if (!source || !target) return '';
+          <!-- 边（连接线） -->
+          <g class="edges">
+            ${edges.map(edge => {
+              const source = nodePositions.get(edge.source);
+              const target = nodePositions.get(edge.target);
+              if (!source || !target) return '';
 
-            const dx = target.x - source.x;
-            const dy = target.y - source.y - config.layerHeight / 2;
+              // 贝塞尔曲线
+              const path = `M ${source.x} ${source.y + 30} C ${source.x} ${source.y + 50}, ${target.x} ${target.y - 50}, ${target.x} ${target.y - 30}`;
 
-            // 贝塞尔曲线
-            const path = `M ${source.x} ${source.y + 30} C ${source.x} ${source.y + 50}, ${target.x} ${target.y - 50}, ${target.x} ${target.y - 30}`;
+              return `
+                <g class="edge-group" data-source="${edge.source}" data-target="${edge.target}">
+                  <path class="edge-path" d="${path}" stroke="#ccc" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
+                  <title>${edge.sourceChapter} → ${edge.targetChapter}</title>
+                </g>
+              `;
+            }).join('')}
+          </g>
 
-            return `
-              <g class="edge-group" data-source="${edge.source}" data-target="${edge.target}">
-                <path class="edge-path" d="${path}" stroke="#ddd" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
-                <title>${edge.sourceChapter} → ${edge.targetChapter}</title>
-              </g>
-            `;
-          }).join('')}
-        </g>
+          <!-- 节点 -->
+          <g class="nodes">
+            ${nodes.map(node => {
+              const pos = nodePositions.get(node.id);
+              if (!pos) return '';
 
-        <!-- 节点 -->
-        <g class="nodes">
-          ${nodes.map(node => {
-            const pos = nodePositions.get(node.id);
-            if (!pos) return '';
+              const level = levelMap.get(node.id);
+              const color = layerColors[level % layerColors.length];
+              const status = node.status;
+              const statusIcon = status === 'completed' ? '✓' : status === 'mastered' ? '★' : status === 'learning' ? '◐' : '○';
 
-            const level = levelMap.get(node.id);
-            const color = layerColors[level % layerColors.length];
-            const status = node.status;
-            const statusIcon = status === 'completed' ? '✓' : status === 'mastered' ? '★' : status === 'learning' ? '◐' : '○';
+              return `
+                <g class="node-group" data-lesson-id="${node.id}" transform="translate(${pos.x - config.nodeWidth / 2}, ${pos.y - config.nodeHeight / 2})" style="cursor: pointer;">
+                  <!-- 节点背景 -->
+                  <rect class="node-rect"
+                        x="0" y="0"
+                        width="${config.nodeWidth}" height="${config.nodeHeight}"
+                        rx="10" ry="10"
+                        fill="url(#grad-${node.id})"
+                        stroke="${color}"
+                        stroke-width="2.5" />
 
-            return `
-              <g class="node-group" data-lesson-id="${node.id}" transform="translate(${pos.x - config.nodeWidth / 2}, ${pos.y - config.nodeHeight / 2})" style="cursor: pointer;">
-                <!-- 节点背景 -->
-                <rect class="node-rect"
-                      x="0" y="0"
-                      width="${config.nodeWidth}" height="${config.nodeHeight}"
-                      rx="10" ry="10"
-                      fill="url(#grad-${node.id})"
-                      stroke="${color}"
-                      stroke-width="3" />
+                  <!-- 状态图标 -->
+                  <circle cx="18" cy="18" r="11" fill="white" opacity="0.95" />
+                  <text x="18" y="23" text-anchor="middle" font-size="13" font-weight="bold" fill="${this.getStatusColor(status)}">${statusIcon}</text>
 
-                <!-- 状态图标 -->
-                <circle cx="20" cy="20" r="12" fill="white" opacity="0.9" />
-                <text x="20" y="25" text-anchor="middle" font-size="14" font-weight="bold" fill="${this.getStatusColor(status)}">${statusIcon}</text>
+                  <!-- 课程标题 -->
+                  <text x="38" y="22" font-size="12" font-weight="500" fill="#333" style="text-anchor: start;">
+                    ${this.escapeXml(node.title)}
+                  </text>
 
-                <!-- 课程标题 -->
-                <text x="45" y="25" font-size="13" font-weight="500" fill="white" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
-                  ${this.escapeXml(node.title)}
-                </text>
+                  <!-- 章节名称 -->
+                  <text x="38" y="42" font-size="11" fill="#666">
+                    📚 ${this.escapeXml(node.chapter)}
+                  </text>
 
-                <!-- 章节名称 -->
-                <text x="45" y="45" font-size="11" fill="rgba(255,255,255,0.85);">
-                  📚 ${this.escapeXml(node.chapter)}
-                </text>
+                  <!-- 依赖信息 -->
+                  <text x="${config.nodeWidth - 8}" y="62" text-anchor="end" font-size="10" fill="#888;">
+                    🔗 被依赖：${node.outDegree}
+                  </text>
 
-                <!-- 依赖信息 -->
-                <text x="${config.nodeWidth - 10}" y="65" text-anchor="end" font-size="10" fill="rgba(255,255,255,0.9);">
-                  🔗 ${node.outDegree} 依赖
-                </text>
+                  <!-- 进度条 -->
+                  ${status === 'completed' || status === 'mastered' ? `
+                    <rect x="10" y="52" width="${config.nodeWidth - 20}" height="5" rx="2.5" fill="#e0e0e0" />
+                    <rect x="10" y="52" width="${(config.nodeWidth - 20) * (node.percent / 100)}" height="5" rx="2.5" fill="#58CC02" />
+                  ` : ''}
 
-                <!-- 进度条 -->
-                ${status === 'completed' || status === 'mastered' ? `
-                  <rect x="10" y="60" width="${config.nodeWidth - 20}" height="6" rx="3" fill="rgba(255,255,255,0.3)" />
-                  <rect x="10" y="60" width="${(config.nodeWidth - 20) * (node.percent / 100)}" height="6" rx="3" fill="#58CC02" />
-                ` : ''}
-
-                <title>${node.title}
+                  <title>${node.title}
   章节：${node.chapter}
   状态：${this.getStatusText(status)}
-  依赖数：${node.outDegree}</title>
-              </g>
-            `;
-          }).join('')}
-        </g>
-      </svg>
+  先修：${node.inDegree} | 被依赖：${node.outDegree}
+  点击进行学习</title>
+                </g>
+              `;
+            }).join('')}
+          </g>
+        </svg>
+      </div>
 
       <!-- 图例 -->
       <div class="dependency-legend">
@@ -335,46 +335,58 @@ const DependencyGraph = {
 
   // 绑定交互事件
   bindEvents(container, nodes) {
-    // 节点点击事件
+    // 节点点击事件 - 直接进入课程
     container.querySelectorAll('.node-group').forEach(group => {
       group.addEventListener('click', () => {
         const lessonId = group.dataset.lessonId;
         if (lessonId) {
+          // 先高亮路径
           this.highlightPath(lessonId);
-          // 3 秒后可以直接进入课程
-          setTimeout(() => {
-            const goToLesson = confirm('是否进入此课程学习？');
-            if (goToLesson) {
-              SkillTree.openLesson(lessonId);
-            }
-          }, 500);
+          // 直接打开课程
+          SkillTree.openLesson(lessonId);
         }
       });
+
+      // 添加 title 提示
+      const lessonId = group.dataset.lessonId;
+      const node = nodes.find(n => n.id === lessonId);
+      if (node) {
+        group.querySelector('title').textContent =
+          `${node.title}\n章节：${node.chapter}\n状态：${this.getStatusText(node.status)}\n点击进行学习`;
+      }
     });
 
     // 缩放控制
     let scale = 1;
-    const svg = container.querySelector('.dependency-svg');
+    const svgContainer = container.querySelector('.svg-container');
 
     document.getElementById('dep-zoom-in')?.addEventListener('click', () => {
       scale = Math.min(scale * 1.2, 3);
-      svg.style.transform = `scale(${scale})`;
+      if (svgContainer) svgContainer.style.transform = `scale(${scale})`;
     });
 
     document.getElementById('dep-zoom-out')?.addEventListener('click', () => {
       scale = Math.max(scale / 1.2, 0.5);
-      svg.style.transform = `scale(${scale})`;
+      if (svgContainer) svgContainer.style.transform = `scale(${scale})`;
     });
 
     document.getElementById('dep-reset')?.addEventListener('click', () => {
       scale = 1;
-      svg.style.transform = 'scale(1)';
+      if (svgContainer) svgContainer.style.transform = 'scale(1)';
+      if (svgContainer) {
+        svgContainer.style.transformOrigin = 'center center';
+        svgContainer.style.transition = 'transform 0.3s ease';
+      }
       this.clearHighlight();
     });
 
     // 点击空白处清除高亮
     container.addEventListener('click', (e) => {
       if (e.target === container || e.target.classList.contains('dependency-container')) {
+        this.clearHighlight();
+      }
+    });
+  },
         this.clearHighlight();
       }
     });
