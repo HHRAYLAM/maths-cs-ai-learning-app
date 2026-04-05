@@ -334,6 +334,156 @@ html, body {
   color: var(--white);
 }
 
+/* 搜索功能 */
+.search-modal-content {
+  max-width: 500px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid var(--gray-300);
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  border-color: var(--primary-color);
+}
+
+.search-close {
+  background: var(--gray-200);
+  border: none;
+  color: var(--gray-600);
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-close:hover {
+  background: var(--gray-300);
+}
+
+.search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.search-result-item {
+  padding: 12px 16px;
+  background: var(--gray-100);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.search-result-item:hover {
+  background: var(--primary-color);
+  color: var(--white);
+}
+
+.search-result-item:hover .search-result-chapter {
+  color: var(--white);
+}
+
+.search-result-title {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.search-result-chapter {
+  font-size: 13px;
+  color: var(--gray-500);
+}
+
+.search-hints {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--gray-200);
+}
+
+.hint-item {
+  font-size: 13px;
+  color: var(--gray-500);
+  margin-bottom: 8px;
+}
+
+.search-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--gray-500);
+}
+
+.search-empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+/* Dashboard 增强样式 */
+.continue-learning-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.current-lesson-info {
+  text-align: center;
+}
+
+.current-lesson-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: var(--primary-color);
+  color: var(--white);
+  border-radius: 12px;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.current-lesson-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin-bottom: 8px;
+}
+
+.current-lesson-chapter {
+  font-size: 14px;
+  color: var(--gray-500);
+}
+
+.empty-lesson {
+  text-align: center;
+  padding: 16px 0;
+}
+
+.empty-lesson-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.empty-lesson-text {
+  color: var(--gray-500);
+  font-size: 14px;
+}
+
 /* 响应式 */
 @media (min-width: 768px) {
   .main-content {

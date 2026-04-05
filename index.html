@@ -38,6 +38,7 @@
   <header class="top-nav">
     <h1 id="page-title">知识框架</h1>
     <div class="header-actions">
+      <button id="search-btn" class="icon-btn" title="搜索">🔍</button>
       <button id="language-btn" class="icon-btn" title="切换语言">🌐</button>
       <button id="content-pack-btn" class="icon-btn" title="切换内容包">📚</button>
       <button id="settings-btn" class="icon-btn" title="设置">⚙️</button>
@@ -106,6 +107,24 @@
         <!-- 动态生成 -->
       </div>
       <button class="modal-close" onclick="closeModal('content-pack-modal')">关闭</button>
+    </div>
+  </div>
+
+  <!-- 搜索弹窗 -->
+  <div id="search-modal" class="modal hidden">
+    <div class="modal-content search-modal-content">
+      <h2>搜索课程</h2>
+      <div class="search-box">
+        <input type="text" id="search-input" class="search-input" placeholder="搜索课程标题、概念、关键词...">
+        <button id="search-close" class="search-close">✕</button>
+      </div>
+      <div id="search-results" class="search-results">
+        <!-- 动态生成搜索结果 -->
+      </div>
+      <div id="search-hints" class="search-hints">
+        <div class="hint-item">💡 支持搜索课程标题、概念名称</div>
+        <div class="hint-item">💡 按 Enter 键快速搜索</div>
+      </div>
     </div>
   </div>
 

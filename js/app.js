@@ -92,6 +92,11 @@ const App = {
         document.getElementById('settings-modal')?.classList.add('hidden');
       }
     });
+
+    // 搜索按钮
+    document.getElementById('search-btn')?.addEventListener('click', () => {
+      this.showSearchModal();
+    });
   },
 
   // 导航到指定页面
@@ -161,27 +166,56 @@ const App = {
     const summary = ProgressManager.getSummary();
     const stats = Storage.getStats();
     const dueReviews = Storage.getLessonsDueForReview();
+    const currentLesson = Storage.getCurrentLesson();
+    const currentLessonData = currentLesson ? Content.getLesson(currentLesson) : null;
 
     container.innerHTML = `
       <div class="dashboard-container">
+        <!-- 继续学习 -->
+        <div class="dashboard-section">
+          <h2 class="dashboard-section-title">
+            ${currentLesson ? '继续学习' : '开始学习'}
+          </h2>
+          <div class="card continue-learning-card">
+            ${currentLesson ? `
+              <div class="current-lesson-info">
+                <div class="current-lesson-badge">当前课程</div>
+                <div class="current-lesson-title">${currentLessonData?.title || '未知课程'}</div>
+                <div class="current-lesson-chapter">📚 ${Content.getChapter(currentLessonData?.chapterId)?.title || ''}</div>
+              </div>
+              <button class="btn btn-primary" onclick="App.continueLearning()">
+                继续学习 →
+              </button>
+            ` : `
+              <div class="empty-lesson">
+                <div class="empty-lesson-icon">🎓</div>
+                <div class="empty-lesson-text">还没有开始学习</div>
+              </div>
+              <button class="btn btn-primary" onclick="App.startFirstLesson()">
+                开始第一章
+              </button>
+            `}
+          </div>
+        </div>
+
         <!-- 统计卡片 -->
         <div class="dashboard-section">
           <h2 class="dashboard-section-title">学习统计</h2>
           <div class="stats-grid">
             <div class="stat-card">
-              <div class="stat-value">${summary.completionRate}</div>
+              <div class="stat-value">${stats.completionRate}%</div>
               <div class="stat-label">完成率</div>
             </div>
             <div class="stat-card green">
-              <div class="stat-value">${summary.completedLessons}/${summary.totalLessons}</div>
+              <div class="stat-value">${stats.completed + stats.mastered}</div>
               <div class="stat-label">已完成</div>
             </div>
             <div class="stat-card orange">
-              <div class="stat-value">${summary.masteredLessons}</div>
+              <div class="stat-value">${stats.mastered}</div>
               <div class="stat-label">已精通</div>
             </div>
             <div class="stat-card purple">
-              <div class="stat-value">${summary.dueForReview}</div>
+              <div class="stat-value">${dueReviews.length}</div>
               <div class="stat-label">待复习</div>
             </div>
           </div>
@@ -193,9 +227,9 @@ const App = {
           <div class="card">
             <div style="text-align: center;">
               <div style="font-size: 36px; font-weight: 700; color: var(--primary-color);">
-                ${summary.totalTime}
+                ${ProgressManager.formatTime(stats.totalTimeSeconds)}
               </div>
-              <div style="color: var(--gray-500); margin-top: 8px;">累计学习</div>
+              <div style="color: var(--gray-500); margin-top: 8px;">累计学习时长</div>
             </div>
           </div>
         </div>
@@ -208,7 +242,7 @@ const App = {
               ${dueReviews.slice(0, 5).map(item => {
                 const lesson = Content.getLesson(item.lessonId);
                 return `
-                  <div class="recent-lesson-item" style="cursor: pointer;" onclick="LessonViewer.open('${item.lessonId}')">
+                  <div class="recent-lesson-item" style="cursor: pointer;" onclick="App.reviewLesson('${item.lessonId}')">
                     <div class="recent-lesson-icon">📚</div>
                     <div class="recent-lesson-info">
                       <div class="recent-lesson-title">${lesson?.title || item.lessonId}</div>
@@ -220,16 +254,6 @@ const App = {
             </div>
           </div>
         ` : ''}
-
-        <!-- 继续学习 -->
-        <div class="dashboard-section">
-          <h2 class="dashboard-section-title">继续学习</h2>
-          <div class="card">
-            <button class="btn btn-primary" style="width: 100%;" onclick="App.continueLearning()">
-              开始学习
-            </button>
-          </div>
-        </div>
       </div>
     `;
   },
@@ -396,6 +420,100 @@ const App = {
     showToast(`已切换到 ${packId}`);
   },
 
+  // 显示搜索弹窗
+  showSearchModal() {
+    const modal = document.getElementById('search-modal');
+    const input = document.getElementById('search-input');
+    const results = document.getElementById('search-results');
+    const hints = document.getElementById('search-hints');
+
+    modal?.classList.remove('hidden');
+    input?.focus();
+
+    // 清空搜索结果
+    if (results) results.innerHTML = '';
+    if (hints) hints.style.display = 'block';
+
+    // 绑定输入事件
+    input?.addEventListener('input', (e) => {
+      const query = e.target.value.trim();
+      if (query.length > 0) {
+        this.performSearch(query);
+        if (hints) hints.style.display = 'none';
+      } else {
+        if (results) results.innerHTML = '';
+        if (hints) hints.style.display = 'block';
+      }
+    });
+
+    // 绑定关闭按钮
+    document.getElementById('search-close')?.addEventListener('click', () => {
+      modal?.classList.add('hidden');
+    });
+  },
+
+  // 执行搜索
+  performSearch(query) {
+    const results = document.getElementById('search-results');
+    if (!results) return;
+
+    const chapters = Content.getChapters();
+    const matches = [];
+
+    // 搜索所有课程
+    for (const chapter of chapters) {
+      for (const lesson of (chapter.lessons || [])) {
+        const titleMatch = lesson.title.toLowerCase().includes(query.toLowerCase());
+        const descMatch = (lesson.description || '').toLowerCase().includes(query.toLowerCase());
+
+        if (titleMatch || descMatch) {
+          matches.push({
+            ...lesson,
+            chapterTitle: chapter.title,
+            chapterId: chapter.id,
+            matchType: titleMatch ? 'title' : 'description'
+          });
+        }
+      }
+    }
+
+    // 按相关性排序（标题匹配优先）
+    matches.sort((a, b) => {
+      if (a.matchType === 'title' && b.matchType === 'description') return -1;
+      if (a.matchType === 'description' && b.matchType === 'title') return 1;
+      return 0;
+    });
+
+    // 显示结果
+    if (matches.length === 0) {
+      results.innerHTML = `
+        <div class="search-empty">
+          <div class="search-empty-icon">🔍</div>
+          <div class="search-empty-title">未找到匹配结果</div>
+          <div class="search-empty-description">尝试其他关键词试试</div>
+        </div>
+      `;
+    } else {
+      results.innerHTML = matches.map(lesson => `
+        <div class="search-result-item" data-lesson-id="${lesson.id}">
+          <div class="search-result-title">${lesson.title}</div>
+          <div class="search-result-chapter">📚 ${lesson.chapterTitle}</div>
+        </div>
+      `).join('');
+
+      // 绑定点击事件
+      results.querySelectorAll('.search-result-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const lessonId = item.dataset.lessonId;
+          if (lessonId) {
+            document.getElementById('search-modal')?.classList.add('hidden');
+            SkillTree.openLesson(lessonId);
+          }
+        });
+      });
+    }
+  },
+
   // 继续学习
   continueLearning() {
     const currentLesson = Storage.getCurrentLesson();
@@ -403,14 +521,26 @@ const App = {
       LessonViewer.open(currentLesson);
     } else {
       // 从第一章第一节课开始
-      const chapters = Content.getChapters();
-      const firstLesson = chapters[0]?.lessons?.[0];
-      if (firstLesson) {
-        LessonViewer.open(firstLesson.id);
-      } else {
-        showToast('暂无可学习内容');
-      }
+      this.startFirstLesson();
     }
+  },
+
+  // 开始第一课
+  startFirstLesson() {
+    const chapters = Content.getChapters();
+    const firstLesson = chapters[0]?.lessons?.[0];
+    if (firstLesson) {
+      LessonViewer.open(firstLesson.id);
+    } else {
+      showToast('暂无可学习内容');
+    }
+  },
+
+  // 复习课程
+  reviewLesson(lessonId) {
+    Storage.reviewLesson(lessonId);
+    showToast('已完成复习');
+    this.refreshCurrentPage();
   }
 };
 

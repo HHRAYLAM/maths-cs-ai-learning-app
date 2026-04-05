@@ -118,10 +118,16 @@ const DependencyGraph = {
 
     // 绑定点击事件
     container.querySelectorAll('.dependency-node').forEach(node => {
-      node.addEventListener('click', () => {
+      node.addEventListener('click', (e) => {
         const lessonId = node.dataset.lessonId;
         if (lessonId) {
           const nodeElement = nodeMap.get(lessonId);
+          // 如果按下 Ctrl/Cmd 键，高亮依赖路径
+          if (e.ctrlKey || e.metaKey) {
+            this.highlightPath(lessonId);
+            showToast('已高亮依赖路径，再次点击空白处清除');
+            return;
+          }
           if (nodeElement && nodeElement.dependedByCount === 0 && nodeElement.isRoot === false) {
             // 只有叶节点和中间节点可以直接进入
             SkillTree.openLesson(lessonId);
@@ -132,6 +138,13 @@ const DependencyGraph = {
           }
         }
       });
+    });
+
+    // 点击空白处清除高亮
+    container.addEventListener('click', (e) => {
+      if (e.target === container || e.target.classList.contains('dependency-content')) {
+        this.clearHighlight();
+      }
     });
   },
 
