@@ -1,6 +1,13 @@
 // 知识树（思维导图）组件
 
 const SkillTree = {
+  // 当前过滤条件
+  filters: {
+    status: null, // 'not-started', 'learning', 'completed', 'mastered'
+    difficulty: null, // 'basic', 'intermediate', 'advanced'
+    chapterId: null
+  },
+
   // 渲染知识树
   render(container) {
     const chapters = Content.getChapters();
@@ -16,8 +23,12 @@ const SkillTree = {
       return;
     }
 
+    // 渲染过滤工具栏
+    const filterBarHtml = this.renderFilterBar();
+
     container.innerHTML = `
       <div class="skill-tree-container">
+        ${filterBarHtml}
         ${chapters.map(chapter => this.renderChapter(chapter)).join('')}
       </div>
     `;
@@ -39,6 +50,32 @@ const SkillTree = {
         }
       });
     });
+
+    // 绑定过滤事件
+    this.bindFilterEvents(container);
+  },
+
+  // 渲染过滤工具栏
+  renderFilterBar() {
+    const statusOptions = {
+      'not-started': '未开始',
+      'learning': '学习中',
+      'completed': '已完成',
+      'mastered': '已精通'
+    };
+
+    return `
+      <div class="filter-bar">
+        <div class="filter-group">
+          <span class="filter-label">状态：</span>
+          <button class="filter-btn ${!this.filters.status ? 'active' : ''}" data-filter="all" data-type="status">全部</button>
+          ${Object.entries(statusOptions).map(([key, label]) => `
+            <button class="filter-btn ${this.filters.status === key ? 'active' : ''}" data-filter="${key}" data-type="status">${label}</button>
+          `).join('')}
+        </div>
+        <button class="filter-reset-btn" id="filter-reset">重置</button>
+      </div>
+    `;
   },
 
   // 渲染章节
@@ -62,10 +99,24 @@ const SkillTree = {
           </div>
         </div>
         <div class="lesson-list">
-          ${(chapter.lessons || []).map(lesson => this.renderLesson(lesson)).join('')}
+          ${(chapter.lessons || [])
+            .filter(lesson => this.shouldShowLesson(lesson))
+            .map(lesson => this.renderLesson(lesson))
+            .join('')}
         </div>
+        ${this.hasActiveFilters() && (chapter.lessons || []).filter(lesson => this.shouldShowLesson(lesson)).length === 0 ? `
+          <div class="chapter-no-results">
+            <div class="no-results-icon">🔍</div>
+            <div>该章节没有符合条件的课程</div>
+          </div>
+        ` : ''}
       </div>
     `;
+  },
+
+  // 检查是否有激活的过滤条件
+  hasActiveFilters() {
+    return this.filters.status || this.filters.difficulty || this.filters.chapterId;
   },
 
   // 渲染课程
@@ -135,6 +186,75 @@ const SkillTree = {
         if (card) card.classList.add('expanded');
       });
     }
+  },
+
+  // 绑定过滤事件
+  bindFilterEvents(container) {
+    const filterBtns = container.querySelectorAll('.filter-btn');
+    const resetBtn = document.getElementById('filter-reset');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filterType = btn.dataset.type;
+        const filterValue = btn.dataset.filter;
+
+        if (filterType === 'status') {
+          this.filters.status = filterValue === 'all' ? null : filterValue;
+        }
+
+        this.refreshWithFilters();
+      });
+    });
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        this.filters.status = null;
+        this.filters.difficulty = null;
+        this.filters.chapterId = null;
+        this.refreshWithFilters();
+        showToast('过滤条件已重置');
+      });
+    }
+  },
+
+  // 应用过滤条件刷新显示
+  refreshWithFilters() {
+    const container = document.querySelector('.skill-tree-container');
+    if (!container) return;
+
+    // 保存展开状态
+    const expandedChapters = container.querySelectorAll('.chapter-card.expanded');
+    const expandedIds = Array.from(expandedChapters).map(el => el.dataset.chapterId);
+
+    // 重新渲染
+    this.render(container);
+
+    // 恢复展开状态
+    expandedIds.forEach(id => {
+      const card = container.querySelector(`[data-chapter-id="${id}"]`);
+      if (card) card.classList.add('expanded');
+    });
+  },
+
+  // 检查课程是否符合过滤条件
+  shouldShowLesson(lesson) {
+    const progress = Storage.getLessonProgress(lesson.id);
+    const status = progress?.status || 'not-started';
+
+    // 状态过滤
+    if (this.filters.status && status !== this.filters.status) {
+      return false;
+    }
+
+    // 难度过滤（需要章节数据支持）
+    if (this.filters.difficulty) {
+      const difficulty = lesson.difficulty || 'intermediate';
+      if (difficulty !== this.filters.difficulty) {
+        return false;
+      }
+    }
+
+    return true;
   }
 };
 
