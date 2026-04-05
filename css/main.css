@@ -765,3 +765,167 @@ html, body {
     transform: translateX(-50%);
   }
 }
+
+/* PWA 安装横幅 */
+.pwa-install-banner {
+  position: fixed;
+  bottom: 80px;
+  left: 16px;
+  right: 16px;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.pwa-install-banner .banner-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+}
+
+.pwa-install-banner .banner-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.pwa-install-banner .banner-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.pwa-install-banner .banner-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-800);
+}
+
+.pwa-install-banner .banner-desc {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-top: 2px;
+}
+
+.pwa-install-banner .banner-install-btn {
+  background: var(--primary-color);
+  color: var(--white);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.pwa-install-banner .banner-install-btn:active {
+  transform: scale(0.95);
+}
+
+.pwa-install-banner .banner-close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--gray-400);
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+/* PWA 缓存提示 */
+.pwa-cache-hint {
+  position: fixed;
+  bottom: 80px;
+  left: 16px;
+  right: 16px;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  z-index: 1000;
+  transition: all 0.3s ease;
+  border: 1px solid var(--warning-color);
+}
+
+.pwa-cache-hint .hint-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+}
+
+.pwa-cache-hint .hint-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.pwa-cache-hint .hint-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.pwa-cache-hint .hint-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-800);
+}
+
+.pwa-cache-hint .hint-desc {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-top: 2px;
+}
+
+.pwa-cache-hint .hint-cache-btn {
+  background: var(--success-color);
+  color: var(--white);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.pwa-cache-hint .hint-cache-btn:active {
+  transform: scale(0.95);
+}
+
+.pwa-cache-hint .hint-close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--gray-400);
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+/* PWA 缓存 Toast */
+.pwa-cache-toast {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gray-800);
+  color: var(--white);
+  padding: 12px 20px;
+  border-radius: 24px;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 2000;
+  max-width: 90%;
+  text-align: center;
+}
+
+.pwa-cache-toast.success {
+  background: var(--success-color);
+}
+
+.pwa-cache-toast.error {
+  background: var(--danger-color);
+}

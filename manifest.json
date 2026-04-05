@@ -1,12 +1,14 @@
 {
   "name": "数学/计算机/AI 学习",
-  "short_name": "数学AI",
+  "short_name": "数学 AI",
   "description": "数学、计算机、AI 知识学习应用",
-  "start_url": "/",
+  "start_url": "/maths-cs-ai-learning-app/",
+  "scope": "/maths-cs-ai-learning-app/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#4A90D9",
-  "orientation": "portrait",
+  "orientation": "any",
+  "categories": ["education", "productivity"],
   "icons": [
     {
       "src": "images/icon-192.png",
@@ -19,6 +21,22 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "知识树",
+      "short_name": "知识树",
+      "description": "查看知识框架",
+      "url": "/maths-cs-ai-learning-app/#skill-tree",
+      "icons": [{ "src": "images/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "依赖图",
+      "short_name": "依赖图",
+      "description": "查看依赖关系",
+      "url": "/maths-cs-ai-learning-app/#dependency",
+      "icons": [{ "src": "images/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }
