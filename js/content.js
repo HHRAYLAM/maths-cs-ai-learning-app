@@ -181,15 +181,26 @@ const Content = {
       for (const lesson of (chapter.lessons || [])) {
         const prerequisites = lesson.prerequisites || [];
         for (const prereqId of prerequisites) {
+          // 查找先修课程所属的章节
+          let fromChapter = '';
+          for (const ch of this.chapters) {
+            const found = (ch.lessons || []).find(l => l.id === prereqId);
+            if (found) {
+              fromChapter = ch.id;
+              break;
+            }
+          }
+
           dependencies.push({
             from: prereqId,
             to: lesson.id,
-            fromChapter: this.getLesson(prereqId)?.chapterId || '',
+            fromChapter: fromChapter,
             toChapter: chapter.id
           });
         }
       }
     }
+    console.log('依赖关系数量:', dependencies.length);
     return dependencies;
   },
 

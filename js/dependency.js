@@ -11,8 +11,13 @@ const DependencyGraph = {
 
   // 渲染依赖图
   render(container) {
+    console.log('依赖图渲染开始...');
+
     const chapters = Content.getChapters();
     const dependencies = Content.getAllDependencies();
+
+    console.log('章节数:', chapters?.length || 0);
+    console.log('依赖关系数:', dependencies?.length || 0);
 
     if (!chapters || chapters.length === 0) {
       container.innerHTML = `
@@ -27,6 +32,9 @@ const DependencyGraph = {
 
     // 构建节点和边数据
     const { nodes, edges } = this.buildGraphData(chapters, dependencies);
+
+    console.log('节点数:', nodes.length);
+    console.log('边数:', edges.length);
 
     if (nodes.length === 0) {
       container.innerHTML = `
