@@ -387,10 +387,6 @@ const DependencyGraph = {
       }
     });
   },
-        this.clearHighlight();
-      }
-    });
-  },
 
   // 获取节点颜色
   getNodeColor(status, isStart) {
