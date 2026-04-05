@@ -1,8 +1,38 @@
-/* 依赖关系图样式 */
+/* 依赖关系图样式 - SVG 可视化版本 */
 
 .dependency-container {
-  padding: 16px;
+  padding: 0;
   position: relative;
+  overflow: auto;
+  min-height: 500px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* SVG 样式 */
+.dependency-svg {
+  display: block;
+  margin: 0 auto;
+  transition: transform 0.3s ease;
+}
+
+/* 边（连接线） */
+.edge-path {
+  transition: all 0.3s ease;
+}
+
+.edge-group:hover .edge-path {
+  stroke: #4A90D9 !important;
+  stroke-width: 3 !important;
+}
+
+/* 节点悬停效果 */
+.node-group:hover .node-rect {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+}
+
+.node-group.highlighted .node-rect {
+  filter: brightness(1.2);
 }
 
 /* 图例 */
@@ -10,11 +40,12 @@
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  margin-bottom: 20px;
-  padding: 12px;
+  padding: 16px;
   background: var(--white);
-  border-radius: 8px;
+  border-radius: 12px;
+  margin: 16px;
   font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .legend-item {
@@ -24,214 +55,80 @@
 }
 
 .legend-dot {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
 }
 
-.legend-dot.root {
-  background: var(--blue-500);
-}
-
-.legend-dot.intermediate {
-  background: var(--purple-500);
-}
-
-.legend-dot.leaf {
-  background: var(--green-500);
-}
-
-/* 依赖层级 */
-.dependency-level {
-  margin-bottom: 24px;
-}
-
-.dependency-level-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--gray-600);
-  margin-bottom: 12px;
+/* 控制面板 */
+.dependency-controls {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
   display: flex;
-  align-items: center;
   gap: 8px;
+  z-index: 100;
 }
 
-.dependency-level-title::before {
-  content: '';
-  display: block;
-  width: 4px;
-  height: 16px;
-  background: var(--blue-500);
-  border-radius: 2px;
-}
-
-/* 节点网格 */
-.dependency-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 12px;
-}
-
-/* 依赖节点 */
-.dependency-node {
+.control-btn {
   background: var(--white);
-  border: 2px solid var(--gray-200);
-  border-radius: 10px;
-  padding: 14px;
+  border: 2px solid var(--gray-300);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 16px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  position: relative;
-  overflow: hidden;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
-.dependency-node::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--gray-300);
-  transition: background 0.2s;
-}
-
-.dependency-node:hover {
+.control-btn:hover {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--white);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  border-color: var(--blue-300);
 }
 
-.dependency-node::before {
-  background: var(--blue-500);
-}
-
-/* 节点状态 */
-.dependency-node.not-started {
-  border-color: var(--gray-200);
-}
-
-.dependency-node.learning {
-  border-color: var(--yellow-400);
-  background: linear-gradient(135deg, var(--yellow-50) 0%, var(--white) 100%);
-}
-
-.dependency-node.completed {
-  border-color: var(--green-400);
-  background: linear-gradient(135deg, var(--green-50) 0%, var(--white) 100%);
-}
-
-.dependency-node.mastered {
-  border-color: var(--purple-400);
-  background: linear-gradient(135deg, var(--purple-50) 0%, var(--white) 100%);
-}
-
-.dependency-node.locked {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.dependency-node.locked:hover {
-  transform: none;
-  box-shadow: none;
-}
-
-/* 节点内容 */
-.dependency-node-title {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--gray-800);
-  margin-bottom: 6px;
-  line-height: 1.4;
-}
-
-.dependency-node-chapter {
-  font-size: 12px;
-  color: var(--gray-500);
-  margin-bottom: 8px;
-}
-
-/* 依赖指示器 */
-.dependency-indicator {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--gray-400);
-}
-
-.dependency-arrow {
-  font-size: 14px;
-}
-
-.dependency-count {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  background: var(--gray-100);
-  border-radius: 12px;
-  font-size: 11px;
-}
-
-/* 连接线容器 */
-.dependency-connections {
-  position: relative;
-  height: 0;
-  margin: -20px 0 20px 0;
-}
-
-/* 进度条装饰 */
-.dependency-node .mini-progress {
-  height: 3px;
-  background: var(--gray-100);
-  border-radius: 2px;
-  margin-top: 8px;
-  overflow: hidden;
-}
-
-.dependency-node .mini-progress-fill {
-  height: 100%;
-  background: var(--green-500);
-  transition: width 0.3s ease;
-}
-
-/* 空状态 */
-.dependency-empty {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--gray-500);
-}
-
-.dependency-empty-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
-
-.dependency-empty-title {
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--gray-700);
-  margin-bottom: 8px;
+.control-btn:active {
+  transform: translateY(0);
 }
 
 /* 响应式 */
 @media (max-width: 768px) {
-  .dependency-grid {
-    grid-template-columns: 1fr;
-  }
-
   .dependency-legend {
     flex-direction: column;
     gap: 8px;
   }
+
+  .dependency-controls {
+    bottom: 70px;
+    right: 10px;
+  }
+
+  .control-btn {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
 }
 
-/* 高亮路径 */
-.dependency-node.highlighted {
-  border-color: var(--blue-500);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
 }
 
-.dependency-node.dimmed {
-  opacity: 0.4;
+.empty-state-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-state-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin-bottom: 8px;
+}
+
+.empty-state-description {
+  font-size: 14px;
+  color: var(--gray-500);
 }
