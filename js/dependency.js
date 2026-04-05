@@ -17,39 +17,72 @@ const DependencyGraph = {
       return;
     }
 
-    // 构建节点列表
-    const nodes = [];
+    // 构建节点和依赖映射
     const nodeMap = new Map();
+    const dependencyMap = new Map(); // to -> [from...]
+    const dependedByMap = new Map(); // from -> [to...]
 
     for (const chapter of chapters) {
       for (const lesson of (chapter.lessons || [])) {
-        const node = {
-          id: lesson.id,
+        const nodeId = lesson.id;
+        const prereqs = lesson.prerequisites || [];
+
+        nodeMap.set(nodeId, {
+          id: nodeId,
           title: lesson.title,
           chapter: chapter.title,
-          hasPrereqs: (lesson.prerequisites || []).length > 0,
-          isPrereqForOthers: false,
-          progress: Storage.getLessonProgress(lesson.id)
-        };
-        nodes.push(node);
-        nodeMap.set(lesson.id, node);
+          chapterId: chapter.id,
+          prereqCount: prereqs.length,
+          dependedByCount: 0,
+          progress: Storage.getLessonProgress(nodeId),
+          isRoot: prereqs.length === 0
+        });
+
+        dependencyMap.set(nodeId, prereqs);
+        dependedByMap.set(nodeId, []);
       }
     }
 
-    // 标记哪些节点是其他节点的先修
-    for (const dep of dependencies) {
-      const targetNode = nodeMap.get(dep.to);
-      if (targetNode) {
-        targetNode.isPrereqForOthers = true;
+    // 计算每个节点被多少其他节点依赖
+    for (const [lessonId, prereqs] of dependencyMap.entries()) {
+      for (const prereqId of prereqs) {
+        const count = dependedByMap.get(prereqId)?.length || 0;
+        dependedByMap.set(prereqId, [...(dependedByMap.get(prereqId) || []), lessonId]);
+
+        const node = nodeMap.get(prereqId);
+        if (node) {
+          node.dependedByCount++;
+        }
       }
     }
 
-    // 只显示有依赖关系的节点
-    const filteredNodes = nodes.filter(node =>
-      node.hasPrereqs || node.isPrereqForOthers
-    );
+    // 更新被依赖数量
+    for (const [lessonId, dependents] of dependedByMap.entries()) {
+      const node = nodeMap.get(lessonId);
+      if (node) {
+        node.dependedByCount = dependents.length;
+      }
+    }
 
-    if (filteredNodes.length === 0) {
+    // 分类节点：根节点（无先修）、中间节点、叶节点（不被依赖）
+    const rootNodes = [];
+    const intermediateNodes = [];
+    const leafNodes = [];
+
+    for (const node of nodeMap.values()) {
+      if (node.isRoot && node.dependedByCount > 0) {
+        rootNodes.push(node);
+      } else if (!node.isRoot && node.dependedByCount > 0) {
+        intermediateNodes.push(node);
+      } else if (node.dependedByCount === 0) {
+        leafNodes.push(node);
+      }
+    }
+
+    // 检查是否有依赖关系
+    const hasDependencies = dependencies.length > 0;
+
+    if (!hasDependencies) {
       container.innerHTML = `
         <div class="empty-state">
           <div class="empty-state-icon">🎉</div>
@@ -61,11 +94,25 @@ const DependencyGraph = {
     }
 
     container.innerHTML = `
-      <div class="dependency-container">
-        <p style="color: var(--gray-500); font-size: 14px; margin-bottom: 16px;">
-          点击节点进入课程学习
-        </p>
-        ${filteredNodes.map(node => this.renderNode(node)).join('')}
+      <div class="dependency-legend">
+        <div class="legend-item">
+          <div class="legend-dot root"></div>
+          <span>基础课程（${rootNodes.length}个）</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot intermediate"></div>
+          <span>中级课程（${intermediateNodes.length}个）</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot leaf"></div>
+          <span>高级课程（${leafNodes.length}个）</span>
+        </div>
+      </div>
+
+      <div class="dependency-content">
+        ${rootNodes.length > 0 ? this.renderLevel('基础课程', rootNodes, 'root') : ''}
+        ${intermediateNodes.length > 0 ? this.renderLevel('中级课程', intermediateNodes, 'intermediate') : ''}
+        ${leafNodes.length > 0 ? this.renderLevel('高级课程', leafNodes, 'leaf') : ''}
       </div>
     `;
 
@@ -74,29 +121,106 @@ const DependencyGraph = {
       node.addEventListener('click', () => {
         const lessonId = node.dataset.lessonId;
         if (lessonId) {
-          SkillTree.openLesson(lessonId);
+          const nodeElement = nodeMap.get(lessonId);
+          if (nodeElement && nodeElement.dependedByCount === 0 && nodeElement.isRoot === false) {
+            // 只有叶节点和中间节点可以直接进入
+            SkillTree.openLesson(lessonId);
+          } else if (nodeElement) {
+            // 根节点显示提示
+            showToast('这是基础课程，可以直接开始学习！');
+            SkillTree.openLesson(lessonId);
+          }
         }
       });
     });
   },
 
+  // 渲染层级
+  renderLevel(title, nodes, type) {
+    return `
+      <div class="dependency-level" data-level="${type}">
+        <div class="dependency-level-title">${title}</div>
+        <div class="dependency-grid">
+          ${nodes.map(node => this.renderNode(node, type)).join('')}
+        </div>
+      </div>
+    `;
+  },
+
   // 渲染节点
-  renderNode(node) {
+  renderNode(node, type) {
     const status = node.progress?.status || 'not-started';
     const isCompleted = status === 'completed' || status === 'mastered';
+    const progressPercent = node.progress?.percent || 0;
+
+    const statusIcons = {
+      'not-started': '○',
+      'learning': '◐',
+      'completed': '✓',
+      'mastered': '★'
+    };
+
+    // 获取先修课程标题
+    const prereqs = dependencyMap.get(node.id) || [];
+    const prereqTitles = prereqs.slice(0, 2).map(id => {
+      const prereq = Content.getLesson(id);
+      return prereq?.title || id;
+    });
 
     return `
-      <div class="dependency-node ${status} ${isCompleted ? 'completed' : ''}" data-lesson-id="${node.id}">
-        <div class="dependency-node-title">${node.title}</div>
-        <div class="dependency-node-chapter">${node.chapter}</div>
+      <div class="dependency-node ${status} ${node.isRoot ? 'root-node' : ''}" data-lesson-id="${node.id}">
+        <div class="dependency-node-title">
+          ${statusIcons[status]} ${node.title}
+        </div>
+        <div class="dependency-node-chapter">📚 ${node.chapter}</div>
+        ${prereqTitles.length > 0 ? `
+          <div class="dependency-indicator">
+            <span class="dependency-arrow">⬅</span>
+            <span>需先修：${prereqTitles.join(', ')}</span>
+          </div>
+        ` : ''}
+        ${node.dependedByCount > 0 ? `
+          <div class="dependency-indicator">
+            <span class="dependency-arrow">➡</span>
+            <span class="dependency-count">🔗 ${node.dependedByCount} 门课程依赖</span>
+          </div>
+        ` : ''}
+        ${isCompleted ? `
+          <div class="mini-progress">
+            <div class="mini-progress-fill" style="width: ${progressPercent}%"></div>
+          </div>
+        ` : ''}
       </div>
     `;
   },
 
   // 高亮某个节点的依赖路径
   highlightPath(lessonId) {
-    // 未来可以实现：高亮显示从根节点到当前节点的完整路径
-    console.log('高亮路径:', lessonId);
+    const container = document.querySelector('.dependency-container');
+    if (!container) return;
+
+    // 获取完整依赖树
+    const fullPrereqs = Content.getFullPrerequisites(lessonId);
+
+    // 高亮依赖路径上的所有节点
+    container.querySelectorAll('.dependency-node').forEach(node => {
+      const id = node.dataset.lessonId;
+      if (id === lessonId || fullPrereqs.some(p => p.id === id)) {
+        node.classList.add('highlighted');
+      } else {
+        node.classList.add('dimmed');
+      }
+    });
+  },
+
+  // 清除高亮
+  clearHighlight() {
+    const container = document.querySelector('.dependency-container');
+    if (!container) return;
+
+    container.querySelectorAll('.dependency-node').forEach(node => {
+      node.classList.remove('highlighted', 'dimmed');
+    });
   }
 };
 

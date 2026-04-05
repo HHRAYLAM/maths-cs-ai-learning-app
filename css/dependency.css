@@ -1,0 +1,237 @@
+/* 依赖关系图样式 */
+
+.dependency-container {
+  padding: 16px;
+  position: relative;
+}
+
+/* 图例 */
+.dependency-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 12px;
+  background: var(--white);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.legend-dot.root {
+  background: var(--blue-500);
+}
+
+.legend-dot.intermediate {
+  background: var(--purple-500);
+}
+
+.legend-dot.leaf {
+  background: var(--green-500);
+}
+
+/* 依赖层级 */
+.dependency-level {
+  margin-bottom: 24px;
+}
+
+.dependency-level-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-600);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dependency-level-title::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 16px;
+  background: var(--blue-500);
+  border-radius: 2px;
+}
+
+/* 节点网格 */
+.dependency-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+/* 依赖节点 */
+.dependency-node {
+  background: var(--white);
+  border: 2px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.dependency-node::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gray-300);
+  transition: background 0.2s;
+}
+
+.dependency-node:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-color: var(--blue-300);
+}
+
+.dependency-node::before {
+  background: var(--blue-500);
+}
+
+/* 节点状态 */
+.dependency-node.not-started {
+  border-color: var(--gray-200);
+}
+
+.dependency-node.learning {
+  border-color: var(--yellow-400);
+  background: linear-gradient(135deg, var(--yellow-50) 0%, var(--white) 100%);
+}
+
+.dependency-node.completed {
+  border-color: var(--green-400);
+  background: linear-gradient(135deg, var(--green-50) 0%, var(--white) 100%);
+}
+
+.dependency-node.mastered {
+  border-color: var(--purple-400);
+  background: linear-gradient(135deg, var(--purple-50) 0%, var(--white) 100%);
+}
+
+.dependency-node.locked {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dependency-node.locked:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* 节点内容 */
+.dependency-node-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--gray-800);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.dependency-node-chapter {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-bottom: 8px;
+}
+
+/* 依赖指示器 */
+.dependency-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--gray-400);
+}
+
+.dependency-arrow {
+  font-size: 14px;
+}
+
+.dependency-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: var(--gray-100);
+  border-radius: 12px;
+  font-size: 11px;
+}
+
+/* 连接线容器 */
+.dependency-connections {
+  position: relative;
+  height: 0;
+  margin: -20px 0 20px 0;
+}
+
+/* 进度条装饰 */
+.dependency-node .mini-progress {
+  height: 3px;
+  background: var(--gray-100);
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.dependency-node .mini-progress-fill {
+  height: 100%;
+  background: var(--green-500);
+  transition: width 0.3s ease;
+}
+
+/* 空状态 */
+.dependency-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--gray-500);
+}
+
+.dependency-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.dependency-empty-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--gray-700);
+  margin-bottom: 8px;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .dependency-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dependency-legend {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* 高亮路径 */
+.dependency-node.highlighted {
+  border-color: var(--blue-500);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.dependency-node.dimmed {
+  opacity: 0.4;
+}

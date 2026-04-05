@@ -172,6 +172,52 @@ const Content = {
         chapters: 20
       }
     ];
+  },
+
+  // 获取所有依赖关系（用于依赖图）
+  getAllDependencies() {
+    const dependencies = [];
+    for (const chapter of this.chapters) {
+      for (const lesson of (chapter.lessons || [])) {
+        const prerequisites = lesson.prerequisites || [];
+        for (const prereqId of prerequisites) {
+          dependencies.push({
+            from: prereqId,
+            to: lesson.id,
+            fromChapter: this.getLesson(prereqId)?.chapterId || '',
+            toChapter: chapter.id
+          });
+        }
+      }
+    }
+    return dependencies;
+  },
+
+  // 获取课程的完整依赖树（递归获取所有先修课程）
+  getFullPrerequisites(lessonId, visited = new Set()) {
+    if (visited.has(lessonId)) return [];
+    visited.add(lessonId);
+
+    const lesson = this.getLesson(lessonId);
+    if (!lesson) return [];
+
+    const allPrereqs = [];
+    const prerequisites = lesson.prerequisites || [];
+
+    for (const prereqId of prerequisites) {
+      const prereqLesson = this.getLesson(prereqId);
+      if (prereqLesson) {
+        allPrereqs.push({
+          ...prereqLesson,
+          chapterId: prereqLesson.chapterId || this.getLesson(prereqId)?.chapterId
+        });
+        // 递归获取先修的先修
+        const nestedPrereqs = this.getFullPrerequisites(prereqId, visited);
+        allPrereqs.push(...nestedPrereqs);
+      }
+    }
+
+    return allPrereqs;
   }
 };
 
