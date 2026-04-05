@@ -61,6 +61,80 @@ const LessonViewer = {
 
     // 绑定书签按钮
     this.bindBookmarkButton(lessonId);
+
+    // 绑定费曼按钮
+    this.bindFeynmanButton(lessonId);
+  },
+
+  // 绑定费曼按钮
+  bindFeynmanButton(lessonId) {
+    const feynmanBtn = document.getElementById('feynman-btn');
+    if (!feynmanBtn) return;
+
+    // 绑定点击事件
+    feynmanBtn.replaceWith(feynmanBtn.cloneNode(true));
+    document.getElementById('feynman-btn')?.addEventListener('click', () => {
+      this.openFeynmanModal(lessonId);
+    });
+  },
+
+  // 打开费曼模式弹窗
+  openFeynmanModal(lessonId) {
+    const modal = document.getElementById('feynman-modal');
+    const textarea = document.getElementById('feynman-input');
+    const saveBtn = document.getElementById('feynman-save');
+    const closeBtn = document.getElementById('feynman-close');
+    const historyList = document.getElementById('feynman-history-list');
+
+    if (!modal || !textarea) return;
+
+    // 加载历史记录
+    const records = Storage.getLessonFeynmanRecords(lessonId);
+    if (records.length > 0 && historyList) {
+      historyList.innerHTML = records.map(record => `
+        <div class="feynman-history-item">
+          <div class="feynman-history-date">${new Date(record.createdAt).toLocaleString('zh-CN')}</div>
+          <div class="feynman-history-text">${this.escapeHtml(record.explanation)}</div>
+        </div>
+      `).join('');
+    } else if (historyList) {
+      historyList.innerHTML = '<div style="color: var(--gray-500); font-size: 13px; text-align: center; padding: 20px;">还没有保存的解释</div>';
+    }
+
+    // 显示弹窗
+    modal.classList.remove('hidden');
+    textarea.focus();
+
+    // 绑定保存按钮
+    const newSaveBtn = saveBtn.cloneNode(true);
+    saveBtn.replaceWith(newSaveBtn);
+    document.getElementById('feynman-save')?.addEventListener('click', () => {
+      const explanation = textarea.value.trim();
+      if (explanation) {
+        Storage.saveFeynmanRecord(lessonId, explanation);
+        showToast('解释已保存');
+        modal.classList.add('hidden');
+        textarea.value = '';
+        // 刷新历史记录
+        this.openFeynmanModal(lessonId);
+      } else {
+        showToast('请输入解释内容');
+      }
+    });
+
+    // 绑定关闭按钮
+    const newCloseBtn = closeBtn.cloneNode(true);
+    closeBtn.replaceWith(newCloseBtn);
+    document.getElementById('feynman-close')?.addEventListener('click', () => {
+      modal.classList.add('hidden');
+    });
+  },
+
+  // HTML 转义
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   },
 
   // 绑定书签按钮

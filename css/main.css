@@ -601,6 +601,156 @@ html, body {
   color: var(--gray-500);
 }
 
+/* 成就系统 */
+.achievements-empty {
+  text-align: center;
+  padding: 24px 16px;
+}
+
+.achievements-empty-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.achievements-empty-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--gray-700);
+  margin-bottom: 8px;
+}
+
+.achievements-empty-description {
+  font-size: 13px;
+  color: var(--gray-500);
+}
+
+.achievements-list {
+  padding: 8px 0;
+}
+
+.achievement-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, var(--gray-100), var(--white));
+  border: 2px solid var(--gray-200);
+  border-radius: 12px;
+  min-width: 80px;
+  transition: all 0.2s;
+}
+
+.achievement-badge:hover {
+  transform: translateY(-4px);
+  border-color: var(--warning-color);
+  box-shadow: 0 4px 12px rgba(255, 200, 0, 0.3);
+}
+
+.achievement-icon {
+  font-size: 32px;
+  margin-bottom: 4px;
+}
+
+.achievement-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray-700);
+  text-align: center;
+}
+
+/* 错题本 */
+.wrong-answers-empty {
+  text-align: center;
+  padding: 24px 16px;
+}
+
+.wrong-answers-empty-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.wrong-answers-empty-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--gray-700);
+  margin-bottom: 8px;
+}
+
+.wrong-answers-empty-description {
+  font-size: 13px;
+  color: var(--gray-500);
+}
+
+.wrong-answers-stats {
+  padding: 8px 0;
+}
+
+/* 费曼模式 */
+.feynman-modal-content {
+  max-width: 600px;
+}
+
+.feynman-intro {
+  margin-bottom: 16px;
+  color: var(--gray-600);
+}
+
+.feynman-input {
+  width: 100%;
+  min-height: 200px;
+  padding: 16px;
+  border: 2px solid var(--gray-300);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  line-height: 1.6;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.feynman-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.feynman-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.feynman-history {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--gray-200);
+}
+
+.feynman-history h3 {
+  font-size: 14px;
+  color: var(--gray-600);
+  margin-bottom: 12px;
+}
+
+.feynman-history-item {
+  padding: 12px;
+  background: var(--gray-100);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.feynman-history-date {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-bottom: 8px;
+}
+
+.feynman-history-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--gray-700);
+  white-space: pre-wrap;
+}
+
 /* 响应式 */
 @media (min-width: 768px) {
   .main-content {

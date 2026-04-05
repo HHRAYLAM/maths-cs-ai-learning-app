@@ -2740,13 +2740,26 @@ const QuizData = {
       isCorrect = validAnswers.includes(userAnswer.toLowerCase().trim());
     }
 
-    return {
+    const result = {
       correct: isCorrect,
       explanation: question.explanation,
       correctAnswer: question.type === 'choice'
         ? question.options[question.answer]
         : question.answer
     };
+
+    // 如果答错，自动记录到错题本
+    if (!isCorrect) {
+      Storage.addWrongAnswer(
+        lessonId,
+        questionIndex,
+        userAnswer,
+        result.correctAnswer,
+        question.explanation
+      );
+    }
+
+    return result;
   },
 
   // 获取题目数量

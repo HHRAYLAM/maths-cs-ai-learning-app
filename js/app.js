@@ -50,6 +50,16 @@ const App = {
       this.refreshCurrentPage();
     });
 
+    // 监听错题变化
+    window.addEventListener('wrong-answers-changed', () => {
+      this.refreshCurrentPage();
+    });
+
+    // 监听成就解锁
+    window.addEventListener('achievement-unlocked', (e) => {
+      this.showAchievementToast(e.detail.achievement);
+    });
+
     // 渲染默认页面
     this.navigateTo('skill-tree');
 
@@ -272,6 +282,58 @@ const App = {
           </div>
         ` : ''}
 
+        <!-- 学习统计 -->
+        <div class="dashboard-section">
+          <h2 class="dashboard-section-title">学习统计</h2>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value">${stats.completionRate}%</div>
+              <div class="stat-label">完成率</div>
+            </div>
+            <div class="stat-card green">
+              <div class="stat-value">${stats.completed + stats.mastered}</div>
+              <div class="stat-label">已完成</div>
+            </div>
+            <div class="stat-card orange">
+              <div class="stat-value">${stats.mastered}</div>
+              <div class="stat-label">已精通</div>
+            </div>
+            <div class="stat-card purple">
+              <div class="stat-value">${dueReviews.length}</div>
+              <div class="stat-label">待复习</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 连续学习 -->
+        <div class="dashboard-section">
+          <h2 class="dashboard-section-title">连续学习</h2>
+          <div class="card">
+            <div style="text-align: center;">
+              <div style="font-size: 48px; font-weight: 700; color: var(--danger-color);">
+                🔥 ${Storage.getLearningStreak()} 天
+              </div>
+              <div style="color: var(--gray-500); margin-top: 8px;">连续学习天数</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 成就 -->
+        <div class="dashboard-section">
+          <h2 class="dashboard-section-title">成就徽章</h2>
+          <div class="card">
+            ${this.renderAchievementsSection()}
+          </div>
+        </div>
+
+        <!-- 错题本 -->
+        <div class="dashboard-section">
+          <h2 class="dashboard-section-title">错题本</h2>
+          <div class="card">
+            ${this.renderWrongAnswersSection()}
+          </div>
+        </div>
+
         <!-- 我的收藏 -->
         <div class="dashboard-section">
           <h2 class="dashboard-section-title">我的收藏</h2>
@@ -290,6 +352,99 @@ const App = {
           LessonViewer.open(lessonId);
         }
       });
+    });
+
+    // 检查成就
+    this.checkAchievements();
+  },
+
+  // 渲染成就区域
+  renderAchievementsSection() {
+    const achievements = Storage.getAchievements();
+    const definitions = Storage.getAchievementDefinitions();
+    const unlockedIds = achievements.map(a => a.id);
+
+    if (achievements.length === 0) {
+      return `
+        <div class="achievements-empty">
+          <div class="achievements-empty-icon">🏆</div>
+          <div class="achievements-empty-title">还没有解锁成就</div>
+          <div class="achievements-empty-description">完成课程、连续学习来解锁成就</div>
+        </div>
+      `;
+    }
+
+    // 显示已解锁的成就
+    return `
+      <div class="achievements-list">
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+          ${achievements.map(a => `
+            <div class="achievement-badge" title="${a.name}: ${a.description}">
+              <span class="achievement-icon">${a.icon}</span>
+              <span class="achievement-name">${a.name}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div style="margin-top: 12px; font-size: 13px; color: var(--gray-500);">
+          已解锁 ${achievements.length} / ${definitions.length} 个成就
+        </div>
+      </div>
+    `;
+  },
+
+  // 渲染错题本区域
+  renderWrongAnswersSection() {
+    const stats = Storage.getWrongAnswerStats();
+    const activeWrongAnswers = Storage.getActiveWrongAnswers();
+
+    if (stats.total === 0) {
+      return `
+        <div class="wrong-answers-empty">
+          <div class="wrong-answers-empty-icon">✅</div>
+          <div class="wrong-answers-empty-title">太棒了！</div>
+          <div class="wrong-answers-empty-description">还没有错题，继续保持！</div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="wrong-answers-stats">
+        <div style="display: flex; justify-content: space-around; text-align: center; margin-bottom: 16px;">
+          <div>
+            <div style="font-size: 24px; font-weight: 700; color: var(--danger-color);">${stats.active}</div>
+            <div style="font-size: 12px; color: var(--gray-500);">待掌握</div>
+          </div>
+          <div>
+            <div style="font-size: 24px; font-weight: 700; color: var(--success-color);">${stats.mastered}</div>
+            <div style="font-size: 12px; color: var(--gray-500);">已掌握</div>
+          </div>
+          <div>
+            <div style="font-size: 24px; font-weight: 700; color: var(--primary-color);">${stats.masteryRate}%</div>
+            <div style="font-size: 12px; color: var(--gray-500);">掌握率</div>
+          </div>
+        </div>
+        ${activeWrongAnswers.length > 0 ? `
+          <div style="font-size: 13px; color: var(--gray-500);">
+            最近错题：${activeWrongAnswers.slice(0, 3).map(wa => {
+              const lesson = Content.getLesson(wa.lessonId);
+              return lesson?.title || wa.lessonId;
+            }).join(', ')}...
+          </div>
+        ` : ''}
+      </div>
+    `;
+  },
+
+  // 检查成就
+  checkAchievements() {
+    const achievementIds = [
+      'first_lesson', 'five_lessons', 'ten_lessons', 'twenty_lessons',
+      'streak_3days', 'streak_7days', 'streak_30days',
+      'master_5', 'review_10'
+    ];
+
+    achievementIds.forEach(id => {
+      Storage.checkAndUnlockAchievement(id);
     });
   },
 
@@ -655,6 +810,34 @@ function showToast(message) {
 function closeModal(modalId) {
   document.getElementById(modalId)?.classList.add('hidden');
 }
+
+// 显示成就解锁提示
+function closeModal(modalId) {
+  document.getElementById(modalId)?.classList.add('hidden');
+}
+
+// 显示成就解锁提示
+function showAchievementToast(achievement) {
+  const toast = document.getElementById('toast');
+  if (toast) {
+    toast.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 24px;">${achievement.icon}</span>
+        <div>
+          <div style="font-weight: 600;">成就解锁！</div>
+          <div style="font-size: 12px;">${achievement.name} - ${achievement.description}</div>
+        </div>
+      </div>
+    `;
+    toast.classList.remove('hidden');
+    setTimeout(() => {
+      toast.classList.add('hidden');
+    }, 4000);
+  }
+}
+
+// 导出到全局
+window.showAchievementToast = showAchievementToast;
 
 // 打开练习弹窗
 function openQuiz(lessonId) {
