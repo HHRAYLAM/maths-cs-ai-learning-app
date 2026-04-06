@@ -1,9 +1,9 @@
-/* 课程阅读页面样式 */
+/* 课程阅读页面 - Apple 风格 */
 
 .lesson-viewer {
   position: fixed;
   inset: 0;
-  background: var(--white);
+  background: var(--bg-secondary);
   z-index: 500;
   display: flex;
   flex-direction: column;
@@ -13,22 +13,37 @@
   display: none;
 }
 
+/* 课程头部 */
 .lesson-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background: var(--white);
-  border-bottom: 1px solid var(--gray-200);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--border-light);
+}
+
+[data-theme="dark"] .lesson-header {
+  background: rgba(28, 28, 30, 0.72);
 }
 
 .back-btn {
-  background: none;
+  background: rgba(118, 118, 128, 0.12);
   border: none;
-  font-size: 16px;
-  color: var(--primary-color);
+  font-size: 15px;
+  color: var(--primary);
   cursor: pointer;
-  padding: 8px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-weight: 500;
+  transition: all 0.2s var(--ease-apple);
+}
+
+.back-btn:active {
+  transform: scale(0.95);
+  background: rgba(118, 118, 128, 0.2);
 }
 
 .lesson-nav {
@@ -37,18 +52,27 @@
 }
 
 .nav-btn {
-  background: var(--gray-100);
+  width: 38px;
+  height: 38px;
+  background: rgba(118, 118, 128, 0.12);
   border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  font-size: 18px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s var(--ease-apple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-btn:not(:disabled):hover {
+  background: rgba(0, 122, 255, 0.15);
 }
 
 .nav-btn:not(:disabled):active {
-  background: var(--gray-200);
+  transform: scale(0.92);
 }
 
 .nav-btn:disabled {
@@ -56,111 +80,127 @@
   cursor: not-allowed;
 }
 
+/* 课程内容区 */
 .lesson-content {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 16px;
+  padding: 24px 20px;
   -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
 .lesson-content img {
   max-width: 100%;
   height: auto;
-  border-radius: 8px;
-  margin: 16px 0;
+  border-radius: var(--radius);
+  margin: 20px 0;
+  box-shadow: var(--shadow);
 }
 
+/* 课程底部 */
 .lesson-footer {
-  padding: 16px;
-  background: var(--white);
-  border-top: 1px solid var(--gray-200);
+  padding: 16px 20px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-light);
 }
 
 .complete-btn {
   width: 100%;
   padding: 16px;
-  background: var(--success-color);
-  color: var(--white);
+  background: var(--success);
+  color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s var(--ease-apple);
+  box-shadow: 0 4px 14px rgba(52, 199, 89, 0.25);
 }
 
 .complete-btn:active {
-  background: var(--success-dark);
+  transform: scale(0.97);
 }
 
 .complete-btn.completed {
-  background: var(--gray-300);
+  background: var(--border);
+  box-shadow: none;
 }
 
 /* Markdown 内容样式 */
 .lesson-content h1 {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
   margin: 24px 0 16px;
-  color: var(--gray-800);
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
 }
 
 .lesson-content h2 {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   margin: 20px 0 12px;
-  color: var(--gray-800);
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
 }
 
 .lesson-content h3 {
   font-size: 18px;
   font-weight: 600;
   margin: 16px 0 8px;
-  color: var(--gray-700);
+  color: var(--text-primary);
 }
 
 .lesson-content p {
-  margin: 12px 0;
+  margin: 14px 0;
   line-height: 1.7;
-  color: var(--gray-700);
+  color: var(--text-primary);
+  font-size: 15px;
 }
 
 .lesson-content ul,
 .lesson-content ol {
-  margin: 12px 0;
+  margin: 14px 0;
   padding-left: 24px;
 }
 
 .lesson-content li {
   margin: 8px 0;
-  color: var(--gray-700);
+  color: var(--text-primary);
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 .lesson-content a {
-  color: var(--primary-color);
+  color: var(--primary);
   text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
 }
 
 .lesson-content a:hover {
-  text-decoration: underline;
+  border-bottom-color: var(--primary);
 }
 
 .lesson-content code {
-  background: var(--gray-100);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+  background: var(--bg-tertiary);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: 'SF Mono', SFMono-Regular, Consolas, monospace;
   font-size: 0.9em;
-  color: var(--gray-800);
+  color: var(--text-primary);
 }
 
 .lesson-content pre {
-  background: var(--gray-800);
-  color: var(--gray-100);
+  background: #1e1e1e;
+  color: #f8f8f2;
   padding: 16px;
-  border-radius: 8px;
+  border-radius: var(--radius);
   overflow-x: auto;
   margin: 16px 0;
+  font-family: 'SF Mono', SFMono-Regular, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .lesson-content pre code {
@@ -170,45 +210,55 @@
 }
 
 .lesson-content blockquote {
-  border-left: 4px solid var(--primary-color);
+  border-left: 4px solid var(--primary);
   padding-left: 16px;
   margin: 16px 0;
-  color: var(--gray-600);
+  color: var(--text-secondary);
+  background: rgba(0, 122, 255, 0.05);
+  padding: 12px 16px;
+  border-radius: 0 var(--radius) var(--radius) 0;
 }
 
 .lesson-content table {
   width: 100%;
   border-collapse: collapse;
   margin: 16px 0;
-}
-
-.lesson-content th,
-.lesson-content td {
-  border: 1px solid var(--gray-300);
-  padding: 12px;
-  text-align: left;
+  font-size: 14px;
 }
 
 .lesson-content th {
-  background: var(--gray-100);
+  background: var(--bg-tertiary);
   font-weight: 600;
+  text-align: left;
+  padding: 12px;
+  border-bottom: 2px solid var(--border);
 }
 
-/* KaTeX 公式样式调整 */
+.lesson-content td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.lesson-content tr:last-child td {
+  border-bottom: none;
+}
+
+/* KaTeX 公式 */
 .katex {
-  font-size: 1.1em;
+  font-size: 1.05em;
 }
 
 .katex-display {
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 8px 0;
+  padding: 12px 0;
+  margin: 16px 0;
 }
 
 /* 课程信息卡片 */
 .lesson-info-card {
-  background: var(--gray-50);
-  border-radius: 12px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
   padding: 16px;
   margin-bottom: 20px;
 }
@@ -216,7 +266,7 @@
 .lesson-info-card-title {
   font-size: 18px;
   font-weight: 600;
-  color: var(--gray-800);
+  color: var(--text-primary);
   margin-bottom: 8px;
 }
 
@@ -224,7 +274,7 @@
   display: flex;
   gap: 16px;
   font-size: 13px;
-  color: var(--gray-500);
+  color: var(--text-secondary);
 }
 
 /* 加载状态 */
@@ -234,155 +284,117 @@
   align-items: center;
   justify-content: center;
   height: 200px;
-  color: var(--gray-500);
+  color: var(--text-secondary);
 }
 
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid var(--gray-200);
-  border-top-color: var(--primary-color);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* 练习弹窗样式 */
+/* 练习弹窗 */
 .quiz-modal-content {
-  max-width: 500px;
+  max-width: 520px;
 }
 
 .quiz-container {
-  max-height: 60vh;
+  max-height: 55vh;
   overflow-y: auto;
   margin: 16px 0;
 }
 
 .quiz-question {
-  background: var(--gray-50);
-  border-radius: 12px;
-  padding: 16px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+  padding: 18px;
   margin-bottom: 16px;
 }
 
 .quiz-question-title {
   font-size: 16px;
   font-weight: 600;
-  color: var(--gray-800);
-  margin-bottom: 12px;
+  color: var(--text-primary);
+  margin-bottom: 14px;
 }
 
 .quiz-options {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .quiz-option {
   display: flex;
   align-items: center;
-  padding: 12px;
-  background: var(--white);
-  border: 2px solid var(--gray-200);
-  border-radius: 8px;
+  padding: 14px 16px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s var(--ease-apple);
 }
 
 .quiz-option:hover {
-  border-color: var(--primary-color);
-  background: var(--gray-50);
+  border-color: var(--primary);
+  background: rgba(0, 122, 255, 0.05);
 }
 
 .quiz-option.selected {
-  border-color: var(--primary-color);
-  background: rgba(74, 144, 217, 0.1);
+  border-color: var(--primary);
+  background: rgba(0, 122, 255, 0.08);
 }
 
 .quiz-option.correct {
-  border-color: var(--success-color);
-  background: rgba(88, 204, 2, 0.1);
+  border-color: var(--success);
+  background: rgba(52, 199, 89, 0.08);
 }
 
 .quiz-option.incorrect {
-  border-color: var(--danger-color);
-  background: rgba(255, 75, 75, 0.1);
+  border-color: var(--danger);
+  background: rgba(255, 59, 48, 0.08);
 }
 
 .quiz-option-input {
   width: 20px;
   height: 20px;
   margin-right: 12px;
-  accent-color: var(--primary-color);
-}
-
-.quiz-answer-area {
-  margin-top: 12px;
+  accent-color: var(--primary);
 }
 
 .quiz-input {
   width: 100%;
-  padding: 12px;
-  border: 2px solid var(--gray-300);
-  border-radius: 8px;
-  font-size: 16px;
-  margin-bottom: 8px;
+  padding: 14px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 15px;
+  margin-bottom: 10px;
 }
 
 .quiz-input:focus {
   outline: none;
-  border-color: var(--primary-color);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
 }
 
 .quiz-check-btn {
   width: 100%;
-  padding: 12px;
-  background: var(--primary-color);
-  color: var(--white);
+  padding: 14px;
+  background: var(--primary);
+  color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s var(--ease-apple);
 }
 
 .quiz-check-btn:disabled {
-  background: var(--gray-300);
+  background: var(--border);
   cursor: not-allowed;
 }
 
 .quiz-explanation {
-  margin-top: 12px;
-  padding: 12px;
-  background: var(--gray-100);
-  border-radius: 8px;
-  border-left: 4px solid var(--primary-color);
-}
-
-.quiz-explanation-title {
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: var(--primary-color);
-}
-
-.quiz-explanation.correct {
-  border-left-color: var(--success-color);
-}
-
-.quiz-explanation.correct .quiz-explanation-title {
-  color: var(--success-color);
-}
-
-.quiz-explanation.incorrect {
-  border-left-color: var(--danger-color);
-}
-
-.quiz-explanation.incorrect .quiz-explanation-title {
-  color: var(--danger-color);
+  margin-top: 14px;
+  padding: 14px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  border-left: 4px solid var(--primary);
 }
 
 .quiz-progress {
@@ -390,23 +402,78 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
-  padding: 12px;
-  background: var(--gray-50);
-  border-radius: 8px;
+  padding: 12px 16px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius);
 }
 
-.quiz-progress-text {
-  font-size: 14px;
-  color: var(--gray-600);
+/* 费曼模式 */
+.feynman-modal-content {
+  max-width: 600px;
 }
 
-.no-quiz-hint {
-  text-align: center;
-  padding: 32px;
-  color: var(--gray-500);
-}
-
-.no-quiz-hint-icon {
-  font-size: 48px;
+.feynman-intro {
   margin-bottom: 16px;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.feynman-input {
+  width: 100%;
+  min-height: 220px;
+  padding: 16px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-family: inherit;
+  line-height: 1.7;
+  resize: vertical;
+  transition: all 0.2s var(--ease-apple);
+}
+
+.feynman-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+}
+
+.feynman-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.feynman-history {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.feynman-history h3 {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.feynman-history-item {
+  padding: 14px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .lesson-content {
+    padding: 16px 14px;
+  }
+
+  .lesson-content h1 {
+    font-size: 24px;
+  }
+
+  .lesson-content h2 {
+    font-size: 20px;
+  }
 }

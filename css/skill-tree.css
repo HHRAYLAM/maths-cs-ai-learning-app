@@ -1,140 +1,140 @@
-/* 知识树样式 */
+/* 知识树页面 - Apple 风格 */
+
+.skill-tree-container {
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
 
 /* 过滤工具栏 */
 .filter-bar {
-  background: var(--white);
-  border-radius: 12px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
 }
 
 .filter-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
 }
 
 .filter-label {
-  font-size: 14px;
-  color: var(--gray-600);
+  font-size: 13px;
+  color: var(--text-secondary);
   font-weight: 500;
+  margin-right: 4px;
 }
 
 .filter-btn {
-  padding: 6px 12px;
-  border: 1px solid var(--gray-300);
-  background: var(--white);
-  border-radius: 16px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  border-radius: 20px;
   font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s var(--ease-apple);
 }
 
 .filter-btn:hover {
-  border-color: var(--primary-color);
-  background: var(--gray-100);
+  border-color: var(--primary);
+  background: rgba(0, 122, 255, 0.05);
 }
 
 .filter-btn.active {
-  border-color: var(--primary-color);
-  background: var(--primary-color);
-  color: var(--white);
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
 }
 
-.filter-reset-btn {
-  margin-top: 8px;
-  padding: 6px 12px;
-  border: 1px solid var(--gray-300);
-  background: var(--white);
-  border-radius: 6px;
-  font-size: 13px;
-  cursor: pointer;
-  color: var(--gray-600);
-  transition: all 0.2s;
-}
-
-.filter-reset-btn:hover {
-  border-color: var(--danger-color);
-  color: var(--danger-color);
-}
-
-.skill-tree-container {
-  padding: 16px;
-}
-
-/* 章节卡片 */
+/* 章节卡片 - Apple 风格 */
 .chapter-card {
-  background: var(--white);
-  border-radius: 12px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
   margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
   overflow: hidden;
+  transition: all 0.3s var(--ease-apple);
+}
+
+.chapter-card:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
 }
 
 .chapter-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 16px;
+  padding: 18px 20px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s var(--ease-apple);
 }
 
 .chapter-header:active {
-  background-color: var(--gray-100);
+  background-color: var(--bg-tertiary);
 }
 
 .chapter-info {
   flex: 1;
+  min-width: 0;
 }
 
 .chapter-title {
   font-size: 18px;
-  font-weight: 600;
-  color: var(--gray-800);
-  margin-bottom: 4px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
 }
 
 .chapter-description {
   font-size: 14px;
-  color: var(--gray-500);
+  color: var(--text-secondary);
+  line-height: 1.5;
 }
 
 .chapter-progress {
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-width: 80px;
+  gap: 12px;
+  min-width: 100px;
 }
 
 .progress-percent {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--primary-color);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary);
   min-width: 45px;
   text-align: right;
 }
 
 .chapter-progress-bar {
-  width: 60px;
-  height: 6px;
-  background: var(--gray-200);
+  width: 70px;
+  height: 5px;
+  background: var(--border-light);
   border-radius: 3px;
   overflow: hidden;
 }
 
 .chapter-progress-fill {
   height: 100%;
-  background: var(--success-color);
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg, var(--primary), var(--purple));
+  border-radius: 3px;
+  transition: width 0.5s var(--ease-apple);
 }
 
 .expand-icon {
   font-size: 20px;
-  color: var(--gray-400);
-  transition: transform 0.3s;
+  color: var(--text-tertiary);
+  margin-left: 12px;
+  transition: transform 0.4s var(--ease-apple);
 }
 
 .chapter-card.expanded .expand-icon {
@@ -145,7 +145,8 @@
 .lesson-list {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease;
+  transition: max-height 0.5s var(--ease-apple);
+  background: var(--bg-tertiary);
 }
 
 .chapter-card.expanded .lesson-list {
@@ -155,260 +156,125 @@
 .lesson-item {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
-  border-top: 1px solid var(--gray-100);
+  padding: 14px 20px;
+  border-top: 1px solid var(--border-light);
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s var(--ease-apple);
+}
+
+.lesson-item:first-child {
+  border-top: none;
 }
 
 .lesson-item:active {
-  background-color: var(--gray-100);
+  background: rgba(0, 122, 255, 0.08);
 }
 
 .lesson-status {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 12px;
-  font-size: 12px;
+  margin-right: 14px;
+  font-size: 13px;
   flex-shrink: 0;
+  transition: all 0.2s var(--ease-apple);
 }
 
 .lesson-status.not-started {
-  background: var(--gray-200);
-  color: var(--gray-400);
+  background: var(--border-light);
+  color: var(--text-tertiary);
 }
 
 .lesson-status.learning {
-  background: var(--primary-color);
-  color: var(--white);
+  background: var(--warning);
+  color: white;
+  box-shadow: 0 2px 8px rgba(255, 149, 0, 0.3);
 }
 
 .lesson-status.completed {
-  background: var(--success-color);
-  color: var(--white);
+  background: var(--success);
+  color: white;
+  box-shadow: 0 2px 8px rgba(52, 199, 89, 0.3);
 }
 
 .lesson-status.mastered {
-  background: var(--warning-color);
-  color: var(--gray-800);
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  color: white;
+  box-shadow: 0 2px 8px rgba(175, 82, 222, 0.3);
 }
 
 .lesson-info {
   flex: 1;
+  min-width: 0;
 }
 
 .lesson-title {
   font-size: 15px;
-  color: var(--gray-700);
-  margin-bottom: 2px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .lesson-meta {
   font-size: 12px;
-  color: var(--gray-400);
+  color: var(--text-tertiary);
 }
 
 .lesson-check {
-  font-size: 16px;
-  color: var(--gray-300);
+  font-size: 18px;
+  color: var(--border);
+  transition: all 0.2s var(--ease-apple);
 }
 
 .lesson-item.completed .lesson-check {
-  color: var(--success-color);
+  color: var(--success);
 }
 
-/* 过滤无结果提示 */
+/* 无结果提示 */
 .chapter-no-results {
   text-align: center;
-  padding: 24px 16px;
-  color: var(--gray-500);
+  padding: 32px 16px;
+  color: var(--text-secondary);
 }
 
 .no-results-icon {
-  font-size: 32px;
-  margin-bottom: 8px;
+  font-size: 40px;
+  margin-bottom: 12px;
+  opacity: 0.5;
 }
 
-/* 章节状态指示器 */
+/* 章节状态条 */
 .chapter-status {
   width: 4px;
   height: 100%;
-  background: var(--gray-200);
+  background: var(--border-light);
 }
 
 .chapter-card.partial .chapter-status {
-  background: var(--success-color);
+  background: var(--success);
 }
 
 .chapter-card.completed .chapter-status {
-  background: var(--success-color);
+  background: linear-gradient(180deg, var(--success), var(--primary));
 }
 
-/* 空状态 */
-.empty-state {
-  text-align: center;
-  padding: 48px 16px;
-  color: var(--gray-500);
-}
+/* 响应式 */
+@media (max-width: 768px) {
+  .skill-tree-container {
+    padding: 16px;
+  }
 
-.empty-state-icon {
-  font-size: 64px;
-  margin-bottom: 16px;
-}
+  .chapter-title {
+    font-size: 16px;
+  }
 
-.empty-state-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--gray-600);
-  margin-bottom: 8px;
-}
-
-.empty-state-description {
-  font-size: 14px;
-}
-
-/* 依赖图样式 */
-.dependency-container {
-  padding: 16px;
-  overflow-x: auto;
-}
-
-.dependency-node {
-  background: var(--white);
-  border: 2px solid var(--gray-300);
-  border-radius: 8px;
-  padding: 12px;
-  margin: 8px;
-  min-width: 150px;
-  max-width: 250px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: inline-block;
-}
-
-.dependency-node:hover {
-  border-color: var(--primary-color);
-  box-shadow: 0 4px 12px rgba(74, 144, 217, 0.2);
-}
-
-.dependency-node.completed {
-  border-color: var(--success-color);
-  background: #f0fff0;
-}
-
-.dependency-node.current {
-  border-color: var(--primary-color);
-  box-shadow: 0 4px 12px rgba(74, 144, 217, 0.3);
-}
-
-.dependency-node-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--gray-800);
-  margin-bottom: 4px;
-}
-
-.dependency-node-chapter {
-  font-size: 12px;
-  color: var(--gray-500);
-}
-
-/* 概览页面样式 */
-.dashboard-container {
-  padding: 16px;
-}
-
-.dashboard-section {
-  margin-bottom: 24px;
-}
-
-.dashboard-section-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--gray-800);
-  margin-bottom: 12px;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.stat-card {
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-  color: var(--white);
-  border-radius: 12px;
-  padding: 16px;
-  text-align: center;
-}
-
-.stat-value {
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.stat-label {
-  font-size: 13px;
-  opacity: 0.9;
-}
-
-.stat-card.green {
-  background: linear-gradient(135deg, var(--success-color), var(--success-dark));
-}
-
-.stat-card.orange {
-  background: linear-gradient(135deg, var(--warning-color), #E6B400);
-  color: var(--gray-800);
-}
-
-.stat-card.purple {
-  background: linear-gradient(135deg, #9333EA, #7C3AED);
-}
-
-/* 最近学习 */
-.recent-lessons {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.recent-lesson-item {
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  background: var(--gray-50);
-  border-radius: 8px;
-}
-
-.recent-lesson-icon {
-  width: 40px;
-  height: 40px;
-  background: var(--primary-color);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  margin-right: 12px;
-}
-
-.recent-lesson-info {
-  flex: 1;
-}
-
-.recent-lesson-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--gray-800);
-}
-
-.recent-lesson-time {
-  font-size: 12px;
-  color: var(--gray-500);
+  .lesson-title {
+    font-size: 14px;
+  }
 }
