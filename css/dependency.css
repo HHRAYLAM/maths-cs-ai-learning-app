@@ -3,23 +3,25 @@
 .dependency-container {
   padding: 0;
   position: relative;
-  overflow: hidden;
-  min-height: 500px;
+  overflow: auto;
+  min-height: calc(100vh - 120px);
   background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
 }
 
-/* SVG 容器 */
+/* SVG 容器 - 全屏尺寸 */
 .svg-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 20px;
+  display: block;
+  width: 100%;
+  min-height: calc(100vh - 120px);
+  padding: 40px 20px;
+  overflow: visible;
 }
 
 /* SVG 样式 */
 .dependency-svg {
   display: block;
   background: transparent;
+  max-width: 100%;
 }
 
 /* 边（连接线） */

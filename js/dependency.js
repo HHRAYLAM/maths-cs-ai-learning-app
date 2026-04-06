@@ -1,12 +1,12 @@
 // 依赖关系图可视化组件 - SVG 力导向布局
 
 const DependencyGraph = {
-  // 配置
+  // 配置 - 优化为更大的节点和间距
   config: {
-    nodeWidth: 160,
-    nodeHeight: 70,
-    layerHeight: 140,
-    padding: 60
+    nodeWidth: 200,      // 增加节点宽度
+    nodeHeight: 80,      // 增加节点高度
+    layerHeight: 180,    // 增加层间距
+    padding: 80          // 增加边距
   },
 
   // 渲染依赖图

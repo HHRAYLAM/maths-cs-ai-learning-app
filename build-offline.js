@@ -47,11 +47,6 @@ function collectLessonContents(chapters) {
   return contents;
 }
 
-// 转义字符串用于嵌入 JSON
-function escapeForJSON(str) {
-  return JSON.stringify(str);
-}
-
 // 构建 HTML
 function buildHTML() {
   const mainCSS = readCSS('main.css');
@@ -60,48 +55,417 @@ function buildHTML() {
   const dependencyCSS = readCSS('dependency.css');
 
   const storageJS = readJS('storage.js');
-  const contentJS = readJS('content.js');
   const progressJS = readJS('progress.js');
   const quizJS = readJS('quiz.js');
   const skillTreeJS = readJS('skill-tree.js');
   const dependencyJS = readJS('dependency.js');
   const lessonJS = readJS('lesson.js');
   const appJS = readJS('app.js');
-  const pwaManagerJS = readJS('pwa-manager.js');
 
   const contentData = readContent();
   const lessonContents = collectLessonContents(contentData);
 
-  // 修改 Content.loadLessonContent 以支持离线模式
-  const modifiedLessonJS = lessonJS.replace(
-    'async loadLessonContent(lesson) {',
-    `async loadLessonContent(lesson) {
-    // 离线模式：从内嵌数据读取
-    if (lesson.file && window.LESSON_CONTENTS && window.LESSON_CONTENTS[lesson.file]) {
-      return window.LESSON_CONTENTS[lesson.file];
-    }
-    if (!lesson || !lesson.file) return null;`
-  );
+  // 修改 Content.load 方法
+  const contentDataStr = JSON.stringify(contentData.chapters);
+  const contentJSModified = `
+const Content = {
+  chapters: ${contentDataStr},
+  activePack: 'math-cs-ai',
 
-  // 修改 Content.load 方法，直接使用内嵌数据
-  const embeddedContentJS = contentJS.replace(
-    'async load(pack = \'math-cs-ai\') {',
-    `async load(pack = 'math-cs-ai') {
-    this.activePack = pack;
-    // 离线模式：使用内嵌数据
-    this.chapters = ${JSON.stringify(contentData.chapters)};
-    window.CONTENT_DATA = { pack, chapters: this.chapters };
-    console.log('内容加载成功 (离线模式):', this.chapters.length, '章节');
+  getChapters() {
     return this.chapters;
   },
 
-  // 原始方法（保留作为fallback）
-  _loadOriginal: async function(pack = 'math-cs-ai') {
-    this.activePack = pack;`
-  ).replace(
-    'try {\n      const response = await fetch',
-    'try {\n      const response = await fetch'
-  );
+  getChapter(chapterId) {
+    return this.chapters.find(c => c.id === chapterId) || null;
+  },
+
+  getLesson(lessonId) {
+    for (const chapter of this.chapters) {
+      const lesson = (chapter.lessons || []).find(l => l.id === lessonId);
+      if (lesson) return lesson;
+    }
+    return null;
+  },
+
+  getChapterByLesson(lessonId) {
+    for (const chapter of this.chapters) {
+      if ((chapter.lessons || []).some(l => l.id === lessonId)) {
+        return chapter;
+      }
+    }
+    return null;
+  },
+
+  getLessonsForChapter(chapterId) {
+    const chapter = this.getChapter(chapterId);
+    return chapter ? (chapter.lessons || []) : [];
+  },
+
+  getAllLessons() {
+    const lessons = [];
+    for (const chapter of this.chapters) {
+      if (chapter.lessons) {
+        lessons.push(...chapter.lessons.map(l => ({ ...l, chapterId: chapter.id })));
+      }
+    }
+    return lessons;
+  },
+
+  getAllDependencies() {
+    const dependencies = [];
+    for (const chapter of this.chapters) {
+      for (const lesson of (chapter.lessons || [])) {
+        for (const prereqId of (lesson.prerequisites || [])) {
+          dependencies.push({
+            from: prereqId,
+            to: lesson.id,
+            fromChapter: this.getChapterByLesson(prereqId)?.id,
+            toChapter: chapter.id
+          });
+        }
+      }
+    }
+    return dependencies;
+  },
+
+  async loadLessonContent(lesson) {
+    if (!lesson || !lesson.file) return null;
+
+    // 离线模式：从内嵌数据读取
+    const fileName = lesson.file.trim();
+    if (window.LESSON_CONTENTS && window.LESSON_CONTENTS[fileName]) {
+      console.log('加载课程内容成功:', fileName);
+      return window.LESSON_CONTENTS[fileName];
+    }
+
+    // 尝试移除前后的空格和点号
+    const normalized = fileName.replace(/^\\s+|\\.\\s+$/g, '');
+    for (const [key, value] of Object.entries(window.LESSON_CONTENTS || {})) {
+      if (key.replace(/^\\s+|\\.\\s+$/g, '') === normalized) {
+        console.log('加载课程内容成功 (模糊匹配):', key);
+        return value;
+      }
+    }
+
+    console.error('课程内容未找到:', fileName, '可用内容:', Object.keys(window.LESSON_CONTENTS || {}).length);
+    return null;
+  },
+
+  getLessonMeta(lessonId) {
+    return this.getLesson(lessonId);
+  },
+
+  getChapterProgress(chapter) {
+    const lessons = chapter.lessons || [];
+    if (lessons.length === 0) return 0;
+    const completed = lessons.filter(lesson => {
+      const progress = Storage.getLessonProgress(lesson.id);
+      return progress && (progress.status === 'completed' || progress.status === 'mastered');
+    }).length;
+    return Math.round((completed / lessons.length) * 100);
+  },
+
+  checkPrerequisites(lesson) {
+    const prerequisites = lesson.prerequisites || [];
+    if (prerequisites.length === 0) return { canAccess: true, missing: [] };
+    const missing = [];
+    for (const prereqId of prerequisites) {
+      const progress = Storage.getLessonProgress(prereqId);
+      if (!progress || progress.status !== 'completed') {
+        const prereqLesson = this.getLesson(prereqId);
+        missing.push(prereqLesson?.title || prereqId);
+      }
+    }
+    return {
+      canAccess: missing.length === 0,
+      missing
+    };
+  },
+
+  search(query) {
+    const results = [];
+    const q = query.toLowerCase().trim();
+    if (!q) return results;
+    for (const chapter of this.chapters) {
+      if (chapter.title.toLowerCase().includes(q)) {
+        results.push({ type: 'chapter', data: chapter });
+      }
+      for (const lesson of (chapter.lessons || [])) {
+        if (lesson.title.toLowerCase().includes(q)) {
+          results.push({ type: 'lesson', data: lesson, chapter });
+        }
+      }
+    }
+    return results;
+  },
+
+  async load() {
+    window.CONTENT_DATA = { pack: this.activePack, chapters: this.chapters };
+    console.log('内容加载成功 (离线版):', this.chapters.length, '章节');
+    return this.chapters;
+  }
+};
+`;
+
+  // 简化的 app.js
+  const appJSSimple = `
+const App = {
+  currentPage: 'skill-tree',
+
+  async init() {
+    console.log('应用初始化...');
+    await Content.load();
+    const currentTheme = Storage.getTheme();
+    Storage.applyTheme(currentTheme);
+    this.bindNavigation();
+    this.bindModals();
+    this.navigateTo('skill-tree');
+    console.log('应用初始化完成');
+  },
+
+  bindNavigation() {
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = item.dataset.page;
+        if (page) this.navigateTo(page);
+      });
+    });
+    window.addEventListener('hashchange', () => {
+      const hash = window.location.hash.slice(1);
+      if (hash && ['dashboard', 'skill-tree', 'dependency', 'progress'].includes(hash)) {
+        this.navigateTo(hash);
+      }
+    });
+  },
+
+  bindModals() {
+    document.getElementById('language-btn')?.addEventListener('click', () => {
+      document.getElementById('settings-modal')?.classList.remove('hidden');
+    });
+    document.getElementById('search-btn')?.addEventListener('click', () => {
+      document.getElementById('search-modal')?.classList.remove('hidden');
+    });
+    document.getElementById('settings-btn')?.addEventListener('click', () => {
+      document.getElementById('settings-modal')?.classList.remove('hidden');
+    });
+    document.getElementById('search-close')?.addEventListener('click', () => {
+      document.getElementById('search-modal')?.classList.add('hidden');
+    });
+    document.querySelectorAll('.modal-close').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.closest('.modal')?.classList.add('hidden');
+      });
+    });
+    document.getElementById('search-input')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const query = e.target.value.trim();
+        if (query) {
+          const results = Content.search(query);
+          renderSearchResults(results);
+        }
+      }
+    });
+    document.getElementById('reset-progress')?.addEventListener('click', () => {
+      if (confirm('确定要重置所有学习进度吗？此操作不可恢复！')) {
+        localStorage.removeItem('learning-progress');
+        localStorage.removeItem('bookmarks');
+        localStorage.removeItem('feynman-explanations');
+        localStorage.removeItem('wrong-answers');
+        window.dispatchEvent(new Event('progress-reset'));
+        document.getElementById('settings-modal')?.classList.add('hidden');
+      }
+    });
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const theme = this.dataset.theme;
+        Storage.setTheme(theme);
+        Storage.applyTheme(theme);
+        window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme } }));
+      });
+    });
+    document.querySelectorAll('.language-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.language-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        Storage.setLanguage(this.dataset.lang);
+      });
+    });
+    this.bindSearch();
+  },
+
+  bindSearch() {
+    const searchInput = document.getElementById('search-input');
+    if (!searchInput) return;
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.trim();
+      if (query.length > 0) {
+        const results = Content.search(query);
+        renderSearchResults(results);
+      } else {
+        document.getElementById('search-results').innerHTML = '';
+      }
+    });
+  },
+
+  navigateTo(page) {
+    this.currentPage = page;
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.page === page);
+    });
+    const titles = {
+      'dashboard': '学习概览',
+      'skill-tree': '知识框架',
+      'dependency': '依赖关系',
+      'progress': '学习进度'
+    };
+    document.getElementById('page-title').textContent = titles[page] || '知识框架';
+    const app = document.getElementById('app');
+    app.innerHTML = '';
+    switch (page) {
+      case 'dashboard':
+        this.renderDashboard(app);
+        break;
+      case 'skill-tree':
+        SkillTree.render(app);
+        break;
+      case 'dependency':
+        DependencyGraph.render(app);
+        break;
+      case 'progress':
+        this.renderProgress(app);
+        break;
+    }
+    window.location.hash = page;
+  },
+
+  refreshCurrentPage() {
+    const app = document.getElementById('app');
+    if (!app) return;
+    switch (this.currentPage) {
+      case 'dashboard':
+        this.renderDashboard(app);
+        break;
+      case 'skill-tree':
+        SkillTree.refresh();
+        break;
+      case 'dependency':
+        DependencyGraph.render(app);
+        break;
+      case 'progress':
+        this.renderProgress(app);
+        break;
+    }
+  },
+
+  renderDashboard(container) {
+    const summary = ProgressManager.getSummary();
+    const stats = Storage.getStats();
+    container.innerHTML = \`
+      <div class="dashboard-container">
+        <div class="dashboard-section">
+          <h2 class="dashboard-section-title">学习统计</h2>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value">\${stats.completedLessons}</div>
+              <div class="stat-label">已完成课程</div>
+            </div>
+            <div class="stat-card green">
+              <div class="stat-value">\${Object.keys(Storage.getProgress()).length}</div>
+              <div class="stat-label">学习进度</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    \`;
+  },
+
+  renderProgress(container) {
+    const chapters = Content.getChapters();
+    let html = '<div class="skill-tree-container">';
+    for (const chapter of chapters) {
+      const progress = Content.getChapterProgress(chapter);
+      html += \`
+        <div class="chapter-card">
+          <div class="chapter-info">
+            <div class="chapter-title">\${chapter.order}. \${chapter.title}</div>
+            <div class="chapter-description">\${chapter.description}</div>
+          </div>
+          <div class="chapter-progress">
+            <div class="progress-percent">\${progress}%</div>
+            <div class="chapter-progress-bar">
+              <div class="chapter-progress-fill" style="width: \${progress}%"></div>
+            </div>
+          </div>
+        </div>
+      \`;
+    }
+    html += '</div>';
+    container.innerHTML = html;
+  },
+
+  continueLearning() {
+    const currentLesson = Storage.getCurrentLesson();
+    if (currentLesson) {
+      SkillTree.openLesson(currentLesson);
+    }
+  },
+
+  startFirstLesson() {
+    const firstChapter = Content.getChapters()[0];
+    if (firstChapter && firstChapter.lessons && firstChapter.lessons[0]) {
+      SkillTree.openLesson(firstChapter.lessons[0].id);
+    }
+  }
+};
+
+function renderSearchResults(results) {
+  const container = document.getElementById('search-results');
+  if (!results || results.length === 0) {
+    container.innerHTML = '<div class="search-empty"><div class="search-empty-icon">🔍</div><div class="search-empty-title">未找到匹配的课程</div></div>';
+    return;
+  }
+  container.innerHTML = results.map(r => {
+    if (r.type === 'lesson') {
+      return \`<div class="search-result-item" onclick="SkillTree.openLesson('\${r.data.id}')">
+        <div class="search-result-title">\${r.data.title}</div>
+        <div class="search-result-chapter">\${r.chapter.title}</div>
+      </div>\`;
+    }
+    return \`<div class="search-result-item"><div class="search-result-title">\${r.data.title}</div></div>\`;
+  }).join('');
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  if (toast) {
+    toast.textContent = message;
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 2000);
+  }
+}
+
+function closeModal(modalId) {
+  document.getElementById(modalId)?.classList.add('hidden');
+}
+
+function closeQuiz() {
+  document.getElementById('quiz-modal')?.classList.add('hidden');
+}
+
+window.App = App;
+window.showToast = showToast;
+window.closeModal = closeModal;
+window.closeQuiz = closeQuiz;
+window.renderSearchResults = renderSearchResults;
+
+document.addEventListener('DOMContentLoaded', () => {
+  App.init();
+});
+`;
 
   const html = `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -121,9 +485,9 @@ function buildHTML() {
   </style>
   <!-- KaTeX 公式渲染 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"><\/script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
   <!-- Marked Markdown 解析 -->
-  <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/lib/marked.umd.js"><\/script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/lib/marked.umd.js"></script>
 </head>
 <body>
   <!-- 顶部导航栏 -->
@@ -211,17 +575,6 @@ function buildHTML() {
     </div>
   </div>
 
-  <!-- 内容包选择弹窗 -->
-  <div id="content-pack-modal" class="modal hidden">
-    <div class="modal-content">
-      <h2>选择学习内容</h2>
-      <div id="content-pack-list" class="pack-list">
-        <!-- 动态生成 -->
-      </div>
-      <button class="modal-close" onclick="closeModal('content-pack-modal')">关闭</button>
-    </div>
-  </div>
-
   <!-- 搜索弹窗 -->
   <div id="search-modal" class="modal hidden">
     <div class="modal-content search-modal-content">
@@ -232,10 +585,6 @@ function buildHTML() {
       </div>
       <div id="search-results" class="search-results">
         <!-- 动态生成搜索结果 -->
-      </div>
-      <div id="search-hints" class="search-hints">
-        <div class="hint-item">💡 支持搜索课程标题、概念名称</div>
-        <div class="hint-item">💡 按 Enter 键快速搜索</div>
       </div>
     </div>
   </div>
@@ -250,14 +599,6 @@ function buildHTML() {
           <button class="theme-btn active" data-theme="light">☀️ 浅色</button>
           <button class="theme-btn" data-theme="dark">🌙 暗色</button>
           <button class="theme-btn" data-theme="auto">🔄 跟随系统</button>
-        </div>
-      </div>
-      <div class="settings-section">
-        <h3>语言设置</h3>
-        <div class="language-selector">
-          <button class="language-btn active" data-lang="zh-CN">中文</button>
-          <button class="language-btn" data-lang="en-US">English</button>
-          <button class="language-btn" data-lang="both">中英双语</button>
         </div>
       </div>
       <div class="settings-section">
@@ -277,47 +618,22 @@ function buildHTML() {
   <!-- Toast 提示 -->
   <div id="toast" class="toast hidden"></div>
 
-  <!-- 脚本 -->
+  <!-- 脚本 - 内嵌数据 -->
   <script>
-    // 内嵌的课程内容 (Markdown)
     window.LESSON_CONTENTS = ${JSON.stringify(lessonContents)};
+  </script>
 
-    // 内嵌的章节数据
-    window.EMBEDDED_CONTENT = ${JSON.stringify(contentData)};
-  <\/script>
+  <!-- 脚本 - 核心逻辑 -->
   <script>
     ${storageJS}
-    ${embeddedContentJS}
+    ${contentJSModified}
     ${progressJS}
     ${quizJS}
     ${skillTreeJS}
     ${dependencyJS}
-    ${modifiedLessonJS}
-    ${appJS}
-
-    // 全局辅助函数
-    function closeModal(modalId) {
-      document.getElementById(modalId)?.classList.add('hidden');
-    }
-
-    function closeQuiz() {
-      document.getElementById('quiz-modal')?.classList.add('hidden');
-    }
-
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      if (toast) {
-        toast.textContent = message;
-        toast.classList.remove('hidden');
-        setTimeout(() => toast.classList.add('hidden'), 2000);
-      }
-    }
-
-    // 页面加载完成后初始化
-    window.addEventListener('DOMContentLoaded', () => {
-      App.init();
-    });
-  <\/script>
+    ${lessonJS}
+    ${appJSSimple}
+  </script>
 </body>
 </html>`;
 
