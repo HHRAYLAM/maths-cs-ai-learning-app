@@ -70,6 +70,59 @@
   --ease-tom-chase: cubic-bezier(0.55, 0.055, 0.675, 0.19); /* 追逐动画曲线 */
 }
 
+/* ===== 覆盖 main.css 的具体样式 ===== */
+
+/* 顶部导航栏 - Tom and Jerry 主题 */
+.top-nav {
+  background: rgba(245, 240, 230, 0.85);  /* house-cream 带透明 */
+  border-bottom-color: var(--border-light);
+}
+
+[data-theme="dark"] .top-nav {
+  background: rgba(26, 26, 26, 0.85);
+  border-bottom-color: rgba(232, 224, 208, 0.1);
+}
+
+/* 底部导航栏 - Tom and Jerry 主题 */
+.bottom-nav {
+  background: rgba(245, 240, 230, 0.85);
+  border-top-color: var(--border-light);
+}
+
+[data-theme="dark"] .bottom-nav {
+  background: rgba(26, 26, 26, 0.85);
+  border-top-color: rgba(232, 224, 208, 0.1);
+}
+
+/* 页面背景 */
+html, body {
+  background-color: var(--bg-primary);
+}
+
+/* 卡片样式 */
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+}
+
+/* 弹窗背景 */
+.modal {
+  background: rgba(45, 45, 45, 0.5);
+}
+
+.modal-content {
+  background: var(--bg-secondary);
+}
+
+/* Toast 背景 */
+.toast {
+  background: linear-gradient(135deg, var(--tom-blue), var(--tom-blue-dark));
+}
+
+.toast.success {
+  background: linear-gradient(135deg, var(--success), #2FA896);
+}
+
 /* 暗色模式 - 夜晚场景 */
 [data-theme="dark"] {
   --bg-primary: #1A1A1A;
