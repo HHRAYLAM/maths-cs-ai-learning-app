@@ -408,6 +408,153 @@ html, body {
   max-width: 300px;
 }
 
+/* 设置弹窗 - Apple 风格 */
+.settings-modal {
+  padding: 0;
+  overflow: hidden;
+}
+
+.settings-modal h2 {
+  background: var(--bg-tertiary);
+  padding: 20px 24px;
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.settings-group {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-light);
+  padding: 16px 20px;
+}
+
+.settings-group:last-of-type {
+  border-bottom: none;
+}
+
+.settings-group.danger-zone {
+  background: rgba(255, 59, 48, 0.04);
+}
+
+.settings-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings-item-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.settings-description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 4px 0;
+}
+
+.settings-description.version {
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+/* 主题选择器 - Pill 样式 */
+.theme-selector {
+  display: flex;
+  gap: 8px;
+}
+
+.theme-btn.pill {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  background: var(--bg-tertiary);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s var(--ease-apple);
+}
+
+.theme-btn.pill:hover {
+  background: rgba(0, 122, 255, 0.08);
+  border-color: var(--primary);
+}
+
+.theme-btn.pill.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+/* 语言选择器 - Segmented Control 样式 */
+.language-selector.segmented {
+  display: flex;
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.language-btn.segmented {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s var(--ease-apple);
+}
+
+.language-btn.segmented:hover {
+  background: rgba(0, 122, 255, 0.08);
+}
+
+.language-btn.segmented.active {
+  background: var(--bg-secondary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  color: var(--text-primary);
+}
+
+/* 设置按钮 */
+.setting-btn {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-apple);
+  text-align: left;
+}
+
+.setting-btn.secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.setting-btn.secondary:hover {
+  background: rgba(0, 122, 255, 0.08);
+}
+
+.setting-btn.danger {
+  background: rgba(255, 59, 48, 0.1);
+  color: var(--danger);
+}
+
+.setting-btn.danger:hover {
+  background: rgba(255, 59, 48, 0.15);
+}
+
 /* 加载动画 */
 .loading-spinner {
   width: 40px;
@@ -477,39 +624,40 @@ input:focus, textarea:focus {
     /* 知识树页面 - Apple 风格 */
 
 .skill-tree-container {
-  padding: 20px;
-  max-width: 900px;
+  padding: 16px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
-/* 过滤工具栏 */
+/* 过滤工具栏 - 优化为更简洁的样式 */
 .filter-bar {
   background: var(--bg-secondary);
-  border-radius: var(--radius-lg);
-  padding: 16px 20px;
-  margin-bottom: 20px;
-  box-shadow: var(--shadow-sm);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
   border: 1px solid var(--border-light);
 }
 
 .filter-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
 }
 
 .filter-label {
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--text-secondary);
-  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   margin-right: 4px;
 }
 
 .filter-btn {
-  padding: 8px 16px;
+  padding: 8px 14px;
   border: 1px solid var(--border);
-  background: var(--bg-secondary);
+  background: var(--bg-tertiary);
   border-radius: 20px;
   font-size: 13px;
   font-weight: 500;
@@ -519,8 +667,8 @@ input:focus, textarea:focus {
 }
 
 .filter-btn:hover {
+  background: rgba(0, 122, 255, 0.08);
   border-color: var(--primary);
-  background: rgba(0, 122, 255, 0.05);
 }
 
 .filter-btn.active {
@@ -529,26 +677,29 @@ input:focus, textarea:focus {
   color: white;
 }
 
-/* 章节卡片 - Apple 风格 */
+/* 章节卡片 - Apple 风格分组列表 */
 .chapter-card {
   background: var(--bg-secondary);
-  border-radius: var(--radius-lg);
-  margin-bottom: 16px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  margin-bottom: 12px;
   overflow: hidden;
+  border: 1px solid var(--border-light);
   transition: all 0.3s var(--ease-apple);
 }
 
 .chapter-card:hover {
   box-shadow: var(--shadow);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+}
+
+.chapter-card.expanded {
+  box-shadow: var(--shadow-lg);
 }
 
 .chapter-header {
   display: flex;
   align-items: center;
-  padding: 18px 20px;
+  padding: 16px 18px;
   cursor: pointer;
   transition: background-color 0.2s var(--ease-apple);
 }
@@ -563,7 +714,7 @@ input:focus, textarea:focus {
 }
 
 .chapter-title {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 6px;
@@ -571,38 +722,38 @@ input:focus, textarea:focus {
 }
 
 .chapter-description {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-secondary);
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .chapter-progress {
   display: flex;
   align-items: center;
-  gap: 12px;
-  min-width: 100px;
+  gap: 10px;
+  min-width: 80px;
 }
 
 .progress-percent {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--primary);
-  min-width: 45px;
+  min-width: 42px;
   text-align: right;
 }
 
 .chapter-progress-bar {
-  width: 70px;
-  height: 5px;
+  width: 60px;
+  height: 4px;
   background: var(--border-light);
-  border-radius: 3px;
+  border-radius: 2px;
   overflow: hidden;
 }
 
 .chapter-progress-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--primary), var(--purple));
-  border-radius: 3px;
+  border-radius: 2px;
   transition: width 0.5s var(--ease-apple);
 }
 
@@ -610,18 +761,34 @@ input:focus, textarea:focus {
   font-size: 20px;
   color: var(--text-tertiary);
   margin-left: 12px;
-  transition: transform 0.4s var(--ease-apple);
+  transition: transform 0.3s var(--ease-apple);
 }
 
 .chapter-card.expanded .expand-icon {
   transform: rotate(180deg);
 }
 
+/* 章节状态条 */
+.chapter-status {
+  width: 3px;
+  height: 100%;
+  background: var(--border-light);
+  transition: all 0.3s var(--ease-apple);
+}
+
+.chapter-card.partial .chapter-status {
+  background: var(--success);
+}
+
+.chapter-card.completed .chapter-status {
+  background: linear-gradient(180deg, var(--success), var(--primary));
+}
+
 /* 课程列表 */
 .lesson-list {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.5s var(--ease-apple);
+  transition: max-height 0.4s var(--ease-apple);
   background: var(--bg-tertiary);
 }
 
@@ -632,7 +799,7 @@ input:focus, textarea:focus {
 .lesson-item {
   display: flex;
   align-items: center;
-  padding: 14px 20px;
+  padding: 14px 18px;
   border-top: 1px solid var(--border-light);
   cursor: pointer;
   transition: all 0.2s var(--ease-apple);
@@ -646,15 +813,19 @@ input:focus, textarea:focus {
   background: rgba(0, 122, 255, 0.08);
 }
 
+.lesson-item:hover {
+  background: rgba(0, 122, 255, 0.04);
+}
+
 .lesson-status {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 14px;
-  font-size: 13px;
+  margin-right: 12px;
+  font-size: 12px;
   flex-shrink: 0;
   transition: all 0.2s var(--ease-apple);
 }
@@ -667,19 +838,19 @@ input:focus, textarea:focus {
 .lesson-status.learning {
   background: var(--warning);
   color: white;
-  box-shadow: 0 2px 8px rgba(255, 149, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(255, 149, 0, 0.25);
 }
 
 .lesson-status.completed {
   background: var(--success);
   color: white;
-  box-shadow: 0 2px 8px rgba(52, 199, 89, 0.3);
+  box-shadow: 0 2px 8px rgba(52, 199, 89, 0.25);
 }
 
 .lesson-status.mastered {
   background: linear-gradient(135deg, var(--primary), var(--purple));
   color: white;
-  box-shadow: 0 2px 8px rgba(175, 82, 222, 0.3);
+  box-shadow: 0 2px 8px rgba(175, 82, 222, 0.25);
 }
 
 .lesson-info {
@@ -691,7 +862,7 @@ input:focus, textarea:focus {
   font-size: 15px;
   font-weight: 500;
   color: var(--text-primary);
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -725,25 +896,11 @@ input:focus, textarea:focus {
   opacity: 0.5;
 }
 
-/* 章节状态条 */
-.chapter-status {
-  width: 4px;
-  height: 100%;
-  background: var(--border-light);
-}
-
-.chapter-card.partial .chapter-status {
-  background: var(--success);
-}
-
-.chapter-card.completed .chapter-status {
-  background: linear-gradient(180deg, var(--success), var(--primary));
-}
-
 /* 响应式 */
 @media (max-width: 768px) {
-  .skill-tree-container {
-    padding: 16px;
+  .skill-tree-container,
+  .dashboard-container {
+    padding: 12px;
   }
 
   .chapter-title {
@@ -753,6 +910,520 @@ input:focus, textarea:focus {
   .lesson-title {
     font-size: 14px;
   }
+
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 概览页面容器 */
+.dashboard-container {
+  padding: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Dashboard 卡片 - Apple 风格分组列表 */
+.dashboard-card {
+  background: var(--bg-secondary);
+  border-radius: 14px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.dashboard-card.continue-learning {
+  background: linear-gradient(135deg, rgba(0, 122, 255, 0.08), rgba(175, 82, 222, 0.05));
+  border-color: rgba(0, 122, 255, 0.2);
+}
+
+.card-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.card-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  background: rgba(0, 122, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.card-body {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.lesson-main {
+  flex: 1;
+}
+
+.lesson-title-large {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.lesson-chapter {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.btn-continue {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-apple);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.btn-continue:hover {
+  background: var(--primary-light);
+  transform: scale(1.02);
+}
+
+.btn-continue:active {
+  transform: scale(0.98);
+}
+
+.btn-arrow {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* 空状态卡片 */
+.empty-state-card {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.empty-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.empty-icon {
+  font-size: 56px;
+  opacity: 0.6;
+}
+
+.empty-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.empty-description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  max-width: 280px;
+}
+
+.btn-start {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-apple);
+  margin-top: 8px;
+}
+
+.btn-start:hover {
+  background: var(--primary-light);
+  transform: scale(1.02);
+}
+
+/* 统计行 - 一行显示 */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.stat-item {
+  background: var(--bg-secondary);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border-light);
+  transition: all 0.2s var(--ease-apple);
+}
+
+.stat-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.stat-icon {
+  font-size: 32px;
+}
+
+.stat-icon.completion { }
+.stat-icon.completed { }
+.stat-icon.mastered { }
+.stat-icon.review { }
+
+.stat-info {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* 信息卡片网格 */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.info-card {
+  background: var(--bg-secondary);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--border-light);
+  transition: all 0.2s var(--ease-apple);
+}
+
+.info-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.info-card.time {
+  background: linear-gradient(135deg, rgba(0, 122, 255, 0.05), rgba(0, 122, 255, 0.02));
+}
+
+.info-card.streak {
+  background: linear-gradient(135deg, rgba(255, 59, 48, 0.05), rgba(255, 59, 48, 0.02));
+}
+
+.info-icon {
+  font-size: 36px;
+  flex-shrink: 0;
+}
+
+.info-content {
+  flex: 1;
+}
+
+.info-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.info-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* Section 样式 */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.section-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  padding: 4px 10px;
+  border-radius: 10px;
+}
+
+.section-count.all-good {
+  background: rgba(52, 199, 89, 0.1);
+  color: var(--success);
+}
+
+.section-count.has-wrong {
+  background: rgba(255, 59, 48, 0.1);
+  color: var(--danger);
+}
+
+/* 复习列表 */
+.review-list {
+  background: var(--bg-secondary);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.review-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  gap: 12px;
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: all 0.2s var(--ease-apple);
+}
+
+.review-item:last-child {
+  border-bottom: none;
+}
+
+.review-item:hover {
+  background: rgba(0, 122, 255, 0.05);
+}
+
+.review-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.review-info {
+  flex: 1;
+}
+
+.review-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.review-days {
+  font-size: 12px;
+  color: var(--danger);
+}
+
+.review-arrow {
+  font-size: 24px;
+  color: var(--text-tertiary);
+  line-height: 1;
+}
+
+/* 成就列表 */
+.achievements-list {
+  background: var(--bg-secondary);
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid var(--border-light);
+}
+
+/* 错题本 */
+.wrong-answers-stats {
+  background: var(--bg-secondary);
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid var(--border-light);
+}
+
+.wrong-answers-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.wrong-answer-stat {
+  flex: 1;
+  text-align: center;
+}
+
+.wrong-answer-value {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.wrong-answer-value.danger {
+  color: var(--danger);
+}
+
+.wrong-answer-value.success {
+  color: var(--success);
+}
+
+.wrong-answer-value.primary {
+  color: var(--primary);
+}
+
+.wrong-answer-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.wrong-answer-divider {
+  width: 1px;
+  height: 40px;
+  background: var(--border-light);
+}
+
+.wrong-answers-recent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wrong-answers-recent-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.wrong-answer-item {
+  font-size: 14px;
+  color: var(--text-primary);
+  padding: 8px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wrong-answers-empty {
+  text-align: center;
+  padding: 24px 16px;
+}
+
+.wrong-answers-empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.wrong-answers-empty-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.wrong-answers-empty-description {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* 书签列表 */
+.bookmarks-list {
+  background: var(--bg-secondary);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.bookmark-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  gap: 12px;
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: all 0.2s var(--ease-apple);
+}
+
+.bookmark-item:last-child {
+  border-bottom: none;
+}
+
+.bookmark-item:hover {
+  background: rgba(0, 122, 255, 0.05);
+}
+
+.bookmark-star {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.bookmark-info {
+  flex: 1;
+}
+
+.bookmark-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.bookmark-chapter {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.bookmarks-empty {
+  text-align: center;
+  padding: 32px 16px;
+}
+
+.bookmarks-empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.bookmarks-empty-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.bookmarks-empty-description {
+  font-size: 13px;
+  color: var(--text-secondary);
 }
 
     /* 课程阅读页面 - Apple 风格 */
@@ -842,6 +1513,7 @@ input:focus, textarea:focus {
   flex: 1;
   overflow-y: auto;
   padding: 24px 20px;
+  padding-bottom: 80px; /* 为移动端底部导航留空间 */
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
 }
@@ -1224,6 +1896,7 @@ input:focus, textarea:focus {
 @media (max-width: 768px) {
   .lesson-content {
     padding: 16px 14px;
+    padding-bottom: 100px; /* 为移动端底部导航留空间 */
   }
 
   .lesson-content h1 {
@@ -1232,6 +1905,67 @@ input:focus, textarea:focus {
 
   .lesson-content h2 {
     font-size: 20px;
+  }
+
+  /* 移动端底部导航栏 - 覆盖在 lesson-footer 上面 */
+  .mobile-lesson-nav {
+    display: flex !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-secondary) !important;
+    border-top: 1px solid var(--border-light);
+    padding: 12px 16px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0));
+    gap: 12px;
+    z-index: 600 !important;
+    pointer-events: auto;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+  }
+
+  .mobile-nav-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 24px;
+    background: var(--bg-tertiary) !important;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary) !important;
+    cursor: pointer;
+    transition: all 0.2s var(--ease-apple);
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-nav-btn:not(:disabled):active {
+    background: var(--primary) !important;
+    color: white !important;
+    transform: scale(0.98);
+  }
+
+  .mobile-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .mobile-nav-btn.prev {
+    background: var(--bg-tertiary) !important;
+  }
+
+  .mobile-nav-btn.next {
+    background: var(--primary) !important;
+    color: white !important;
+  }
+
+  /* 桌面端隐藏移动端导航 */
+  .mobile-lesson-nav {
+    display: none !important;
   }
 }
 
@@ -1797,22 +2531,40 @@ const Storage = {
     });
 
     // 计算总课程数（需要从内容获取）
-    stats.totalLessons = this.getTotalLessons();
+    const totalFromContent = this.getTotalLessons();
+    stats.totalLessons = totalFromContent > 0 ? totalFromContent : stats.totalLessons;
+
+    // 计算完成率
+    const completedCount = (stats.completed || 0) + (stats.mastered || 0);
     stats.completionRate = stats.totalLessons > 0
-      ? ((stats.completed + stats.mastered) / stats.totalLessons * 100).toFixed(1)
-      : 0;
+      ? ((completedCount / stats.totalLessons) * 100).toFixed(1)
+      : '0.0';
 
     return stats;
   },
 
   // 获取总课程数（从内容配置）
   getTotalLessons() {
-    const content = window.CONTENT_DATA;
-    if (!content || !content.chapters) return 0;
+    // 尝试从 Content 模块获取
+    if (window.Content && typeof window.Content.getChapters === 'function') {
+      const chapters = window.Content.getChapters();
+      if (chapters && chapters.length > 0) {
+        return chapters.reduce((sum, chapter) => {
+          return sum + (chapter.lessons ? chapter.lessons.length : 0);
+        }, 0);
+      }
+    }
 
-    return content.chapters.reduce((sum, chapter) => {
-      return sum + (chapter.lessons ? chapter.lessons.length : 0);
-    }, 0);
+    // 回退到 CONTENT_DATA
+    const content = window.CONTENT_DATA;
+    if (content && content.chapters) {
+      return content.chapters.reduce((sum, chapter) => {
+        return sum + (chapter.lessons ? chapter.lessons.length : 0);
+      }, 0);
+    }
+
+    // 如果都无法获取，返回 0
+    return 0;
   },
 
   // 重置所有进度
@@ -5384,7 +6136,6 @@ const SkillTree = {
   renderLesson(lesson) {
     const progress = Storage.getLessonProgress(lesson.id);
     const status = progress?.status || 'not-started';
-    const prereqCheck = Content.checkPrerequisites(lesson);
 
     const statusIcons = {
       'not-started': '○',
@@ -5393,10 +6144,8 @@ const SkillTree = {
       'mastered': '★'
     };
 
-    const canAccess = prereqCheck.canAccess || status !== 'not-started';
-
     return `
-      <div class="lesson-item ${status} ${!canAccess ? 'locked' : ''}" data-lesson-id="${lesson.id}">
+      <div class="lesson-item ${status}" data-lesson-id="${lesson.id}">
         <div class="lesson-status ${status}">
           ${statusIcons[status] || '○'}
         </div>
@@ -5404,7 +6153,6 @@ const SkillTree = {
           <div class="lesson-title">${lesson.title}</div>
           <div class="lesson-meta">
             ${lesson.estimatedMinutes || 10}分钟
-            ${!prereqCheck.canAccess ? ` · 需先修：${prereqCheck.missing.slice(0, 2).join(', ')}` : ''}
           </div>
         </div>
         <div class="lesson-check">
@@ -5418,15 +6166,6 @@ const SkillTree = {
   openLesson(lessonId) {
     const lesson = Content.getLesson(lessonId);
     if (!lesson) return;
-
-    const prereqCheck = Content.checkPrerequisites(lesson);
-    const progress = Storage.getLessonProgress(lessonId);
-
-    // 检查先修条件
-    if (!prereqCheck.canAccess && (!progress || progress.status === 'not-started')) {
-      showToast(`请先完成：${prereqCheck.missing.join(', ')}`);
-      return;
-    }
 
     // 打开课程阅读器
     LessonViewer.open(lessonId);
@@ -5607,8 +6346,8 @@ const DependencyGraph = {
 
   // 渲染力导向图
   renderForceDirectedGraph(container, nodes, edges) {
-    const width = container.clientWidth || window.innerWidth - 40;
-    const height = container.clientHeight || window.innerHeight - 200;
+    const width = Math.max(container.clientWidth || 800, 800);
+    const height = Math.max(container.clientHeight || 600, 600);
 
     container.innerHTML = '';
 
@@ -5619,80 +6358,101 @@ const DependencyGraph = {
       <button id="dep-zoom-in" class="control-btn" title="放大">+</button>
       <button id="dep-zoom-out" class="control-btn" title="缩小">−</button>
       <button id="dep-reset" class="control-btn" title="重置">⟲</button>
-      <span class="control-hint">💡 拖拽平移 / 滚轮缩放 / 点击课程</span>
+      <span class="control-hint">💡 拖拽 / 滚轮缩放 / 点击课程</span>
     `;
     container.appendChild(controls);
 
-    // SVG 容器
-    const svgContainer = document.createElement('div');
-    svgContainer.className = 'svg-viewport';
-    svgContainer.innerHTML = `
-      <svg class="dependency-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="24" refY="3" orient="auto">
-            <polygon points="0 0, 10 3, 0 6" fill="#999" />
-          </marker>
-        </defs>
-        <g class="graph-content" transform="translate(${width/2}, ${height/2})">
-          <g class="edges-group"></g>
-          <g class="nodes-group"></g>
-        </g>
-      </svg>
-    `;
-    container.appendChild(svgContainer);
+    // 创建 SVG
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('class', 'dependency-svg');
+    svg.setAttribute('width', '100%');
+    svg.setAttribute('height', '100%');
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
 
-    const graphContent = svgContainer.querySelector('.graph-content');
-    const edgesGroup = svg.querySelector('.edges-group');
-    const nodesGroup = svgContainer.querySelector('.nodes-group');
-    const svg = svgContainer.querySelector('.dependency-svg');
+    // 创建 defs
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    defs.innerHTML = `
+      <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="24" refY="3" orient="auto">
+        <polygon points="0 0, 10 3, 0 6" fill="#999" />
+      </marker>
+    `;
+    svg.appendChild(defs);
+
+    // 创建主分组
+    const graphContent = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    graphContent.setAttribute('class', 'graph-content');
+    graphContent.setAttribute('transform', `translate(${width/2}, ${height/2})`);
+
+    const edgesGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    edgesGroup.setAttribute('class', 'edges-group');
+
+    const nodesGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    nodesGroup.setAttribute('class', 'nodes-group');
+
+    graphContent.appendChild(edgesGroup);
+    graphContent.appendChild(nodesGroup);
+    svg.appendChild(graphContent);
+
+    // 创建可拖拽的背景
+    const panBg = document.createElement('div');
+    panBg.style.cssText = 'position:absolute;inset:0;z-index:1;cursor:grab;';
+    container.appendChild(panBg);
+    container.style.position = 'relative';
+
+    container.appendChild(svg);
+
+    const config = this.config;
 
     // 创建边
     edges.forEach(edge => {
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       line.setAttribute('class', 'edge');
-      line.setAttribute('stroke', 'var(--border)');
+      line.setAttribute('stroke', '#ccc');
       line.setAttribute('stroke-width', '1.5');
+      line.setAttribute('fill', 'none');
       line.setAttribute('marker-end', 'url(#arrowhead)');
       edgesGroup.appendChild(line);
     });
 
     // 创建节点
-    const config = this.config;
     nodes.forEach(node => {
       const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
       g.setAttribute('class', 'node-group');
       g.setAttribute('data-lesson-id', node.id);
       g.setAttribute('transform', `translate(${node.x}, ${node.y})`);
+      g.style.cursor = 'pointer';
 
+      // 节点背景
       const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      rect.setAttribute('class', 'node-rect');
       rect.setAttribute('width', config.nodeWidth);
       rect.setAttribute('height', config.nodeHeight);
       rect.setAttribute('rx', '14');
       rect.setAttribute('ry', '14');
-      rect.setAttribute('fill', 'var(--bg-secondary)');
+      rect.setAttribute('fill', '#fff');
       rect.setAttribute('stroke', this.getNodeStroke(node.status));
       rect.setAttribute('stroke-width', '2.5');
       rect.setAttribute('x', -config.nodeWidth / 2);
       rect.setAttribute('y', -config.nodeHeight / 2);
 
+      // 标题
       const title = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      title.setAttribute('class', 'node-title');
       title.setAttribute('text-anchor', 'middle');
-      title.setAttribute('fill', 'var(--text-primary)');
-      title.setAttribute('font-size', '13');
-      title.setAttribute('y', '-8');
-      let displayTitle = node.title.length > 22 ? node.title.substring(0, 20) + '...' : node.title;
+      title.setAttribute('fill', '#1d1d1f');
+      title.setAttribute('font-size', '12');
+      title.setAttribute('font-weight', '600');
+      title.setAttribute('y', '-5');
+      let displayTitle = node.title.length > 20 ? node.title.substring(0, 18) + '...' : node.title;
       title.textContent = displayTitle;
 
+      // 章节
       const chapter = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      chapter.setAttribute('class', 'node-chapter');
       chapter.setAttribute('text-anchor', 'middle');
-      chapter.setAttribute('fill', 'var(--text-secondary)');
+      chapter.setAttribute('fill', '#6e6e73');
       chapter.setAttribute('font-size', '11');
-      chapter.setAttribute('y', '12');
+      chapter.setAttribute('y', '14');
       chapter.textContent = node.chapter;
 
+      // 状态点
       const statusDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       statusDot.setAttribute('r', '7');
       statusDot.setAttribute('cx', config.nodeWidth / 2 - 12);
@@ -5708,7 +6468,7 @@ const DependencyGraph = {
 
     // 力导向模拟
     let iterations = 0;
-    const maxIterations = 250;
+    const maxIterations = 200;
 
     const simulate = () => {
       if (iterations >= maxIterations) return;
@@ -5722,10 +6482,12 @@ const DependencyGraph = {
           const dy = n1.y - n2.y;
           const dist = Math.sqrt(dx * dx + dy * dy) || 1;
           const force = config.charge / (dist * dist);
-          n1.x += (dx / dist) * force;
-          n1.y += (dy / dist) * force;
-          n2.x -= (dx / dist) * force;
-          n2.y -= (dy / dist) * force;
+          const fx = (dx / dist) * force;
+          const fy = (dy / dist) * force;
+          n1.x += fx;
+          n1.y += fy;
+          n2.x -= fx;
+          n2.y -= fy;
         }
       }
 
@@ -5737,11 +6499,13 @@ const DependencyGraph = {
         const dx = target.x - source.x;
         const dy = target.y - source.y;
         const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        const force = (dist - config.linkDistance) * 0.04;
-        source.x += (dx / dist) * force;
-        source.y += (dy / dist) * force;
-        target.x -= (dx / dist) * force;
-        target.y -= (dy / dist) * force;
+        const force = (dist - config.linkDistance) * 0.03;
+        const fx = (dx / dist) * force;
+        const fy = (dy / dist) * force;
+        source.x += fx;
+        source.y += fy;
+        target.x -= fx;
+        target.y -= fy;
       });
 
       // 边界
@@ -5757,11 +6521,12 @@ const DependencyGraph = {
 
     simulate();
 
-    // 绑定交互 - 支持平移、缩放、拖拽
-    this.bindInteractions(container, svgContainer, graphContent, nodes, edges, config);
+    // 交互
+    this.bindInteractions(container, panBg, graphContent, nodes, edges);
   },
 
   updateView(nodes, edges, edgesGroup, nodesGroup) {
+    // 更新边
     const edgeEls = edgesGroup.querySelectorAll('line');
     edges.forEach((edge, i) => {
       const source = nodes.find(n => n.id === edge.source);
@@ -5774,6 +6539,7 @@ const DependencyGraph = {
       }
     });
 
+    // 更新节点
     const nodeEls = nodesGroup.querySelectorAll('.node-group');
     nodes.forEach((node, i) => {
       if (nodeEls[i]) {
@@ -5784,25 +6550,25 @@ const DependencyGraph = {
 
   getNodeStroke(status) {
     const colors = {
-      'not-started': 'var(--border)',
-      'learning': 'var(--warning)',
-      'completed': 'var(--success)',
-      'mastered': 'var(--primary)'
+      'not-started': '#86868b',
+      'learning': '#ff9500',
+      'completed': '#34c759',
+      'mastered': '#007aff'
     };
-    return colors[status] || 'var(--border)';
+    return colors[status] || '#86868b';
   },
 
   getStatusColor(status) {
     const colors = {
-      'not-started': 'var(--text-tertiary)',
-      'learning': 'var(--warning)',
-      'completed': 'var(--success)',
-      'mastered': 'var(--primary)'
+      'not-started': '#86868b',
+      'learning': '#ff9500',
+      'completed': '#34c759',
+      'mastered': '#007aff'
     };
-    return colors[status] || 'var(--text-tertiary)';
+    return colors[status] || '#86868b';
   },
 
-  bindInteractions(container, svgContainer, graphContent, nodes, edges, config) {
+  bindInteractions(container, panBg, graphContent, nodes, edges) {
     let scale = 1;
     let translateX = 0;
     let translateY = 0;
@@ -5810,22 +6576,29 @@ const DependencyGraph = {
     let startX, startY;
     let draggedNode = null;
 
+    const svg = container.querySelector('svg');
+    const edgesGroup = svg.querySelector('.edges-group');
+    const nodesGroup = svg.querySelector('.nodes-group');
+
     const updateTransform = () => {
       graphContent.setAttribute('transform', `translate(${translateX}, ${translateY}) scale(${scale})`);
     };
 
     // 缩放控制
-    document.getElementById('dep-zoom-in')?.addEventListener('click', () => {
+    document.getElementById('dep-zoom-in')?.addEventListener('click', (e) => {
+      e.stopPropagation();
       scale = Math.min(scale * 1.3, 4);
       updateTransform();
     });
 
-    document.getElementById('dep-zoom-out')?.addEventListener('click', () => {
+    document.getElementById('dep-zoom-out')?.addEventListener('click', (e) => {
+      e.stopPropagation();
       scale = Math.max(scale / 1.3, 0.3);
       updateTransform();
     });
 
-    document.getElementById('dep-reset')?.addEventListener('click', () => {
+    document.getElementById('dep-reset')?.addEventListener('click', (e) => {
+      e.stopPropagation();
       scale = 1;
       translateX = 0;
       translateY = 0;
@@ -5833,108 +6606,61 @@ const DependencyGraph = {
     });
 
     // 滚轮缩放
-    svgContainer.addEventListener('wheel', (e) => {
+    svg.addEventListener('wheel', (e) => {
       e.preventDefault();
       const delta = e.deltaY < 0 ? 1.1 : 0.9;
       scale = Math.max(0.3, Math.min(4, scale * delta));
       updateTransform();
     }, { passive: false });
 
-    // 鼠标按下 - 开始平移或拖拽节点
-    svgContainer.addEventListener('mousedown', (e) => {
+    // 背景拖拽平移
+    panBg.addEventListener('mousedown', (e) => {
+      if (e.target === panBg || e.target.classList.contains('dependency-svg')) {
+        isPanning = true;
+        startX = e.clientX - translateX;
+        startY = e.clientY - translateY;
+        panBg.style.cursor = 'grabbing';
+      }
+    });
+
+    // 节点拖拽
+    svg.addEventListener('mousedown', (e) => {
       const nodeGroup = e.target.closest('.node-group');
       if (nodeGroup) {
         draggedNode = nodes.find(n => n.id === nodeGroup.getAttribute('data-lesson-id'));
         e.stopPropagation();
-      } else {
-        isPanning = true;
-        startX = e.clientX - translateX;
-        startY = e.clientY - translateY;
-        svgContainer.style.cursor = 'grabbing';
       }
     });
 
-    // 鼠标移动 - 平移或拖拽
-    svgContainer.addEventListener('mousemove', (e) => {
+    window.addEventListener('mousemove', (e) => {
       if (isPanning) {
         translateX = e.clientX - startX;
         translateY = e.clientY - startY;
         updateTransform();
       } else if (draggedNode) {
-        const rect = svgContainer.getBoundingClientRect();
-        const mouseX = (e.clientX - rect.left - svgContainer.clientWidth / 2 - translateX) / scale;
-        const mouseY = (e.clientY - rect.top - svgContainer.clientHeight / 2 - translateY) / scale;
-        draggedNode.x = mouseX;
-        draggedNode.y = mouseY;
-        this.updateView(nodes, edges, svgContainer.querySelector('.edges-group'), svgContainer.querySelector('.nodes-group'));
+        const rect = svg.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        draggedNode.x = (e.clientX - cx - translateX) / scale;
+        draggedNode.y = (e.clientY - cy - translateY) / scale;
+        this.updateView(nodes, edges, edgesGroup, nodesGroup);
       }
     });
 
-    // 鼠标松开
-    svgContainer.addEventListener('mouseup', () => {
+    window.addEventListener('mouseup', () => {
       isPanning = false;
       draggedNode = null;
-      svgContainer.style.cursor = 'grab';
-    });
-
-    svgContainer.addEventListener('mouseleave', () => {
-      isPanning = false;
-      draggedNode = null;
-      svgContainer.style.cursor = 'grab';
+      panBg.style.cursor = 'grab';
     });
 
     // 节点点击
-    container.querySelectorAll('.node-group').forEach(group => {
+    nodesGroup.querySelectorAll('.node-group').forEach(group => {
       group.addEventListener('click', () => {
         const lessonId = group.getAttribute('data-lesson-id');
-        if (lessonId && SkillTree?.openLesson) {
+        if (lessonId && window.SkillTree?.openLesson) {
           SkillTree.openLesson(lessonId);
         }
       });
-    });
-
-    // 触摸支持
-    let lastTouchDistance = null;
-    let lastTouchX = 0;
-    let lastTouchY = 0;
-
-    svgContainer.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 2) {
-        lastTouchDistance = Math.hypot(
-          e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY
-        );
-      } else if (e.touches.length === 1) {
-        const nodeGroup = e.touches[0].target.closest('.node-group');
-        if (!nodeGroup) {
-          isPanning = true;
-          lastTouchX = e.touches[0].clientX - translateX;
-          lastTouchY = e.touches[0].clientY - translateY;
-        }
-      }
-    }, { passive: true });
-
-    svgContainer.addEventListener('touchmove', (e) => {
-      if (e.touches.length === 2 && lastTouchDistance) {
-        const distance = Math.hypot(
-          e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY
-        );
-        const delta = distance / lastTouchDistance;
-        scale = Math.max(0.3, Math.min(4, scale * delta));
-        lastTouchDistance = distance;
-        updateTransform();
-        e.preventDefault();
-      } else if (e.touches.length === 1 && isPanning) {
-        translateX = e.touches[0].clientX - lastTouchX;
-        translateY = e.touches[0].clientY - lastTouchY;
-        updateTransform();
-      }
-    }, { passive: false });
-
-    svgContainer.addEventListener('touchend', () => {
-      isPanning = false;
-      lastTouchDistance = null;
     });
   },
 
@@ -5983,11 +6709,14 @@ const LessonViewer = {
       </div>
     `;
 
-    // 绑定返回按钮（先移除旧监听器，避免重复绑定）
+    // 绑定返回按钮
     const backBtn = document.getElementById('back-to-tree');
     if (backBtn) {
-      backBtn.replaceWith(backBtn.cloneNode(true));
-      document.getElementById('back-to-tree')?.addEventListener('click', () => {
+      // 移除旧的监听器
+      const newBackBtn = backBtn.cloneNode(true);
+      backBtn.parentNode.replaceChild(newBackBtn, backBtn);
+      // 添加新的监听器
+      newBackBtn.addEventListener('click', () => {
         this.close();
       });
     }
@@ -6005,7 +6734,7 @@ const LessonViewer = {
     // 渲染内容
     this.renderContent(markdown);
 
-    // 更新导航按钮
+    // 更新导航按钮（包括前课/后课按钮）
     this.updateNavigation(lessonId);
 
     // 更新完成按钮状态
@@ -6026,9 +6755,11 @@ const LessonViewer = {
     const feynmanBtn = document.getElementById('feynman-btn');
     if (!feynmanBtn) return;
 
-    // 绑定点击事件
-    feynmanBtn.replaceWith(feynmanBtn.cloneNode(true));
-    document.getElementById('feynman-btn')?.addEventListener('click', () => {
+    // 移除旧的监听器
+    const newFeynmanBtn = feynmanBtn.cloneNode(true);
+    feynmanBtn.parentNode.replaceChild(newFeynmanBtn, feynmanBtn);
+    // 添加新的监听器
+    newFeynmanBtn.addEventListener('click', () => {
       this.openFeynmanModal(lessonId);
     });
   },
@@ -6100,9 +6831,11 @@ const LessonViewer = {
     // 更新书签状态
     this.updateBookmarkButton(lessonId);
 
-    // 绑定点击事件
-    bookmarkBtn.replaceWith(bookmarkBtn.cloneNode(true));
-    document.getElementById('bookmark-btn')?.addEventListener('click', () => {
+    // 移除旧的监听器
+    const newBookmarkBtn = bookmarkBtn.cloneNode(true);
+    bookmarkBtn.parentNode.replaceChild(newBookmarkBtn, bookmarkBtn);
+    // 添加新的监听器
+    newBookmarkBtn.addEventListener('click', () => {
       const isBookmarked = Storage.toggleBookmark(lessonId);
       this.updateBookmarkButton(lessonId);
       showToast(isBookmarked ? '已添加书签' : '已移除书签');
@@ -6244,20 +6977,49 @@ const LessonViewer = {
   updateNavigation(lessonId) {
     const prevBtn = document.getElementById('prev-lesson');
     const nextBtn = document.getElementById('next-lesson');
+    const mobilePrevBtn = document.getElementById('mobile-prev');
+    const mobileNextBtn = document.getElementById('mobile-next');
 
     const prevLesson = Content.getPreviousLesson(lessonId);
     const nextLesson = Content.getNextLesson(lessonId);
 
-    prevBtn.disabled = !prevLesson;
-    nextBtn.disabled = !nextLesson;
+    // 更新桌面端按钮
+    if (prevBtn && nextBtn) {
+      prevBtn.disabled = !prevLesson;
+      nextBtn.disabled = !nextLesson;
 
-    prevBtn.onclick = () => {
-      if (prevLesson) this.open(prevLesson.id);
-    };
+      // 移除旧监听器并添加新的
+      const newPrevBtn = prevBtn.cloneNode(true);
+      prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
+      newPrevBtn.addEventListener('click', () => {
+        if (prevLesson) this.open(prevLesson.id);
+      });
 
-    nextBtn.onclick = () => {
-      if (nextLesson) this.open(nextLesson.id);
-    };
+      const newNextBtn = nextBtn.cloneNode(true);
+      nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
+      newNextBtn.addEventListener('click', () => {
+        if (nextLesson) this.open(nextLesson.id);
+      });
+    }
+
+    // 更新移动端按钮
+    if (mobilePrevBtn && mobileNextBtn) {
+      mobilePrevBtn.disabled = !prevLesson;
+      mobileNextBtn.disabled = !nextLesson;
+
+      // 移除旧监听器并添加新的
+      const newMobilePrevBtn = mobilePrevBtn.cloneNode(true);
+      mobilePrevBtn.parentNode.replaceChild(newMobilePrevBtn, mobilePrevBtn);
+      newMobilePrevBtn.addEventListener('click', () => {
+        if (prevLesson) this.open(prevLesson.id);
+      });
+
+      const newMobileNextBtn = mobileNextBtn.cloneNode(true);
+      mobileNextBtn.parentNode.replaceChild(newMobileNextBtn, mobileNextBtn);
+      newMobileNextBtn.addEventListener('click', () => {
+        if (nextLesson) this.open(nextLesson.id);
+      });
+    }
   },
 
   // 更新完成按钮
@@ -6273,15 +7035,18 @@ const LessonViewer = {
       btn.classList.remove('completed');
     }
 
-    btn.onclick = () => {
+    // 移除旧监听器并添加新的
+    const newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+    newBtn.addEventListener('click', () => {
       ProgressManager.completeCurrentLesson();
-      btn.textContent = '已完成 ✓';
-      btn.classList.add('completed');
+      newBtn.textContent = '已完成 ✓';
+      newBtn.classList.add('completed');
       showToast('课程已完成！');
 
       // 刷新知识树
       SkillTree.refresh();
-    };
+    });
   },
 
   // 关闭阅读器
