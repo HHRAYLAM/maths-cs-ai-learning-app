@@ -22,6 +22,7 @@
 
   <!-- 样式 -->
   <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/theme-tom-jerry.css">
   <link rel="stylesheet" href="css/skill-tree.css">
   <link rel="stylesheet" href="css/lesson.css">
   <link rel="stylesheet" href="css/dependency.css">
@@ -36,11 +37,9 @@
 <body>
   <!-- 顶部导航栏 -->
   <header class="top-nav">
-    <h1 id="page-title">知识框架</h1>
+    <h1 id="page-title"><span class="icon-house"></span>知识框架</h1>
     <div class="header-actions">
       <button id="search-btn" class="icon-btn" title="搜索">🔍</button>
-      <button id="language-btn" class="icon-btn" title="切换语言">🌐</button>
-      <button id="content-pack-btn" class="icon-btn" title="切换内容包">📚</button>
       <button id="settings-btn" class="icon-btn" title="设置">⚙️</button>
     </div>
   </header>
@@ -53,11 +52,11 @@
   <!-- 底部导航栏 -->
   <nav class="bottom-nav">
     <a href="#dashboard" class="nav-item" data-page="dashboard">
-      <span class="icon">📊</span>
+      <span class="icon">🧀</span>
       <span class="label">概览</span>
     </a>
     <a href="#skill-tree" class="nav-item active" data-page="skill-tree">
-      <span class="icon">🌳</span>
+      <span class="icon">🏠</span>
       <span class="label">知识树</span>
     </a>
     <a href="#dependency" class="nav-item" data-page="dependency">
@@ -65,7 +64,7 @@
       <span class="label">依赖图</span>
     </a>
     <a href="#progress" class="nav-item" data-page="progress">
-      <span class="icon">📈</span>
+      <span class="icon">🐾</span>
       <span class="label">进度</span>
     </a>
   </nav>
@@ -75,11 +74,17 @@
     <div class="lesson-header">
       <button id="back-to-tree" class="back-btn">← 返回</button>
       <div class="lesson-nav">
-        <button id="prev-lesson" class="nav-btn" disabled>◀</button>
+        <button id="prev-lesson" class="nav-btn-with-label" disabled>
+          <span class="nav-btn-icon">◀</span>
+          <span class="nav-btn-label">上一课</span>
+        </button>
         <button id="bookmark-btn" class="nav-btn" title="添加书签">⭐</button>
         <button id="feynman-btn" class="nav-btn" title="费曼模式">🎓</button>
         <button id="quiz-btn" class="nav-btn" title="练习题">📝</button>
-        <button id="next-lesson" class="nav-btn">▶</button>
+        <button id="next-lesson" class="nav-btn-with-label">
+          <span class="nav-btn-icon">▶</span>
+          <span class="nav-btn-label">下一课</span>
+        </button>
       </div>
     </div>
     <div class="lesson-content" id="lesson-content">
@@ -87,6 +92,12 @@
     </div>
     <div class="lesson-footer">
       <button id="mark-complete" class="complete-btn">标记为完成</button>
+    </div>
+
+    <!-- 移动端底部导航 -->
+    <div class="mobile-lesson-nav">
+      <button id="mobile-prev" class="mobile-nav-btn prev" disabled>← 上一课</button>
+      <button id="mobile-next" class="mobile-nav-btn next">下一课 →</button>
     </div>
   </div>
 
@@ -151,34 +162,53 @@
 
   <!-- 设置弹窗 -->
   <div id="settings-modal" class="modal hidden">
-    <div class="modal-content">
-      <h2>设置</h2>
-      <div class="settings-section">
-        <h3>主题外观</h3>
-        <div class="theme-selector">
-          <button class="theme-btn active" data-theme="light">☀️ 浅色</button>
-          <button class="theme-btn" data-theme="dark">🌙 暗色</button>
-          <button class="theme-btn" data-theme="auto">🔄 跟随系统</button>
+    <div class="modal-content settings-modal">
+      <h2>⚙️ 设置</h2>
+
+      <div class="settings-group">
+        <div class="settings-item">
+          <div class="settings-item-label">主题外观</div>
+          <div class="theme-selector">
+            <button class="theme-btn pill" data-theme="light">☀️ 浅色</button>
+            <button class="theme-btn pill" data-theme="dark">🌙 暗色</button>
+            <button class="theme-btn pill" data-theme="auto">🔄 系统</button>
+          </div>
         </div>
       </div>
-      <div class="settings-section">
-        <h3>语言设置</h3>
-        <div class="language-selector">
-          <button class="language-btn active" data-lang="zh-CN">中文</button>
-          <button class="language-btn" data-lang="en-US">English</button>
-          <button class="language-btn" data-lang="both">中英双语</button>
+
+      <div class="settings-group">
+        <div class="settings-item">
+          <div class="settings-item-label">语言设置</div>
+          <div class="language-selector segmented">
+            <button class="language-btn segmented active" data-lang="zh-CN">🇨🇳 中文</button>
+            <button class="language-btn segmented" data-lang="en-US">🇺🇸 English</button>
+          </div>
         </div>
       </div>
-      <div class="settings-section">
-        <h3>学习进度</h3>
-        <button id="reset-progress" class="setting-btn danger">重置所有进度</button>
+
+      <div class="settings-group">
+        <div class="settings-item">
+          <div class="settings-item-label">学习内容</div>
+          <button id="content-pack-btn" class="setting-btn secondary">📚 选择内容包 →</button>
+        </div>
       </div>
-      <div class="settings-section">
-        <h3>关于</h3>
-        <p>基于 <a href="https://github.com/HenryNdubuaku/maths-cs-ai-compendium" target="_blank">数学/CS/AI 知识大全</a> 构建</p>
-        <p>版本：1.0.0</p>
+
+      <div class="settings-group danger-zone">
+        <div class="settings-item">
+          <div class="settings-item-label">学习进度</div>
+          <button id="reset-progress" class="setting-btn danger">⚠️ 重置所有进度</button>
+        </div>
       </div>
-      <button class="modal-close" onclick="closeModal('settings-modal')">关闭</button>
+
+      <div class="settings-group">
+        <div class="settings-item">
+          <div class="settings-item-label">关于</div>
+          <p class="settings-description">基于 数学/CS/AI 知识大全 构建</p>
+          <p class="settings-description version">版本 1.0.0</p>
+        </div>
+      </div>
+
+      <button class="modal-close" onclick="closeModal('settings-modal')">完成</button>
     </div>
   </div>
 

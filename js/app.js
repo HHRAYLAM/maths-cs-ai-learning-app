@@ -91,8 +91,8 @@ const App = {
 
   // 绑定弹窗
   bindModals() {
-    // 语言切换按钮
-    document.getElementById('language-btn')?.addEventListener('click', () => {
+    // 设置按钮
+    document.getElementById('settings-btn')?.addEventListener('click', () => {
       document.getElementById('settings-modal')?.classList.remove('hidden');
     });
 
@@ -102,14 +102,9 @@ const App = {
     // 主题选择器
     this.bindThemeSelector();
 
-    // 内容包按钮
+    // 内容包按钮（在设置里面）
     document.getElementById('content-pack-btn')?.addEventListener('click', () => {
       this.showContentPackModal();
-    });
-
-    // 设置按钮
-    document.getElementById('settings-btn')?.addEventListener('click', () => {
-      document.getElementById('settings-modal')?.classList.remove('hidden');
     });
 
     // 重置进度按钮
@@ -196,67 +191,91 @@ const App = {
     const currentLesson = Storage.getCurrentLesson();
     const currentLessonData = currentLesson ? Content.getLesson(currentLesson) : null;
 
+    // 确保 stats 有默认值
+    const completionRate = stats?.completionRate ?? '0.0';
+    const completedCount = (stats?.completed ?? 0) + (stats?.mastered ?? 0);
+    const masteredCount = stats?.mastered ?? 0;
+    const dueReviewCount = dueReviews?.length ?? 0;
+
     container.innerHTML = `
       <div class="dashboard-container">
-        <!-- 继续学习 -->
-        <div class="dashboard-section">
-          <h2 class="dashboard-section-title">
-            ${currentLesson ? '继续学习' : '开始学习'}
-          </h2>
-          <div class="card continue-learning-card">
-            ${currentLesson ? `
-              <div class="current-lesson-info">
-                <div class="current-lesson-badge">当前课程</div>
-                <div class="current-lesson-title">${currentLessonData?.title || '未知课程'}</div>
-                <div class="current-lesson-chapter">📚 ${Content.getChapter(currentLessonData?.chapterId)?.title || ''}</div>
+
+        <!-- 继续学习卡片 -->
+        ${currentLesson ? `
+          <div class="dashboard-card continue-learning">
+            <div class="card-header">
+              <span class="card-badge">当前课程</span>
+            </div>
+            <div class="card-body">
+              <div class="lesson-main">
+                <div class="lesson-title-large">${currentLessonData?.title || '未知课程'}</div>
+                <div class="lesson-chapter">📚 ${Content.getChapter(currentLessonData?.chapterId)?.title || ''}</div>
               </div>
-              <button class="btn btn-primary" onclick="App.continueLearning()">
-                继续学习 →
+              <button class="btn-continue" onclick="App.continueLearning()">
+                继续学习
+                <span class="btn-arrow">→</span>
               </button>
-            ` : `
-              <div class="empty-lesson">
-                <div class="empty-lesson-icon">🎓</div>
-                <div class="empty-lesson-text">还没有开始学习</div>
-              </div>
-              <button class="btn btn-primary" onclick="App.startFirstLesson()">
+            </div>
+          </div>
+        ` : `
+          <div class="dashboard-card empty-state-card">
+            <div class="empty-state-content">
+              <div class="empty-icon">🎯</div>
+              <div class="empty-title">开始你的学习之旅</div>
+              <div class="empty-description">从第一章开始，循序渐进掌握知识</div>
+              <button class="btn-start" onclick="App.startFirstLesson()">
                 开始第一章
               </button>
-            `}
+            </div>
           </div>
-        </div>
+        `}
 
-        <!-- 统计卡片 -->
-        <div class="dashboard-section">
-          <h2 class="dashboard-section-title">学习统计</h2>
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-value">${stats.completionRate}%</div>
+        <!-- 统计概览 - 一行显示 -->
+        <div class="stats-row">
+          <div class="stat-item">
+            <div class="stat-icon completion">📊</div>
+            <div class="stat-info">
+              <div class="stat-value">${completionRate}%</div>
               <div class="stat-label">完成率</div>
             </div>
-            <div class="stat-card green">
-              <div class="stat-value">${stats.completed + stats.mastered}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon completed">✅</div>
+            <div class="stat-info">
+              <div class="stat-value">${completedCount}</div>
               <div class="stat-label">已完成</div>
             </div>
-            <div class="stat-card orange">
-              <div class="stat-value">${stats.mastered}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon mastered">🏆</div>
+            <div class="stat-info">
+              <div class="stat-value">${masteredCount}</div>
               <div class="stat-label">已精通</div>
             </div>
-            <div class="stat-card purple">
-              <div class="stat-value">${dueReviews.length}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon review">📝</div>
+            <div class="stat-info">
+              <div class="stat-value">${dueReviewCount}</div>
               <div class="stat-label">待复习</div>
             </div>
           </div>
         </div>
 
-        <!-- 总学习时长 -->
-        <div class="dashboard-section">
-          <h2 class="dashboard-section-title">学习时长</h2>
-          <div class="card">
-            <div style="text-align: center;">
-              <div style="font-size: 36px; font-weight: 700; color: var(--primary-color);">
-                ${ProgressManager.formatTime(stats.totalTimeSeconds)}
-              </div>
-              <div style="color: var(--gray-500); margin-top: 8px;">累计学习时长</div>
+        <!-- 学习时长和连续学习 -->
+        <div class="info-grid">
+          <div class="info-card time">
+            <div class="info-icon">⏱️</div>
+            <div class="info-content">
+              <div class="info-value">${ProgressManager.formatTime(stats.totalTimeSeconds)}</div>
+              <div class="info-label">总学习时长</div>
+            </div>
+          </div>
+          <div class="info-card streak">
+            <div class="info-icon">🔥</div>
+            <div class="info-content">
+              <div class="info-value">${Storage.getLearningStreak()} 天</div>
+              <div class="info-label">连续学习</div>
             </div>
           </div>
         </div>
@@ -264,17 +283,21 @@ const App = {
         <!-- 待复习课程 -->
         ${dueReviews.length > 0 ? `
           <div class="dashboard-section">
-            <h2 class="dashboard-section-title">待复习课程</h2>
-            <div class="recent-lessons">
+            <div class="section-header">
+              <h3 class="section-title">待复习</h3>
+              <span class="section-count">${dueReviews.length}</span>
+            </div>
+            <div class="review-list">
               ${dueReviews.slice(0, 5).map(item => {
                 const lesson = Content.getLesson(item.lessonId);
                 return `
-                  <div class="recent-lesson-item" style="cursor: pointer;" onclick="App.reviewLesson('${item.lessonId}')">
-                    <div class="recent-lesson-icon">📚</div>
-                    <div class="recent-lesson-info">
-                      <div class="recent-lesson-title">${lesson?.title || item.lessonId}</div>
-                      <div class="recent-lesson-time">已逾期 ${item.daysOverdue} 天</div>
+                  <div class="review-item" onclick="App.reviewLesson('${item.lessonId}')">
+                    <div class="review-icon">📚</div>
+                    <div class="review-info">
+                      <div class="review-title">${lesson?.title || item.lessonId}</div>
+                      <div class="review-days">逾期 ${item.daysOverdue} 天</div>
                     </div>
+                    <div class="review-arrow">›</div>
                   </div>
                 `;
               }).join('')}
@@ -282,65 +305,33 @@ const App = {
           </div>
         ` : ''}
 
-        <!-- 学习统计 -->
+        <!-- 成就徽章 -->
         <div class="dashboard-section">
-          <h2 class="dashboard-section-title">学习统计</h2>
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-value">${stats.completionRate}%</div>
-              <div class="stat-label">完成率</div>
-            </div>
-            <div class="stat-card green">
-              <div class="stat-value">${stats.completed + stats.mastered}</div>
-              <div class="stat-label">已完成</div>
-            </div>
-            <div class="stat-card orange">
-              <div class="stat-value">${stats.mastered}</div>
-              <div class="stat-label">已精通</div>
-            </div>
-            <div class="stat-card purple">
-              <div class="stat-value">${dueReviews.length}</div>
-              <div class="stat-label">待复习</div>
-            </div>
+          <div class="section-header">
+            <h3 class="section-title">成就徽章</h3>
+            <span class="section-count">${Storage.getAchievements().length}</span>
           </div>
-        </div>
-
-        <!-- 连续学习 -->
-        <div class="dashboard-section">
-          <h2 class="dashboard-section-title">连续学习</h2>
-          <div class="card">
-            <div style="text-align: center;">
-              <div style="font-size: 48px; font-weight: 700; color: var(--danger-color);">
-                🔥 ${Storage.getLearningStreak()} 天
-              </div>
-              <div style="color: var(--gray-500); margin-top: 8px;">连续学习天数</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 成就 -->
-        <div class="dashboard-section">
-          <h2 class="dashboard-section-title">成就徽章</h2>
-          <div class="card">
-            ${this.renderAchievementsSection()}
-          </div>
+          ${this.renderAchievementsSection()}
         </div>
 
         <!-- 错题本 -->
         <div class="dashboard-section">
-          <h2 class="dashboard-section-title">错题本</h2>
-          <div class="card">
-            ${this.renderWrongAnswersSection()}
+          <div class="section-header">
+            <h3 class="section-title">错题本</h3>
+            ${this.renderWrongAnswersSummary()}
           </div>
+          ${this.renderWrongAnswersSection()}
         </div>
 
         <!-- 我的收藏 -->
         <div class="dashboard-section">
-          <h2 class="dashboard-section-title">我的收藏</h2>
-          <div class="card">
-            ${this.renderBookmarksSection()}
+          <div class="section-header">
+            <h3 class="section-title">我的收藏</h3>
+            <span class="section-count">${Storage.getBookmarkedLessons().length}</span>
           </div>
+          ${this.renderBookmarksSection()}
         </div>
+
       </div>
     `;
 
@@ -385,7 +376,7 @@ const App = {
             </div>
           `).join('')}
         </div>
-        <div style="margin-top: 12px; font-size: 13px; color: var(--gray-500);">
+        <div style="margin-top: 12px; font-size: 13px; color: var(--text-secondary);">
           已解锁 ${achievements.length} / ${definitions.length} 个成就
         </div>
       </div>
@@ -409,30 +400,42 @@ const App = {
 
     return `
       <div class="wrong-answers-stats">
-        <div style="display: flex; justify-content: space-around; text-align: center; margin-bottom: 16px;">
-          <div>
-            <div style="font-size: 24px; font-weight: 700; color: var(--danger-color);">${stats.active}</div>
-            <div style="font-size: 12px; color: var(--gray-500);">待掌握</div>
+        <div class="wrong-answers-summary">
+          <div class="wrong-answer-stat">
+            <div class="wrong-answer-value danger">${stats.active}</div>
+            <div class="wrong-answer-label">待掌握</div>
           </div>
-          <div>
-            <div style="font-size: 24px; font-weight: 700; color: var(--success-color);">${stats.mastered}</div>
-            <div style="font-size: 12px; color: var(--gray-500);">已掌握</div>
+          <div class="wrong-answer-divider"></div>
+          <div class="wrong-answer-stat">
+            <div class="wrong-answer-value success">${stats.mastered}</div>
+            <div class="wrong-answer-label">已掌握</div>
           </div>
-          <div>
-            <div style="font-size: 24px; font-weight: 700; color: var(--primary-color);">${stats.masteryRate}%</div>
-            <div style="font-size: 12px; color: var(--gray-500);">掌握率</div>
+          <div class="wrong-answer-divider"></div>
+          <div class="wrong-answer-stat">
+            <div class="wrong-answer-value primary">${stats.masteryRate}%</div>
+            <div class="wrong-answer-label">掌握率</div>
           </div>
         </div>
         ${activeWrongAnswers.length > 0 ? `
-          <div style="font-size: 13px; color: var(--gray-500);">
-            最近错题：${activeWrongAnswers.slice(0, 3).map(wa => {
+          <div class="wrong-answers-recent">
+            <div class="wrong-answers-recent-title">最近错题</div>
+            ${activeWrongAnswers.slice(0, 3).map(wa => {
               const lesson = Content.getLesson(wa.lessonId);
-              return lesson?.title || wa.lessonId;
-            }).join(', ')}...
+              return `<div class="wrong-answer-item">${lesson?.title || wa.lessonId}</div>`;
+            }).join('')}
           </div>
         ` : ''}
       </div>
     `;
+  },
+
+  // 渲染错题本摘要（小图标）
+  renderWrongAnswersSummary() {
+    const stats = Storage.getWrongAnswerStats();
+    if (stats.total === 0) {
+      return '<span class="section-count all-good">✓ 全对</span>';
+    }
+    return `<span class="section-count has-wrong">${stats.active} 待掌握</span>`;
   },
 
   // 检查成就
@@ -494,11 +497,11 @@ const App = {
                   <div class="progress-bar-fill" style="width: ${stats.completionRate}%"></div>
                 </div>
               </div>
-              <div style="font-size: 24px; font-weight: 700; color: var(--primary-color);">
+              <div style="font-size: 24px; font-weight: 700; color: var(--primary);">
                 ${stats.completionRate}%
               </div>
             </div>
-            <div style="display: flex; justify-content: space-between; color: var(--gray-500); font-size: 14px;">
+            <div style="display: flex; justify-content: space-between; color: var(--text-secondary); font-size: 14px;">
               <span>已完成：${stats.completed + stats.mastered}</span>
               <span>总计：${stats.totalLessons}</span>
             </div>
@@ -514,7 +517,7 @@ const App = {
               <div class="card" style="padding: 12px 16px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                   <span style="font-weight: 600;">${chapter.order}. ${chapter.title}</span>
-                  <span style="color: var(--primary-color); font-weight: 600;">${progress}%</span>
+                  <span style="color: var(--primary); font-weight: 600;">${progress}%</span>
                 </div>
                 <div class="progress-bar">
                   <div class="progress-bar-fill" style="width: ${progress}%"></div>
@@ -528,11 +531,11 @@ const App = {
         <div class="dashboard-section">
           <h2 class="dashboard-section-title">掌握度分布</h2>
           <div class="stats-grid">
-            <div class="stat-card" style="background: var(--gray-200);">
-              <div class="stat-value" style="color: var(--gray-600);">${stats.notStarted}</div>
+            <div class="stat-card" style="background: var(--bg-tertiary);">
+              <div class="stat-value" style="color: var(--text-tertiary);">${stats.notStarted}</div>
               <div class="stat-label">未开始</div>
             </div>
-            <div class="stat-card" style="background: var(--primary-color);">
+            <div class="stat-card" style="background: var(--primary);">
               <div class="stat-value">${stats.learning}</div>
               <div class="stat-label">学习中</div>
             </div>
@@ -552,10 +555,10 @@ const App = {
           <h2 class="dashboard-section-title">学习时长</h2>
           <div class="card">
             <div style="text-align: center;">
-              <div style="font-size: 32px; font-weight: 700; color: var(--primary-color);">
+              <div style="font-size: 32px; font-weight: 700; color: var(--primary);">
                 ${ProgressManager.formatTime(stats.totalTimeSeconds)}
               </div>
-              <div style="color: var(--gray-500); margin-top: 8px;">累计学习时长</div>
+              <div style="color: var(--text-secondary); margin-top: 8px;">累计学习时长</div>
             </div>
           </div>
         </div>
@@ -565,10 +568,10 @@ const App = {
           <h2 class="dashboard-section-title">复习统计</h2>
           <div class="card">
             <div style="text-align: center;">
-              <div style="font-size: 32px; font-weight: 700; color: var(--primary-color);">
+              <div style="font-size: 32px; font-weight: 700; color: var(--primary);">
                 ${stats.totalReviews}
               </div>
-              <div style="color: var(--gray-500); margin-top: 8px;">累计复习次数</div>
+              <div style="color: var(--text-secondary); margin-top: 8px;">累计复习次数</div>
             </div>
           </div>
         </div>
@@ -585,8 +588,8 @@ const App = {
     list.innerHTML = packs.map(pack => `
       <div class="pack-item ${Content.activePack === pack.id ? 'active' : ''}" onclick="App.switchContentPack('${pack.id}')">
         <div style="font-weight: 600; font-size: 16px;">${pack.name}</div>
-        <div style="color: var(--gray-500); font-size: 13px;">${pack.description}</div>
-        <div style="color: var(--gray-400); font-size: 12px; margin-top: 4px;">${pack.chapters} 章节</div>
+        <div style="color: var(--text-secondary); font-size: 13px;">${pack.description}</div>
+        <div style="color: var(--text-tertiary); font-size: 12px; margin-top: 4px;">${pack.chapters} 章节</div>
       </div>
     `).join('');
 
@@ -812,11 +815,6 @@ function closeModal(modalId) {
 }
 
 // 显示成就解锁提示
-function closeModal(modalId) {
-  document.getElementById(modalId)?.classList.add('hidden');
-}
-
-// 显示成就解锁提示
 function showAchievementToast(achievement) {
   const toast = document.getElementById('toast');
   if (toast) {
@@ -851,7 +849,7 @@ function openQuiz(lessonId) {
       <div class="no-quiz-hint">
         <div class="no-quiz-hint-icon">📝</div>
         <div>暂无练习题</div>
-        <div style="color: var(--gray-500); font-size: 14px; margin-top: 8px;">
+        <div style="color: var(--text-secondary); font-size: 14px; margin-top: 8px;">
           学完其他课程后再来看看
         </div>
       </div>
@@ -978,7 +976,7 @@ function showAnswerResult(questionIndex, result, userAnswer) {
   const explanationHtml = `
     <div class="quiz-explanation ${result.correct ? 'correct' : 'incorrect'}">
       <div class="quiz-explanation-title">${result.correct ? '✓ 回答正确！' : '✗ 不太对哦'}</div>
-      ${!result.correct ? `<div style="margin-bottom: 8px; color: var(--gray-600);">正确答案：${result.correctAnswer}</div>` : ''}
+      ${!result.correct ? `<div style="margin-bottom: 8px; color: var(--text-secondary);">正确答案：${result.correctAnswer}</div>` : ''}
       <div style="color: var(--gray-700); font-size: 14px;">${result.explanation}</div>
     </div>
     <button class="btn btn-primary" style="width: 100%; margin-top: 12px;" onclick="nextQuizQuestion()">

@@ -397,6 +397,153 @@ html, body {
   max-width: 300px;
 }
 
+/* 设置弹窗 - Apple 风格 */
+.settings-modal {
+  padding: 0;
+  overflow: hidden;
+}
+
+.settings-modal h2 {
+  background: var(--bg-tertiary);
+  padding: 20px 24px;
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.settings-group {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-light);
+  padding: 16px 20px;
+}
+
+.settings-group:last-of-type {
+  border-bottom: none;
+}
+
+.settings-group.danger-zone {
+  background: rgba(255, 59, 48, 0.04);
+}
+
+.settings-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings-item-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.settings-description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 4px 0;
+}
+
+.settings-description.version {
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+/* 主题选择器 - Pill 样式 */
+.theme-selector {
+  display: flex;
+  gap: 8px;
+}
+
+.theme-btn.pill {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  background: var(--bg-tertiary);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s var(--ease-apple);
+}
+
+.theme-btn.pill:hover {
+  background: rgba(0, 122, 255, 0.08);
+  border-color: var(--primary);
+}
+
+.theme-btn.pill.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+/* 语言选择器 - Segmented Control 样式 */
+.language-selector.segmented {
+  display: flex;
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.language-btn.segmented {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s var(--ease-apple);
+}
+
+.language-btn.segmented:hover {
+  background: rgba(0, 122, 255, 0.08);
+}
+
+.language-btn.segmented.active {
+  background: var(--bg-secondary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  color: var(--text-primary);
+}
+
+/* 设置按钮 */
+.setting-btn {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-apple);
+  text-align: left;
+}
+
+.setting-btn.secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.setting-btn.secondary:hover {
+  background: rgba(0, 122, 255, 0.08);
+}
+
+.setting-btn.danger {
+  background: rgba(255, 59, 48, 0.1);
+  color: var(--danger);
+}
+
+.setting-btn.danger:hover {
+  background: rgba(255, 59, 48, 0.15);
+}
+
 /* 加载动画 */
 .loading-spinner {
   width: 40px;

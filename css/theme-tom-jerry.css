@@ -1,0 +1,601 @@
+/* 猫和老鼠主题设计系统 */
+
+:root {
+  /* ===== 主题配色 - Tom & Jerry ===== */
+
+  /* 主角色色 */
+  --tom-blue: #5B7C99;        /* Tom 猫的蓝灰色 */
+  --tom-blue-light: #7A94B0;  /* 浅蓝灰 */
+  --tom-blue-dark: #3D5266;   /* 深蓝灰 */
+
+  --jerry-brown: #A06C4A;     /* Jerry 老鼠的棕色 */
+  --jerry-brown-light: #C48B6B;
+  --jerry-brown-dark: #754D32;
+
+  /* 辅助色 */
+  --cheese-yellow: #FFD93D;   /* 奶酪黄 */
+  --cheese-yellow-light: #FFE56B;
+  --cheese-yellow-dark: #E5B800;
+
+  --mouse-hole: #2D2D2D;      /* 鼠洞深色 */
+  --house-cream: #F5F0E6;     /* 房子米白色 */
+  --wood-brown: #8B6F47;      /* 木质棕色 */
+
+  /* 状态色（保持原有但微调） */
+  --primary: var(--tom-blue);
+  --primary-light: var(--tom-blue-light);
+  --primary-dark: var(--tom-blue-dark);
+
+  --success: #4ECDC4;         /* 清新的薄荷绿 */
+  --warning: var(--cheese-yellow);
+  --danger: #E63946;          /* 抓痕红 */
+  --purple: #9B5DE5;          /* 神秘紫 */
+
+  /* ===== 背景色系 ===== */
+  --bg-primary: var(--house-cream);
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #F0E8D8;
+  --bg-tom: rgba(91, 124, 153, 0.08);
+  --bg-jerry: rgba(160, 108, 74, 0.08);
+
+  /* ===== 文字色系 ===== */
+  --text-primary: #2D2D2D;
+  --text-secondary: #5B5B5B;
+  --text-tertiary: #8B8B8B;
+  --text-tom: var(--tom-blue);
+  --text-jerry: var(--jerry-brown);
+
+  /* ===== 边框色 ===== */
+  --border: #D4C8B8;
+  --border-light: #E8E0D0;
+  --border-tom: var(--tom-blue-light);
+  --border-jerry: var(--jerry-brown-light);
+
+  /* ===== 阴影 ===== */
+  --shadow-sm: 0 1px 3px rgba(45, 45, 45, 0.08);
+  --shadow: 0 4px 12px rgba(45, 45, 45, 0.1);
+  --shadow-lg: 0 8px 24px rgba(45, 45, 45, 0.12);
+  --shadow-xl: 0 12px 40px rgba(45, 45, 45, 0.16);
+
+  /* ===== 圆角 ===== */
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-xxl: 32px;
+
+  /* ===== 动画 ===== */
+  --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-tom-chase: cubic-bezier(0.55, 0.055, 0.675, 0.19); /* 追逐动画曲线 */
+}
+
+/* 暗色模式 - 夜晚场景 */
+[data-theme="dark"] {
+  --bg-primary: #1A1A1A;
+  --bg-secondary: #2D2D2D;
+  --bg-tertiary: #3D3D3D;
+  --bg-tom: rgba(91, 124, 153, 0.15);
+  --bg-jerry: rgba(160, 108, 74, 0.15);
+
+  --text-primary: #F5F5F5;
+  --text-secondary: #B8B8B8;
+  --text-tertiary: #8B8B8B;
+
+  --border: #404040;
+  --border-light: #353535;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== 卡通风格图标 ===== */
+.icon-tom::before {
+  content: '🐱';
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.icon-jerry::before {
+  content: '🐭';
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.icon-cheese::before {
+  content: '🧀';
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.icon-house::before {
+  content: '🏠';
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.icon-paw::before {
+  content: '🐾';
+  display: inline-block;
+  margin-right: 4px;
+}
+
+/* ===== 角色徽章 ===== */
+.character-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.character-badge.tom {
+  background: var(--bg-tom);
+  color: var(--tom-blue);
+  border: 1px solid var(--tom-blue-light);
+}
+
+.character-badge.jerry {
+  background: var(--bg-jerry);
+  color: var(--jerry-brown);
+  border: 1px solid var(--jerry-brown-light);
+}
+
+.character-badge.cheese {
+  background: rgba(255, 217, 61, 0.15);
+  color: var(--cheese-yellow-dark);
+  border: 1px solid var(--cheese-yellow);
+}
+
+/* ===== 故事卡片 ===== */
+.story-card {
+  background: linear-gradient(135deg, var(--bg-tom), var(--bg-jerry));
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  margin: 16px 0;
+  border-left: 4px solid var(--tom-blue);
+  box-shadow: var(--shadow-sm);
+}
+
+.story-card.jerry {
+  border-left-color: var(--jerry-brown);
+  background: linear-gradient(135deg, var(--bg-jerry), var(--bg-cheese));
+}
+
+.story-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.story-card-content {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+/* ===== 视觉提示框 ===== */
+.visual-hint {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin: 12px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.visual-hint-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+/* ===== 知识要点框 ===== */
+.key-point {
+  background: linear-gradient(135deg, rgba(91, 124, 153, 0.08), rgba(160, 108, 74, 0.08));
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.key-point-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.key-point-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.key-point-list li {
+  padding: 6px 0 6px 20px;
+  position: relative;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.key-point-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--tom-blue);
+  font-weight: 700;
+}
+
+/* ===== 小测验框 ===== */
+.quiz-box {
+  background: var(--bg-jerry);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  margin: 20px 0;
+  border: 2px solid var(--jerry-brown-light);
+}
+
+.quiz-box-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--jerry-brown);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ===== 双栏布局 ===== */
+.lesson-two-column {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  margin: 20px 0;
+}
+
+.lesson-text-column {
+  min-width: 0;
+}
+
+.lesson-visual-column {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  border: 1px solid var(--border-light);
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
+.lesson-visual-column img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+}
+
+.visual-caption {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  text-align: center;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+/* 响应式：移动端切换为单栏 */
+@media (max-width: 900px) {
+  .lesson-two-column {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .lesson-visual-column {
+    position: static;
+    order: -1; /* 图片在上方 */
+  }
+}
+
+/* ===== 进度追踪 - 脚印样式 ===== */
+.progress-paw-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.progress-paw {
+  flex: 1;
+  height: 8px;
+  background: var(--border-light);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-paw-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--tom-blue), var(--jerry-brown));
+  border-radius: 4px;
+  transition: width 0.5s var(--ease-apple);
+}
+
+/* ===== 章节卡片增强 ===== */
+.chapter-card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-xl);
+  margin-bottom: 20px;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s var(--ease-apple);
+}
+
+.chapter-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.chapter-card.expanded {
+  border-color: var(--tom-blue-light);
+}
+
+.chapter-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--bg-tom), transparent);
+}
+
+.chapter-card.expanded .chapter-header {
+  border-bottom: 1px solid var(--border-light);
+}
+
+.chapter-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chapter-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--tom-blue);
+  color: white;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* ===== 课程项增强 ===== */
+.lesson-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: all 0.2s var(--ease-apple);
+}
+
+.lesson-item:last-child {
+  border-bottom: none;
+}
+
+.lesson-item:hover {
+  background: var(--bg-tom);
+}
+
+.lesson-item.not-started .lesson-status {
+  color: var(--text-tertiary);
+}
+
+.lesson-item.learning .lesson-status {
+  color: var(--tom-blue);
+}
+
+.lesson-item.completed .lesson-status {
+  color: var(--success);
+}
+
+.lesson-item.mastered .lesson-status {
+  color: var(--cheese-yellow-dark);
+}
+
+.lesson-status {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+/* ===== 导航按钮增强 ===== */
+.nav-btn-with-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s var(--ease-apple);
+  min-width: 70px;
+}
+
+.nav-btn-with-label:not(:disabled):hover {
+  background: var(--tom-blue);
+  border-color: var(--tom-blue);
+  color: white;
+}
+
+.nav-btn-with-label:not(:disabled):active {
+  transform: scale(0.95);
+}
+
+.nav-btn-with-label:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.nav-btn-label {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.nav-btn-icon {
+  font-size: 18px;
+}
+
+/* ===== 底部导航增强 ===== */
+.bottom-nav {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+
+[data-theme="dark"] .bottom-nav {
+  background: rgba(45, 45, 45, 0.85);
+  border-top-color: rgba(255,255,255,0.08);
+}
+
+.nav-item {
+  position: relative;
+}
+
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: var(--tom-blue);
+  border-radius: 50%;
+}
+
+/* ===== 成就徽章 - 奖章风格 ===== */
+.achievement-badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  background: linear-gradient(135deg, var(--cheese-yellow-light), var(--cheese-yellow));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  min-width: 80px;
+}
+
+.achievement-icon {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.achievement-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--jerry-brown-dark);
+  text-align: center;
+}
+
+/* ===== 加载动画 - Tom 追逐 ===== */
+.loading-tom-chase {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  padding: 40px;
+}
+
+.loading-tom-chase::before {
+  content: '🐱';
+  font-size: 32px;
+  animation: tomRun 1s infinite var(--ease-tom-chase);
+}
+
+.loading-tom-chase::after {
+  content: '🐭';
+  font-size: 32px;
+  animation: jerryRun 1s infinite var(--ease-tom-chase);
+}
+
+@keyframes tomRun {
+  0%, 100% { transform: translateX(0) scale(1); }
+  50% { transform: translateX(20px) scale(1.1); }
+}
+
+@keyframes jerryRun {
+  0%, 100% { transform: translateX(30px) scale(1); }
+  50% { transform: translateX(50px) scale(1.1); }
+}
+
+/* ===== Toast 增强 ===== */
+.toast {
+  background: linear-gradient(135deg, var(--tom-blue), var(--tom-blue-dark));
+  color: white;
+  font-weight: 500;
+}
+
+.toast.success {
+  background: linear-gradient(135deg, var(--success), #2FA896);
+}
+
+.toast.cheese {
+  background: linear-gradient(135deg, var(--cheese-yellow), var(--cheese-yellow-dark));
+  color: var(--mouse-hole);
+}
+
+/* ===== 移动端课程导航 ===== */
+.mobile-lesson-nav {
+  background: var(--bg-secondary) !important;
+  border-top: 2px solid var(--tom-blue-light);
+}
+
+.mobile-nav-btn {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
+.mobile-nav-btn.next {
+  background: var(--tom-blue) !important;
+  color: white !important;
+}
+
+/* ===== 打印样式 ===== */
+@media print {
+  .lesson-visual-column {
+    position: static;
+  }
+
+  .bottom-nav,
+  .top-nav,
+  .mobile-lesson-nav {
+    display: none !important;
+  }
+}

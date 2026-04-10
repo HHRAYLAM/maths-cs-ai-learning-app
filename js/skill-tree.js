@@ -123,7 +123,6 @@ const SkillTree = {
   renderLesson(lesson) {
     const progress = Storage.getLessonProgress(lesson.id);
     const status = progress?.status || 'not-started';
-    const prereqCheck = Content.checkPrerequisites(lesson);
 
     const statusIcons = {
       'not-started': '○',
@@ -132,10 +131,8 @@ const SkillTree = {
       'mastered': '★'
     };
 
-    const canAccess = prereqCheck.canAccess || status !== 'not-started';
-
     return `
-      <div class="lesson-item ${status} ${!canAccess ? 'locked' : ''}" data-lesson-id="${lesson.id}">
+      <div class="lesson-item ${status}" data-lesson-id="${lesson.id}">
         <div class="lesson-status ${status}">
           ${statusIcons[status] || '○'}
         </div>
@@ -143,7 +140,6 @@ const SkillTree = {
           <div class="lesson-title">${lesson.title}</div>
           <div class="lesson-meta">
             ${lesson.estimatedMinutes || 10}分钟
-            ${!prereqCheck.canAccess ? ` · 需先修：${prereqCheck.missing.slice(0, 2).join(', ')}` : ''}
           </div>
         </div>
         <div class="lesson-check">
@@ -157,15 +153,6 @@ const SkillTree = {
   openLesson(lessonId) {
     const lesson = Content.getLesson(lessonId);
     if (!lesson) return;
-
-    const prereqCheck = Content.checkPrerequisites(lesson);
-    const progress = Storage.getLessonProgress(lessonId);
-
-    // 检查先修条件
-    if (!prereqCheck.canAccess && (!progress || progress.status === 'not-started')) {
-      showToast(`请先完成：${prereqCheck.missing.join(', ')}`);
-      return;
-    }
 
     // 打开课程阅读器
     LessonViewer.open(lessonId);

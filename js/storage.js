@@ -185,22 +185,40 @@ const Storage = {
     });
 
     // 计算总课程数（需要从内容获取）
-    stats.totalLessons = this.getTotalLessons();
+    const totalFromContent = this.getTotalLessons();
+    stats.totalLessons = totalFromContent > 0 ? totalFromContent : stats.totalLessons;
+
+    // 计算完成率
+    const completedCount = (stats.completed || 0) + (stats.mastered || 0);
     stats.completionRate = stats.totalLessons > 0
-      ? ((stats.completed + stats.mastered) / stats.totalLessons * 100).toFixed(1)
-      : 0;
+      ? ((completedCount / stats.totalLessons) * 100).toFixed(1)
+      : '0.0';
 
     return stats;
   },
 
   // 获取总课程数（从内容配置）
   getTotalLessons() {
-    const content = window.CONTENT_DATA;
-    if (!content || !content.chapters) return 0;
+    // 尝试从 Content 模块获取
+    if (window.Content && typeof window.Content.getChapters === 'function') {
+      const chapters = window.Content.getChapters();
+      if (chapters && chapters.length > 0) {
+        return chapters.reduce((sum, chapter) => {
+          return sum + (chapter.lessons ? chapter.lessons.length : 0);
+        }, 0);
+      }
+    }
 
-    return content.chapters.reduce((sum, chapter) => {
-      return sum + (chapter.lessons ? chapter.lessons.length : 0);
-    }, 0);
+    // 回退到 CONTENT_DATA
+    const content = window.CONTENT_DATA;
+    if (content && content.chapters) {
+      return content.chapters.reduce((sum, chapter) => {
+        return sum + (chapter.lessons ? chapter.lessons.length : 0);
+      }, 0);
+    }
+
+    // 如果都无法获取，返回 0
+    return 0;
   },
 
   // 重置所有进度

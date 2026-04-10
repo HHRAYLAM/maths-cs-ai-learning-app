@@ -28,11 +28,14 @@ const LessonViewer = {
       </div>
     `;
 
-    // 绑定返回按钮（先移除旧监听器，避免重复绑定）
+    // 绑定返回按钮
     const backBtn = document.getElementById('back-to-tree');
     if (backBtn) {
-      backBtn.replaceWith(backBtn.cloneNode(true));
-      document.getElementById('back-to-tree')?.addEventListener('click', () => {
+      // 移除旧的监听器
+      const newBackBtn = backBtn.cloneNode(true);
+      backBtn.parentNode.replaceChild(newBackBtn, backBtn);
+      // 添加新的监听器
+      newBackBtn.addEventListener('click', () => {
         this.close();
       });
     }
@@ -50,7 +53,7 @@ const LessonViewer = {
     // 渲染内容
     this.renderContent(markdown);
 
-    // 更新导航按钮
+    // 更新导航按钮（包括前课/后课按钮）
     this.updateNavigation(lessonId);
 
     // 更新完成按钮状态
@@ -71,9 +74,11 @@ const LessonViewer = {
     const feynmanBtn = document.getElementById('feynman-btn');
     if (!feynmanBtn) return;
 
-    // 绑定点击事件
-    feynmanBtn.replaceWith(feynmanBtn.cloneNode(true));
-    document.getElementById('feynman-btn')?.addEventListener('click', () => {
+    // 移除旧的监听器
+    const newFeynmanBtn = feynmanBtn.cloneNode(true);
+    feynmanBtn.parentNode.replaceChild(newFeynmanBtn, feynmanBtn);
+    // 添加新的监听器
+    newFeynmanBtn.addEventListener('click', () => {
       this.openFeynmanModal(lessonId);
     });
   },
@@ -145,9 +150,11 @@ const LessonViewer = {
     // 更新书签状态
     this.updateBookmarkButton(lessonId);
 
-    // 绑定点击事件
-    bookmarkBtn.replaceWith(bookmarkBtn.cloneNode(true));
-    document.getElementById('bookmark-btn')?.addEventListener('click', () => {
+    // 移除旧的监听器
+    const newBookmarkBtn = bookmarkBtn.cloneNode(true);
+    bookmarkBtn.parentNode.replaceChild(newBookmarkBtn, bookmarkBtn);
+    // 添加新的监听器
+    newBookmarkBtn.addEventListener('click', () => {
       const isBookmarked = Storage.toggleBookmark(lessonId);
       this.updateBookmarkButton(lessonId);
       showToast(isBookmarked ? '已添加书签' : '已移除书签');
@@ -289,20 +296,49 @@ const LessonViewer = {
   updateNavigation(lessonId) {
     const prevBtn = document.getElementById('prev-lesson');
     const nextBtn = document.getElementById('next-lesson');
+    const mobilePrevBtn = document.getElementById('mobile-prev');
+    const mobileNextBtn = document.getElementById('mobile-next');
 
     const prevLesson = Content.getPreviousLesson(lessonId);
     const nextLesson = Content.getNextLesson(lessonId);
 
-    prevBtn.disabled = !prevLesson;
-    nextBtn.disabled = !nextLesson;
+    // 更新桌面端按钮
+    if (prevBtn && nextBtn) {
+      prevBtn.disabled = !prevLesson;
+      nextBtn.disabled = !nextLesson;
 
-    prevBtn.onclick = () => {
-      if (prevLesson) this.open(prevLesson.id);
-    };
+      // 移除旧监听器并添加新的
+      const newPrevBtn = prevBtn.cloneNode(true);
+      prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
+      newPrevBtn.addEventListener('click', () => {
+        if (prevLesson) this.open(prevLesson.id);
+      });
 
-    nextBtn.onclick = () => {
-      if (nextLesson) this.open(nextLesson.id);
-    };
+      const newNextBtn = nextBtn.cloneNode(true);
+      nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
+      newNextBtn.addEventListener('click', () => {
+        if (nextLesson) this.open(nextLesson.id);
+      });
+    }
+
+    // 更新移动端按钮
+    if (mobilePrevBtn && mobileNextBtn) {
+      mobilePrevBtn.disabled = !prevLesson;
+      mobileNextBtn.disabled = !nextLesson;
+
+      // 移除旧监听器并添加新的
+      const newMobilePrevBtn = mobilePrevBtn.cloneNode(true);
+      mobilePrevBtn.parentNode.replaceChild(newMobilePrevBtn, mobilePrevBtn);
+      newMobilePrevBtn.addEventListener('click', () => {
+        if (prevLesson) this.open(prevLesson.id);
+      });
+
+      const newMobileNextBtn = mobileNextBtn.cloneNode(true);
+      mobileNextBtn.parentNode.replaceChild(newMobileNextBtn, mobileNextBtn);
+      newMobileNextBtn.addEventListener('click', () => {
+        if (nextLesson) this.open(nextLesson.id);
+      });
+    }
   },
 
   // 更新完成按钮
@@ -318,15 +354,18 @@ const LessonViewer = {
       btn.classList.remove('completed');
     }
 
-    btn.onclick = () => {
+    // 移除旧监听器并添加新的
+    const newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+    newBtn.addEventListener('click', () => {
       ProgressManager.completeCurrentLesson();
-      btn.textContent = '已完成 ✓';
-      btn.classList.add('completed');
+      newBtn.textContent = '已完成 ✓';
+      newBtn.classList.add('completed');
       showToast('课程已完成！');
 
       // 刷新知识树
       SkillTree.refresh();
-    };
+    });
   },
 
   // 关闭阅读器
