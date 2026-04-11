@@ -113,7 +113,8 @@ const Content = {
     if (!lesson || !lesson.file) return null;
 
     try {
-      const response = await fetch(`content/${this.activePack}/${lesson.file}`);
+      // 添加时间戳防止缓存
+      const response = await fetch(`content/${this.activePack}/${lesson.file}?t=${Date.now()}`);
       if (!response.ok) throw new Error('课程 content 加载失败');
 
       const markdown = await response.text();

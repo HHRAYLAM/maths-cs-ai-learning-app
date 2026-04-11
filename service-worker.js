@@ -72,20 +72,28 @@ self.addEventListener('fetch', event => {
   const isContentRequest = url.pathname.includes('/content/');
   const isExternalResource = url.hostname !== self.location.hostname;
 
+  // 检查是否有缓存破坏参数（如 ?t=123456）
+  const hasCacheBuster = url.search.includes('t=');
+
   event.respondWith(
     caches.match(event.request)
       .then(cachedResponse => {
-        if (cachedResponse) {
-          // 缓存命中，直接返回
+        if (cachedResponse && !hasCacheBuster) {
+          // 缓存命中，直接返回（但如果有缓存破坏参数则跳过）
           console.log('缓存命中:', event.request.url);
           return cachedResponse;
         }
 
-        // 缓存未命中，从网络获取
+        // 缓存未命中或有缓存破坏参数，从网络获取
         return fetch(event.request)
           .then(networkResponse => {
             // 不缓存非 GET 请求或错误响应
             if (!networkResponse || networkResponse.status !== 200 || event.request.method !== 'GET') {
+              return networkResponse;
+            }
+
+            // 如果有缓存破坏参数，不缓存（内容可能已更新）
+            if (hasCacheBuster) {
               return networkResponse;
             }
 
