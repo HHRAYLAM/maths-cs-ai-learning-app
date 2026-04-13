@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" width="400" height="200">
+  <title>CAP 定理</title>
+  <rect width="400" height="200" fill="#16213e"/>
+  <!-- 三角形 -->
+  <polygon points="200,40 60,170 340,170" fill="none" stroke="#4A90D9" stroke-width="3"/>
+  <!-- 顶点 -->
+  <circle cx="200" cy="40" r="25" fill="#ef4444"/>
+  <text x="200" y="47" text-anchor="middle" fill="white" font-size="14" font-weight="bold">C</text>
+  <circle cx="60" cy="170" r="25" fill="#10b981"/>
+  <text x="60" y="177" text-anchor="middle" fill="white" font-size="14" font-weight="bold">A</text>
+  <circle cx="340" cy="170" r="25" fill="#f59e0b"/>
+  <text x="340" y="177" text-anchor="middle" fill="white" font-size="14" font-weight="bold">P</text>
+  <!-- 标签 -->
+  <text x="200" y="25" text-anchor="middle" fill="#ef4444" font-size="12">一致性</text>
+  <text x="40" y="195" text-anchor="middle" fill="#10b981" font-size="12">可用性</text>
+  <text x="340" y="195" text-anchor="middle" fill="#f59e0b" font-size="12">分区容错</text>
+  <text x="200" y="120" text-anchor="middle" fill="#aaa" font-size="14">只能选两个</text>
+  <text x="200" y="145" text-anchor="middle" fill="#666" font-size="11">网络分区不可避免</text>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 280" width="500" height="280">
+  <title>Mel 滤波器组</title>
+  <text x="250" y="20" text-anchor="middle" fill="#eee" font-size="16">Mel 滤波器组 (Mel Filterbank)</text>
+  <!-- 坐标轴 -->
+  <line x1="50" y1="220" x2="470" y2="220" stroke="#666" stroke-width="2"/>
+  <line x1="50" y1="40" x2="50" y2="220" stroke="#666" stroke-width="2"/>
+  <text x="260" y="250" text-anchor="middle" fill="#aaa" font-size="12">频率 (Hz, 对数 scale)</text>
+  <text x="25" y="130" text-anchor="middle" fill="#aaa" font-size="12" transform="rotate(-90, 25, 130)">能量</text>
+  <!-- 三角形滤波器 -->
+  <path d="M 50 220 L 50 220 L 80 220 Z" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <path d="M 60 220 L 90 100 L 120 220" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+  <path d="M 100 220 L 140 80 L 180 220" fill="none" stroke="#f97316" stroke-width="2.5"/>
+  <path d="M 160 220 L 200 60 L 240 220" fill="none" stroke="#fbbf24" stroke-width="2.5"/>
+  <path d="M 220 220 L 260 50 L 300 220" fill="none" stroke="#4ade80" stroke-width="2.5"/>
+  <path d="M 280 220 L 320 55 L 360 220" fill="none" stroke="#4A90D9" stroke-width="2.5"/>
+  <path d="M 340 220 L 380 70 L 420 220" fill="none" stroke="#8b5cf6" stroke-width="2.5"/>
+  <path d="M 400 220 L 440 100 L 470 220" fill="none" stroke="#a855f7" stroke-width="2.5"/>
+  <!-- 频率刻度 -->
+  <text x="50" y="235" text-anchor="middle" fill="#888" font-size="10">0</text>
+  <text x="150" y="235" text-anchor="middle" fill="#888" font-size="10">500</text>
+  <text x="260" y="235" text-anchor="middle" fill="#888" font-size="10">1k</text>
+  <text x="360" y="235" text-anchor="middle" fill="#888" font-size="10">2k</text>
+  <text x="470" y="235" text-anchor="middle" fill="#888" font-size="10">8k</text>
+  <!-- 标注 -->
+  <text x="120" y="70" fill="#fbbf24" font-size="11">低频窄滤波器</text>
+  <text x="320" y="70" fill="#4A90D9" font-size="11">高频宽滤波器</text>
+  <text x="260" y="270" text-anchor="middle" fill="#666" font-size="11">人耳对低频更敏感 → 滤波器更密集</text>
+</svg>

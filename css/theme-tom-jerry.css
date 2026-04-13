@@ -67,7 +67,11 @@
   /* ===== 动画 ===== */
   --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
   --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-tom-chase: cubic-bezier(0.55, 0.055, 0.675, 0.19); /* 追逐动画曲线 */
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-tom-chase: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
 }
 
 /* ===== 覆盖 main.css 的具体样式 ===== */
@@ -651,4 +655,586 @@ html, body {
   .mobile-lesson-nav {
     display: none !important;
   }
+}
+
+/* ===== 卡通风格动画关键帧 ===== */
+
+/* 弹跳进入动画 */
+@keyframes bounce-in {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.1); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* 摇摆动画（提示） */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+/* 向上滑动动画 */
+@keyframes slide-up {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* 庆祝动画（成功时） */
+@keyframes celebrate {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.1) rotate(-3deg); }
+  50% { transform: scale(1.1) rotate(3deg); }
+  75% { transform: scale(1.1) rotate(-3deg); }
+}
+
+/* 脉冲动画（加载中） */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+/* ===== 卡通风格按钮 ===== */
+
+.btn-cartoon {
+  background: var(--tom-blue);
+  color: white;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-weight: 600;
+  font-size: 15px;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-cartoon:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.15);
+}
+
+.btn-cartoon:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.15);
+}
+
+.btn-cartoon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-cartoon-primary {
+  background: var(--tom-blue);
+}
+
+.btn-cartoon-secondary {
+  background: var(--jerry-brown);
+}
+
+.btn-cartoon-success {
+  background: var(--success);
+}
+
+/* 动画类 */
+.animate-bounce-in {
+  animation: bounce-in 0.5s var(--ease-spring);
+}
+
+.animate-wiggle {
+  animation: wiggle 0.3s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s var(--ease-apple);
+}
+
+.animate-celebrate {
+  animation: celebrate 0.6s var(--ease-spring);
+}
+
+.animate-pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ===== 故事卡片增强 ===== */
+
+.story-card {
+  background: linear-gradient(135deg, rgba(91, 124, 153, 0.1), rgba(160, 108, 74, 0.1));
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin: 20px 0;
+  border-left: 5px solid var(--tom-blue);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s var(--ease-apple);
+}
+
+.story-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.1);
+}
+
+.story-card.jerry {
+  border-left-color: var(--jerry-brown);
+  background: linear-gradient(135deg, rgba(160, 108, 74, 0.1), rgba(255, 217, 61, 0.1));
+}
+
+.story-card-character {
+  font-size: 32px;
+  margin-right: 12px;
+  display: inline-block;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ===== 双栏布局增强 ===== */
+
+.lesson-two-column {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 28px;
+  margin: 24px 0;
+  align-items: start;
+}
+
+.lesson-text-column {
+  min-width: 0;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.lesson-visual-column {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  border: 2px solid var(--border-light);
+  position: sticky;
+  top: 24px;
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.08);
+}
+
+.lesson-visual-column img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--border-light);
+  transition: transform 0.3s var(--ease-apple);
+}
+
+.lesson-visual-column img:hover {
+  transform: scale(1.02);
+}
+
+.visual-item {
+  margin-bottom: 24px;
+  animation: slide-up 0.5s var(--ease-apple);
+}
+
+.visual-caption {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  text-align: center;
+  margin-top: 10px;
+  font-style: italic;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+}
+
+/* 响应式：移动端切换为单栏，图片在上 */
+@media (max-width: 900px) {
+  .lesson-two-column {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .lesson-visual-column {
+    position: static;
+    max-height: none;
+    order: -1;
+    margin-bottom: 20px;
+  }
+
+  .lesson-visual-column img {
+    max-height: 300px;
+    object-fit: cover;
+  }
+}
+
+/* ===== 导航按钮卡通风格增强 ===== */
+
+.nav-btn-with-label {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-tertiary) !important;
+  border: 2px solid var(--border-light) !important;
+  border-radius: 12px !important;
+  transition: all 0.2s var(--ease-apple);
+}
+
+.nav-btn-with-label:not(:disabled):hover {
+  background: var(--tom-blue) !important;
+  border-color: var(--tom-blue) !important;
+  color: white !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(91, 124, 153, 0.3);
+}
+
+.nav-btn-with-label:not(:disabled):active {
+  transform: scale(0.95) translate(1px, 1px);
+}
+
+.nav-btn-with-label:not(:disabled):hover::after {
+  content: '✨';
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 16px;
+  animation: wiggle 0.5s ease-in-out;
+}
+
+.nav-btn-with-label:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+}
+
+/* 导航按钮图标 */
+.nav-btn-icon {
+  font-size: 18px;
+  transition: transform 0.2s var(--ease-apple);
+}
+
+.nav-btn-with-label:hover .nav-btn-icon {
+  transform: scale(1.1);
+}
+
+/* 课程完成按钮 - 卡通风格 */
+.complete-btn {
+  background: linear-gradient(135deg, var(--success), #2FA896);
+  box-shadow: 4px 4px 0px rgba(46, 168, 150, 0.4);
+  transition: all 0.3s var(--ease-spring);
+}
+
+.complete-btn:hover:not(.completed) {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px rgba(46, 168, 150, 0.4);
+}
+
+.complete-btn:active:not(.completed) {
+  transform: translate(2px, 2px) scale(0.98);
+  box-shadow: 2px 2px 0px rgba(46, 168, 150, 0.4);
+}
+
+.complete-btn.completed {
+  background: var(--border);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+}
+
+/* Toast 卡通风格 */
+.toast {
+  background: linear-gradient(135deg, var(--tom-blue), var(--tom-blue-dark));
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2);
+  animation: slide-up 0.3s var(--ease-spring);
+}
+
+.toast.success {
+  background: linear-gradient(135deg, var(--success), #2FA896);
+}
+
+.toast.cheese {
+  background: linear-gradient(135deg, var(--cheese-yellow), var(--cheese-yellow-dark));
+  color: var(--mouse-hole);
+}
+
+/* ===== 导航按钮样式增强 ===== */
+
+.nav-btn {
+  background: var(--bg-tertiary) !important;
+  border: 2px solid var(--border-light) !important;
+  transition: all 0.2s var(--ease-apple);
+}
+
+.nav-btn:hover:not(:disabled) {
+  background: var(--tom-blue) !important;
+  border-color: var(--tom-blue) !important;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(91, 124, 153, 0.3);
+}
+
+.nav-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* 书签按钮特殊样式 */
+#bookmark-btn:hover {
+  background: var(--cheese-yellow) !important;
+  border-color: var(--cheese-yellow) !important;
+}
+
+/* 费曼按钮特殊样式 */
+#feynman-btn:hover {
+  background: var(--jerry-brown) !important;
+  border-color: var(--jerry-brown) !important;
+}
+
+/* 练习按钮特殊样式 */
+#quiz-btn:hover {
+  background: var(--success) !important;
+  border-color: var(--success) !important;
+}
+
+/* ===== 加载动画 - Tom 追逐 Jerry ===== */
+
+.loading-tom-chase {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px;
+}
+
+.loading-tom-chase::before {
+  content: '🐱';
+  font-size: 36px;
+  animation: tomChase 1s infinite var(--ease-tom-chase);
+}
+
+.loading-tom-chase::after {
+  content: '🐭';
+  font-size: 36px;
+  animation: jerryRun 1s infinite var(--ease-tom-chase);
+}
+
+@keyframes tomChase {
+  0%, 100% { transform: translateX(0) scale(1); }
+  50% { transform: translateX(30px) scale(1.15); }
+}
+
+@keyframes jerryRun {
+  0%, 100% { transform: translateX(40px) scale(1); }
+  50% { transform: translateX(70px) scale(1.1); }
+}
+
+/* ===== 成就徽章 - 卡通奖章风格 ===== */
+
+.achievement-badge {
+  animation: bounce-in 0.6s var(--ease-spring);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+}
+
+.achievement-badge:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* ===== 进度条 - 卡通风格 ===== */
+
+.progress-paw {
+  height: 12px;
+  background: var(--border-light);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.progress-paw-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--tom-blue), var(--jerry-brown));
+  border-radius: 6px;
+  transition: width 0.6s var(--ease-spring);
+  box-shadow: 0 0 10px rgba(91, 124, 153, 0.4);
+}
+
+/* ===== 章节卡片 - 卡通风格 ===== */
+
+.chapter-card {
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s var(--ease-apple);
+}
+
+.chapter-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.1);
+}
+
+.chapter-card.expanded {
+  animation: celebrate 0.4s var(--ease-spring);
+}
+
+/* ===== 图片 Lightbox - 卡通风格 ===== */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox.hidden {
+  display: none;
+}
+
+.lightbox-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+.lightbox-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  animation: bounce-in 0.4s var(--ease-spring);
+}
+
+.lightbox-content img {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border: 4px solid var(--tom-blue);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: -16px;
+  right: -16px;
+  width: 40px;
+  height: 40px;
+  background: var(--tom-blue);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s var(--ease-apple);
+  z-index: 1;
+}
+
+.lightbox-close:hover {
+  background: var(--tom-blue-dark);
+  transform: scale(1.1);
+}
+
+.lightbox-caption {
+  text-align: center;
+  color: white;
+  font-size: 14px;
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: var(--radius);
+}
+
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  background: var(--tom-blue);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s var(--ease-apple);
+}
+
+.lightbox-nav:hover {
+  background: var(--tom-blue-dark);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.lightbox-nav.prev {
+  left: -64px;
+}
+
+.lightbox-nav.next {
+  right: -64px;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .lightbox-nav {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .lightbox-nav.prev {
+    left: 8px;
+  }
+
+  .lightbox-nav.next {
+    right: 8px;
+  }
+}
+
+/* ===== 课程图片卡通边框 ===== */
+
+.lesson-content img {
+  border: 3px solid var(--border-light);
+  border-radius: var(--radius);
+  transition: all 0.3s var(--ease-apple);
+  cursor: pointer;
+}
+
+.lesson-content img:hover {
+  transform: scale(1.02);
+  border-color: var(--tom-blue);
+  box-shadow: 0 8px 24px rgba(91, 124, 153, 0.3);
+}
+
+/* ===== 移动端导航按钮卡通风格 ===== */
+
+.mobile-nav-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s var(--ease-spring) !important;
+}
+
+.mobile-nav-btn:not(:disabled):active {
+  transform: scale(0.95);
+}
+
+.mobile-nav-btn.next {
+  background: linear-gradient(135deg, var(--tom-blue), var(--tom-blue-dark)) !important;
+  box-shadow: 4px 4px 0px rgba(91, 124, 153, 0.4);
+}
+
+.mobile-nav-btn.next:active {
+  box-shadow: 2px 2px 0px rgba(91, 124, 153, 0.4);
+}
+
+.mobile-nav-btn.prev {
+  background: linear-gradient(135deg, var(--jerry-brown), var(--jerry-brown-dark)) !important;
+  box-shadow: 4px 4px 0px rgba(160, 108, 74, 0.4);
+}
+
+.mobile-nav-btn.prev:active {
+  box-shadow: 2px 2px 0px rgba(160, 108, 74, 0.4);
+}
+
+/* 移动端按钮 hover 提示 */
+.mobile-nav-btn:not(:disabled):hover::after {
+  content: '🐾';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  opacity: 0.5;
+  animation: bounce-in 0.3s var(--ease-spring);
 }

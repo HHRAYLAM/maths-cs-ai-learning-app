@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" width="400" height="200">
+  <title>缓存旁路模式</title>
+  <rect width="400" height="200" fill="#16213e"/>
+  <!-- 应用 -->
+  <rect x="10" y="80" width="80" height="40" fill="#4A90D9" rx="5"/>
+  <text x="50" y="105" text-anchor="middle" fill="white" font-size="12">应用</text>
+  <!-- 缓存 -->
+  <rect x="160" y="40" width="80" height="40" fill="#fbbf24" rx="5"/>
+  <text x="200" y="65" text-anchor="middle" fill="#1a1a2e" font-size="12" font-weight="bold">缓存</text>
+  <!-- 数据库 -->
+  <rect x="160" y="120" width="80" height="40" fill="#10b981" rx="5"/>
+  <text x="200" y="145" text-anchor="middle" fill="white" font-size="12">数据库</text>
+  <!-- 流程箭头 -->
+  <line x1="90" y1="90" x2="155" y2="70" stroke="#666" stroke-width="2"/>
+  <text x="120" y="70" fill="#aaa" font-size="9">1. 读缓存</text>
+  <line x1="200" y1="80" x2="200" y2="115" stroke="#666" stroke-width="2" stroke-dasharray="4"/>
+  <text x="210" y="100" fill="#aaa" font-size="9">2. 未命中</text>
+  <line x1="245" y1="130" x2="290" y2="130" stroke="#666" stroke-width="2"/>
+  <line x1="290" y1="130" x2="290" y2="90" x2="245" y2="90" stroke="#666" stroke-width="2"/>
+  <text x="250" y="150" fill="#aaa" font-size="9">3. 写缓存</text>
+</svg>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>快速测试 - 数学/计算机/AI 学习</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; background: #f5f5f5; }
+    .card { background: white; padding: 20px; border-radius: 12px; margin: 10px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .ok { color: #22c55e; }
+    .error { color: #ef4444; }
+    h1 { color: #1a1a1a; }
+    button { background: #4A90D9; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin: 5px; }
+    button:hover { background: #357ABD; }
+    #results { margin-top: 20px; }
+    .result-item { padding: 10px; margin: 5px 0; border-radius: 6px; }
+    .result-item.pass { background: #dcfce7; color: #166534; }
+    .result-item.fail { background: #fee2e2; color: #991b1b; }
+  </style>
+</head>
+<body>
+  <h1>🧪 快速功能测试</h1>
+
+  <div class="card">
+    <h2>模块加载检查</h2>
+    <div id="module-check">检查中...</div>
+  </div>
+
+  <div class="card">
+    <h2>功能测试</h2>
+    <button onclick="testStorage()">测试存储</button>
+    <button onclick="testContent()">测试内容</button>
+    <button onclick="testQuiz()">测试练习题</button>
+    <button onclick="testLesson()">测试课程</button>
+    <div id="results"></div>
+  </div>
+
+  <div class="card">
+    <h2>错误日志</h2>
+    <pre id="error-log" style="background:#1a1a1a;color:#fff;padding:15px;border-radius:8px;overflow-x:auto;min-height:100px;">暂无错误</pre>
+  </div>
+
+  <script>
+    const errors = [];
+
+    window.addEventListener('error', (e) => {
+      errors.push(`${e.message} (${e.filename}:${e.lineno})`);
+      document.getElementById('error-log').textContent = errors.join('\n') || '暂无错误';
+    });
+
+    function checkModules() {
+      const modules = ['Storage', 'Content', 'QuizData', 'LessonViewer', 'App', 'SkillTree'];
+      const html = modules.map(m => {
+        const loaded = window[m] !== undefined;
+        return `<div class="${loaded ? 'ok' : 'error'}">${loaded ? '✓' : '✗'} ${m}</div>`;
+      }).join('');
+      document.getElementById('module-check').innerHTML = html;
+    }
+
+    function showResult(name, passed, message) {
+      const results = document.getElementById('results');
+      results.innerHTML += `<div class="result-item ${passed ? 'pass' : 'fail'}">${name}: ${passed ? '✓ ' + message : '✗ ' + message}</div>`;
+    }
+
+    function testStorage() {
+      try {
+        const progress = Storage.getProgress();
+        const stats = Storage.getStats();
+        showResult('存储功能', true, `进度记录 ${Object.keys(progress).length} 条，完成率 ${stats.completionRate}%`);
+      } catch (e) {
+        showResult('存储功能', false, e.message);
+      }
+    }
+
+    function testContent() {
+      try {
+        const chapters = Content.getChapters();
+        showResult('内容模块', true, `加载 ${chapters.length} 个章节`);
+      } catch (e) {
+        showResult('内容模块', false, e.message);
+      }
+    }
+
+    function testQuiz() {
+      try {
+        QuizData.init();
+        const count = Object.keys(QuizData.quizzes).length;
+        showResult('练习题', true, `题库包含 ${count} 个课程的练习`);
+      } catch (e) {
+        showResult('练习题', false, e.message);
+      }
+    }
+
+    function testLesson() {
+      try {
+        const chapters = Content.getChapters();
+        const firstLesson = chapters[0]?.lessons?.[0];
+        if (!firstLesson) {
+          showResult('课程打开', false, '无法获取第一课');
+          return;
+        }
+        showResult('课程打开', true, `可以访问：${firstLesson.title}`);
+      } catch (e) {
+        showResult('课程打开', false, e.message);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        checkModules();
+
+        // 自动运行测试
+        setTimeout(() => {
+          testStorage();
+          testContent();
+          testQuiz();
+          testLesson();
+        }, 500);
+      }, 1000);
+    });
+  </script>
+
+  <!-- 加载应用脚本 -->
+  <script src="js/storage.js"></script>
+  <script src="js/content.js"></script>
+  <script src="js/content-enhancer.js"></script>
+  <script src="js/image-viewer.js"></script>
+  <script src="js/progress.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/skill-tree.js"></script>
+  <script src="js/dependency.js"></script>
+  <script src="js/lesson.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

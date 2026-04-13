@@ -6,6 +6,9 @@ const LessonViewer = {
   currentContent: null,
   currentQuizIndex: 0,
 
+  // 追踪之前访问的页面
+  previousPage: null,
+
   // 打开课程
   async open(lessonId) {
     const lesson = Content.getLesson(lessonId);
@@ -16,6 +19,10 @@ const LessonViewer = {
 
     this.currentLesson = lesson;
     this.currentQuizIndex = 0;
+
+    // 记录当前页面，用于关闭时恢复
+    this.previousPage = window.App?.currentPage || 'skill-tree';
+
     const viewer = document.getElementById('lesson-viewer');
     const contentDiv = document.getElementById('lesson-content');
 
@@ -28,16 +35,22 @@ const LessonViewer = {
       </div>
     `;
 
-    // 绑定返回按钮
-    const backBtn = document.getElementById('back-to-tree');
+    // 隐藏底部导航
+    const bottomNav = document.querySelector('.bottom-nav');
+    if (bottomNav) {
+      bottomNav.style.display = 'none';
+    }
+
+    // 绑定返回按钮（返回首页/知识树）
+    const backBtn = document.getElementById('back-to-home');
     if (backBtn) {
-      // 移除旧的监听器
-      const newBackBtn = backBtn.cloneNode(true);
-      backBtn.parentNode.replaceChild(newBackBtn, backBtn);
-      // 添加新的监听器
-      newBackBtn.addEventListener('click', () => {
-        this.close();
-      });
+      // 使用 dataset.bound 标志防止重复绑定
+      if (!backBtn.dataset.bound) {
+        backBtn.addEventListener('click', () => {
+          this.close();
+        });
+        backBtn.dataset.bound = 'true';
+      }
     }
 
     // 更新标题
@@ -50,8 +63,11 @@ const LessonViewer = {
     const markdown = await Content.loadLessonContent(lesson);
     this.currentContent = markdown;
 
-    // 渲染内容
-    this.renderContent(markdown);
+    // 使用 ContentEnhancer 增强内容（添加猫和老鼠故事和比喻）
+    const enhancedMarkdown = ContentEnhancer.enhanceLessonContent(markdown, lesson);
+
+    // 渲染内容（使用双栏布局）
+    this.renderContent(enhancedMarkdown);
 
     // 更新导航按钮（包括前课/后课按钮）
     this.updateNavigation(lessonId);
@@ -203,14 +219,70 @@ const LessonViewer = {
         gfm: true
       });
 
-      contentDiv.innerHTML = html;
-
-      // 渲染 KaTeX 公式
-      this.renderMathJax(contentDiv);
-
-      // 处理图片路径
-      this.fixImagePaths(contentDiv);
+      // 创建双栏布局
+      this.renderTwoColumnLayout(html, contentDiv);
     }
+  },
+
+  // 渲染双栏布局（文字左 + 图片右）
+  renderTwoColumnLayout(html, container) {
+    // 创建临时容器解析 HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    // 提取所有图片
+    const images = Array.from(tempDiv.querySelectorAll('img'));
+    const hasImages = images.length > 0;
+
+    if (hasImages) {
+      // 创建双栏结构
+      const leftColumn = document.createElement('div');
+      leftColumn.className = 'lesson-text-column';
+      leftColumn.innerHTML = tempDiv.innerHTML;
+
+      const rightColumn = document.createElement('div');
+      rightColumn.className = 'lesson-visual-column';
+
+      // 将所有图片移到右栏
+      images.forEach((img, index) => {
+        const visualItem = document.createElement('div');
+        visualItem.className = 'visual-item';
+        visualItem.style.animationDelay = `${index * 0.1}s`;
+
+        // 克隆图片（避免从原位置移除）
+        const imgClone = img.cloneNode(true);
+
+        // 创建标题
+        const caption = document.createElement('div');
+        caption.className = 'visual-caption';
+        caption.textContent = img.alt || `示意图 ${index + 1}`;
+
+        visualItem.appendChild(imgClone);
+        visualItem.appendChild(caption);
+        rightColumn.appendChild(visualItem);
+      });
+
+      // 清空左栏中的图片（只保留文字）
+      const leftImages = leftColumn.querySelectorAll('img');
+      leftImages.forEach(img => img.remove());
+
+      // 组合双栏
+      container.innerHTML = '';
+      const twoColumn = document.createElement('div');
+      twoColumn.className = 'lesson-two-column';
+      twoColumn.appendChild(leftColumn);
+      twoColumn.appendChild(rightColumn);
+      container.appendChild(twoColumn);
+    } else {
+      // 没有图片，使用单栏布局
+      container.innerHTML = html;
+    }
+
+    // 渲染 KaTeX 公式
+    this.renderMathJax(container);
+
+    // 处理图片路径（确保使用正确的路径）
+    this.fixImagePaths(container);
   },
 
   // 渲染双语内容
@@ -296,11 +368,15 @@ const LessonViewer = {
   updateNavigation(lessonId) {
     const prevBtn = document.getElementById('prev-lesson');
     const nextBtn = document.getElementById('next-lesson');
-    const mobilePrevBtn = document.getElementById('mobile-prev');
-    const mobileNextBtn = document.getElementById('mobile-next');
+    const lessonProgress = document.getElementById('lesson-progress');
 
     const prevLesson = Content.getPreviousLesson(lessonId);
     const nextLesson = Content.getNextLesson(lessonId);
+
+    // 获取当前章节的课程列表
+    const chapter = Content.getChapterByLesson(lessonId);
+    const lessonsInChapter = chapter ? chapter.lessons : [];
+    const currentIndex = lessonsInChapter.findIndex(l => l.id === lessonId);
 
     // 更新桌面端按钮
     if (prevBtn && nextBtn) {
@@ -321,23 +397,9 @@ const LessonViewer = {
       });
     }
 
-    // 更新移动端按钮
-    if (mobilePrevBtn && mobileNextBtn) {
-      mobilePrevBtn.disabled = !prevLesson;
-      mobileNextBtn.disabled = !nextLesson;
-
-      // 移除旧监听器并添加新的
-      const newMobilePrevBtn = mobilePrevBtn.cloneNode(true);
-      mobilePrevBtn.parentNode.replaceChild(newMobilePrevBtn, mobilePrevBtn);
-      newMobilePrevBtn.addEventListener('click', () => {
-        if (prevLesson) this.open(prevLesson.id);
-      });
-
-      const newMobileNextBtn = mobileNextBtn.cloneNode(true);
-      mobileNextBtn.parentNode.replaceChild(newMobileNextBtn, mobileNextBtn);
-      newMobileNextBtn.addEventListener('click', () => {
-        if (nextLesson) this.open(nextLesson.id);
-      });
+    // 更新课程进度显示
+    if (lessonProgress && lessonsInChapter.length > 0) {
+      lessonProgress.textContent = `${currentIndex + 1} / ${lessonsInChapter.length}`;
     }
   },
 
@@ -361,7 +423,10 @@ const LessonViewer = {
       ProgressManager.completeCurrentLesson();
       newBtn.textContent = '已完成 ✓';
       newBtn.classList.add('completed');
-      showToast('课程已完成！');
+
+      // 触发庆祝效果
+      CelebrationEffect.createConfetti();
+      showToast('课程已完成！🎉');
 
       // 刷新知识树
       SkillTree.refresh();
@@ -378,7 +443,50 @@ const LessonViewer = {
     // 恢复标题
     document.getElementById('page-title').textContent = '知识框架';
 
+    // 恢复底部导航
+    const bottomNav = document.querySelector('.bottom-nav');
+    if (bottomNav) {
+      bottomNav.style.display = 'flex';
+    }
+
+    // 恢复到之前访问的页面（依赖图、知识树等）
+    const pageToRestore = this.previousPage || 'skill-tree';
+    if (window.App && pageToRestore !== 'skill-tree') {
+      // 如果是从依赖图等其他页面进入的，恢复该页面
+      window.App.currentPage = pageToRestore;
+
+      // 更新底部导航激活状态
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.page === pageToRestore);
+      });
+
+      // 更新页面标题
+      const titles = {
+        'dashboard': '学习概览',
+        'skill-tree': '知识框架',
+        'dependency': '依赖关系',
+        'progress': '学习进度'
+      };
+      document.getElementById('page-title').textContent = titles[pageToRestore] || '知识框架';
+
+      // 重新渲染页面内容
+      const app = document.getElementById('app');
+      app.innerHTML = '';
+      switch (pageToRestore) {
+        case 'dependency':
+          DependencyGraph.render(app);
+          break;
+        case 'progress':
+          window.App.renderProgress(app);
+          break;
+        case 'dashboard':
+          window.App.renderDashboard(app);
+          break;
+      }
+    }
+
     this.currentLesson = null;
+    this.previousPage = null;
   },
 
   // 刷新当前内容（例如切换语言后）

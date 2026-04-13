@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>产品测试报告 - 数学/CS/AI 学习应用</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; padding: 20px; background: #1a1a2e; color: #eee; }
+    h1 { color: #4A90D9; border-bottom: 2px solid #4A90D9; padding-bottom: 10px; }
+    h2 { color: #4ade80; margin-top: 30px; }
+    .test-section { margin: 20px 0; padding: 15px; background: #16213e; border-radius: 8px; }
+    .pass { color: #4ade80; font-weight: bold; }
+    .fail { color: #f87171; font-weight: bold; }
+    .warn { color: #fbbf24; font-weight: bold; }
+    .summary { font-size: 18px; margin: 10px 0; padding: 15px; background: #0f0f23; border-radius: 8px; }
+    .progress { height: 25px; background: #0f0f23; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, #4A90D9, #4ade80); transition: width 0.5s; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+    .item { padding: 10px; background: #0f0f23; border-radius: 5px; font-size: 13px; border-left: 3px solid #4A90D9; }
+    .item.pass { border-left-color: #4ade80; }
+    .item.fail { border-left-color: #f87171; }
+    .item.warn { border-left-color: #fbbf24; }
+    pre { background: #0f0f23; padding: 10px; overflow: auto; max-height: 400px; font-size: 12px; border-radius: 5px; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-left: 5px; }
+    .badge-pass { background: #064e3b; color: #4ade80; }
+    .badge-fail { background: #7f1d1d; color: #f87171; }
+    .badge-warn { background: #78350f; color: #fbbf24; }
+    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #333; }
+    th { background: #1a1a2e; color: #4A90D9; }
+    tr:hover { background: #16213e; }
+  </style>
+</head>
+<body>
+  <h1>🧪 产品测试报告</h1>
+  <p>测试时间：<span id="test-time"></span></p>
+
+  <div class="test-section">
+    <h2>📊 测试概览</h2>
+    <div id="summary"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>1. Markdown 文件渲染测试</h2>
+    <div id="markdown-results"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>2. CSS 样式加载测试</h2>
+    <div id="css-results"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>3. JavaScript 文件加载测试</h2>
+    <div id="js-results"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>4. 图片资源测试</h2>
+    <div id="image-results"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>5. 导航链接测试</h2>
+    <div id="navigation-results"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>📋 问题报告</h2>
+    <div id="issues-report"></div>
+  </div>
+
+  <script>
+    const results = {
+      markdown: { pass: 0, fail: 0, warn: 0, items: [] },
+      css: { pass: 0, fail: 0, items: [] },
+      js: { pass: 0, fail: 0, items: [] },
+      image: { pass: 0, fail: 0, items: [] },
+      navigation: { pass: 0, fail: 0, items: [] }
+    };
+
+    const FILES_TO_TEST = {
+      markdown: [
+        '01. vector spaces.md', '02. vector properties.md', '03. norms and metrics.md',
+        '01. systems design fundamentals.md', '02. cloud computing.md',
+        '01. digital signal processing.md', '02. automatic speech recognition.md',
+        '01. classical machine learning.md', '03. deep learning.md',
+        '01. image fundamentals.md', '02. convolutional networks.md',
+        '01. linguistic foundations.md', '04. transformers and language models.md',
+        '01. discrete maths.md', '01. arrays and hashing.md',
+        '01. linux and CMD.md', '01. hardware fundamentals.md',
+        '01. quantisation.md', '01. perception.md',
+        '01. geometric deep learning.md', '01. counting.md'
+      ],
+      css: ['css/main.css', 'css/lesson.css', 'css/skill-tree.css', 'css/dependency.css', 'css/theme-tom-jerry.css'],
+      js: ['js/storage.js', 'js/content.js', 'js/progress.js', 'js/skill-tree.js', 'js/dependency.js', 'js/lesson.js', 'js/app.js', 'js/quiz.js'],
+      images: [
+        'images/icon-192.png', 'images/icon-512.png',
+        'images/audio_waveform.svg', 'images/sampling_aliasing.svg',
+        'images/spectrogram_stft.svg', 'images/mel_filterbank.svg',
+        'images/mfcc_pipeline.svg', 'images/load_balancer.svg',
+        'images/cap_theorem.svg', 'images/resnet_block.svg'
+      ]
+    };
+
+    async function testResource(name, url, type) {
+      try {
+        const response = await fetch(url + '?t=' + Date.now(), { cache: 'no-cache' });
+        const ok = response.ok;
+        const size = ok ? (await response.text()).length : 0;
+        const contentType = response.headers.get('content-type') || 'unknown';
+
+        if (ok) {
+          if (size < 100 && type === 'markdown') {
+            results[type].warn++;
+            results[type].items.push({ name, url, ok: 'warn', size, status: response.status, note: '内容可能为占位符' });
+          } else {
+            results[type].pass++;
+            results[type].items.push({ name, url, ok: true, size, status: response.status, contentType });
+          }
+        } else {
+          results[type].fail++;
+          results[type].items.push({ name, url, ok: false, size: 0, status: response.status });
+        }
+        return ok;
+      } catch (e) {
+        results[type].fail++;
+        results[type].items.push({ name, url, ok: false, error: e.message });
+        return false;
+      }
+    }
+
+    async function runAllTests() {
+      document.getElementById('test-time').textContent = new Date().toLocaleString('zh-CN');
+
+      // 1. 测试 Markdown 文件
+      console.log('测试 Markdown 文件...');
+      for (const file of FILES_TO_TEST.markdown) {
+        await testResource(file, `content/math-cs-ai/${file}`, 'markdown');
+      }
+
+      // 2. 测试 CSS 文件
+      console.log('测试 CSS 文件...');
+      for (const file of FILES_TO_TEST.css) {
+        await testResource(file, file, 'css');
+      }
+
+      // 3. 测试 JS 文件
+      console.log('测试 JS 文件...');
+      for (const file of FILES_TO_TEST.js) {
+        await testResource(file, file, 'js');
+      }
+
+      // 4. 测试图片资源
+      console.log('测试图片资源...');
+      for (const file of FILES_TO_TEST.images) {
+        await testResource(file, file, 'image');
+      }
+
+      // 5. 测试导航功能
+      try {
+        await Content.load('math-cs-ai');
+        results.navigation.pass++;
+        results.navigation.items.push({
+          name: 'Content.load()',
+          ok: true,
+          detail: `加载 ${Content.chapters.length} 个章节，${Content.chapters.reduce((s,c)=>s+(c.lessons?.length||0),0)} 门课程`
+        });
+
+        // 测试课程导航
+        const firstLesson = Content.chapters[0]?.lessons[0];
+        const lastLesson = Content.chapters[Content.chapters.length-1]?.lessons.slice(-1)[0];
+
+        if (firstLesson) {
+          const prev = Content.getPreviousLesson(firstLesson.id);
+          const next = Content.getNextLesson(firstLesson.id);
+          results.navigation.items.push({
+            name: '第一课导航',
+            ok: true,
+            detail: `前一课：${prev === null ? '无' : prev.title}, 下一课：${next?.title || '无'}`
+          });
+          results.navigation.pass++;
+        }
+
+        if (lastLesson) {
+          const prev = Content.getPreviousLesson(lastLesson.id);
+          const next = Content.getNextLesson(lastLesson.id);
+          results.navigation.items.push({
+            name: '最后一课导航',
+            ok: true,
+            detail: `前一课：${prev?.title || '无'}, 下一课：${next === null ? '无' : next.title}`
+          });
+          results.navigation.pass++;
+        }
+
+        // 测试依赖关系
+        const deps = Content.getAllDependencies();
+        results.navigation.items.push({
+          name: '依赖关系图',
+          ok: true,
+          detail: `${deps.length} 个依赖关系`
+        });
+        results.navigation.pass++;
+
+      } catch (e) {
+        results.navigation.fail++;
+        results.navigation.items.push({ name: 'Content.load()', ok: false, error: e.message });
+      }
+
+      renderResults();
+    }
+
+    function renderResults() {
+      // 摘要
+      const totalPass = Object.values(results).reduce((sum, r) => sum + r.pass, 0);
+      const totalFail = Object.values(results).reduce((sum, r) => sum + r.fail, 0);
+      const totalWarn = Object.values(results).reduce((sum, r) => sum + (r.warn||0), 0);
+      const total = totalPass + totalFail;
+      const percentage = total > 0 ? Math.round((totalPass / total) * 100) : 0;
+
+      document.getElementById('summary').innerHTML = `
+        <div class="summary">
+          <div style="font-size: 24px; margin-bottom: 10px;">
+            总通过率：<span class="${percentage >= 90 ? 'pass' : percentage >= 70 ? 'warn' : 'fail'}">${percentage}%</span>
+            <span class="badge badge-pass">✅ 通过 ${totalPass}</span>
+            <span class="badge badge-fail">❌ 失败 ${totalFail}</span>
+            ${totalWarn > 0 ? `<span class="badge badge-warn">⚠️ 警告 ${totalWarn}</span>` : ''}
+          </div>
+          <div class="progress"><div class="progress-bar" style="width: ${percentage}%"></div></div>
+        </div>
+
+        <table>
+          <tr><th>测试项</th><th>通过</th><th>失败</th><th>警告</th><th>状态</th></tr>
+          <tr>
+            <td>Markdown 渲染</td>
+            <td class="pass">${results.markdown.pass}</td>
+            <td class="fail">${results.markdown.fail}</td>
+            <td class="warn">${results.markdown.warn || 0}</td>
+            <td>${results.markdown.fail === 0 ? '<span class="pass">✅ 通过</span>' : '<span class="fail">❌ 需修复</span>'}</td>
+          </tr>
+          <tr>
+            <td>CSS 样式</td>
+            <td class="pass">${results.css.pass}</td>
+            <td class="fail">${results.css.fail}</td>
+            <td>0</td>
+            <td>${results.css.fail === 0 ? '<span class="pass">✅ 通过</span>' : '<span class="fail">❌ 需修复</span>'}</td>
+          </tr>
+          <tr>
+            <td>JavaScript</td>
+            <td class="pass">${results.js.pass}</td>
+            <td class="fail">${results.js.fail}</td>
+            <td>0</td>
+            <td>${results.js.fail === 0 ? '<span class="pass">✅ 通过</span>' : '<span class="fail">❌ 需修复</span>'}</td>
+          </tr>
+          <tr>
+            <td>图片资源</td>
+            <td class="pass">${results.image.pass}</td>
+            <td class="fail">${results.image.fail}</td>
+            <td>0</td>
+            <td>${results.image.fail === 0 ? '<span class="pass">✅ 通过</span>' : '<span class="fail">❌ 需修复</span>'}</td>
+          </tr>
+          <tr>
+            <td>导航功能</td>
+            <td class="pass">${results.navigation.pass}</td>
+            <td class="fail">${results.navigation.fail}</td>
+            <td>0</td>
+            <td>${results.navigation.fail === 0 ? '<span class="pass">✅ 通过</span>' : '<span class="fail">❌ 需修复</span>'}</td>
+          </tr>
+        </table>
+      `;
+
+      // Markdown 结果
+      document.getElementById('markdown-results').innerHTML = renderItems(results.markdown, true);
+      document.getElementById('css-results').innerHTML = renderItems(results.css, true);
+      document.getElementById('js-results').innerHTML = renderItems(results.js, true);
+      document.getElementById('image-results').innerHTML = renderItems(results.image, true);
+      document.getElementById('navigation-results').innerHTML = renderItems(results.navigation, true);
+
+      // 问题报告
+      renderIssuesReport();
+    }
+
+    function renderItems(result, detailed = false) {
+      if (result.items.length === 0) return '<div>暂无数据</div>';
+
+      const itemsHtml = result.items.map(item => {
+        const status = item.ok === true ? 'pass' : (item.ok === 'warn' ? 'warn' : 'fail');
+        const icon = item.ok === true ? '✅' : (item.ok === 'warn' ? '⚠️' : '❌');
+        const detail = item.ok === true
+          ? `大小：${item.size} 字节${item.contentType ? ` | 类型：${item.contentType}` : ''}`
+          : (item.error || `状态：${item.status}`);
+        const note = item.note ? `<br><span class="warn">${item.note}</span>` : '';
+
+        return `
+          <div class="item ${status}">
+            <div>${icon} <strong>${item.name}</strong> ${item.detail ? ` - ${item.detail}` : ''}</div>
+            <div style="font-size: 11px; opacity: 0.7; margin-top: 5px;">${detail}${note}</div>
+          </div>
+        `;
+      }).join('');
+
+      return `<div class="grid">${itemsHtml}</div>`;
+    }
+
+    function renderIssuesReport() {
+      const issues = [];
+
+      // 收集所有失败项
+      for (const [type, result] of Object.entries(results)) {
+        for (const item of result.items) {
+          if (item.ok === false) {
+            issues.push({ type, name: item.name, reason: item.error || `HTTP ${item.status}` });
+          }
+          if (item.ok === 'warn') {
+            issues.push({ type, name: item.name, reason: item.note || '内容可能不完整', severity: 'warn' });
+          }
+        }
+      }
+
+      if (issues.length === 0) {
+        document.getElementById('issues-report').innerHTML = `
+          <div class="pass" style="padding: 20px; text-align: center; font-size: 18px;">
+            ✅ 未发现任何问题！所有测试通过。
+          </div>
+        `;
+        return;
+      }
+
+      const criticalIssues = issues.filter(i => i.severity !== 'warn');
+      const warnings = issues.filter(i => i.severity === 'warn');
+
+      let html = '';
+
+      if (criticalIssues.length > 0) {
+        html += `<h3 class="fail">❌ 严重问题 (${criticalIssues.length})</h3><div class="grid">`;
+        for (const issue of criticalIssues) {
+          html += `
+            <div class="item fail">
+              <div><strong>${issue.name}</strong></div>
+              <div style="font-size: 11px; margin-top: 5px;">类型：${issue.type} | 原因：${issue.reason}</div>
+            </div>
+          `;
+        }
+        html += '</div>';
+      }
+
+      if (warnings.length > 0) {
+        html += `<h3 class="warn" style="margin-top: 20px;">⚠️ 警告 (${warnings.length})</h3><div class="grid">`;
+        for (const issue of warnings) {
+          html += `
+            <div class="item warn">
+              <div><strong>${issue.name}</strong></div>
+              <div style="font-size: 11px; margin-top: 5px;">类型：${issue.type} | 原因：${issue.reason}</div>
+            </div>
+          `;
+        }
+        html += '</div>';
+      }
+
+      document.getElementById('issues-report').innerHTML = html;
+    }
+
+    // 运行测试
+    runAllTests();
+  </script>
+
+  <script src="js/storage.js"></script>
+  <script src="js/content.js"></script>
+</body>
+</html>

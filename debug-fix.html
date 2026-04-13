@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>清理缓存并测试</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #1a1a2e; color: #eee; }
+    .btn { padding: 12px 24px; font-size: 16px; cursor: pointer; border: none; border-radius: 8px; margin: 10px; }
+    .btn-primary { background: #4A90D9; color: white; }
+    .btn-danger { background: #dc3545; color: white; }
+    .status { margin: 20px 0; padding: 15px; background: #16213e; border-radius: 8px; }
+    .pass { color: #4ade80; }
+    .fail { color: #f87171; }
+    pre { background: #0f0f23; padding: 10px; overflow: auto; max-height: 300px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h1>🔧 调试工具 - 清理缓存并测试</h1>
+
+  <div class="status">
+    <h3>步骤 1: 清理 Service Worker 缓存</h3>
+    <button class="btn btn-danger" onclick="clearServiceWorker()">清理 Service Worker</button>
+    <button class="btn btn-danger" onclick="clearAllCache()">清理所有浏览器缓存</button>
+  </div>
+
+  <div class="status">
+    <h3>步骤 2: 测试资源加载</h3>
+    <button class="btn btn-primary" onclick="testResources()">测试资源加载</button>
+    <div id="test-results"></div>
+  </div>
+
+  <div class="status">
+    <h3>步骤 3: 直接访问课程</h3>
+    <button class="btn btn-primary" onclick="window.open('index.html', '_blank')">打开主页面</button>
+  </div>
+
+  <script>
+    // 清理 Service Worker
+    async function clearServiceWorker() {
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+          registration.unregister();
+          console.log('Service Worker 已注销:', registration.scope);
+        }
+        alert('Service Worker 已注销！请刷新页面。');
+      } else {
+        alert('当前浏览器不支持 Service Worker');
+      }
+    }
+
+    // 清理所有缓存
+    async function clearAllCache() {
+      const cacheNames = await caches.keys();
+      for (const name of cacheNames) {
+        await caches.delete(name);
+        console.log('缓存已删除:', name);
+      }
+      alert('所有缓存已清理！');
+    }
+
+    // 测试资源加载
+    async function testResources() {
+      const resultsDiv = document.getElementById('test-results');
+      resultsDiv.innerHTML = '<div>测试中...</div>';
+
+      const tests = [
+        { name: 'index.html', url: './index.html' },
+        { name: 'chapters.json', url: 'content/math-cs-ai/chapters.json?t=' + Date.now() },
+        { name: '系统设计基础', url: 'content/math-cs-ai/01. systems design fundamentals.md?t=' + Date.now() },
+        { name: 'css/main.css', url: 'css/main.css?t=' + Date.now() },
+        { name: 'js/content.js', url: 'js/content.js?t=' + Date.now() },
+        { name: 'js/lesson.js', url: 'js/lesson.js?t=' + Date.now() }
+      ];
+
+      let html = '';
+      for (const test of tests) {
+        try {
+          const response = await fetch(test.url, { cache: 'no-cache' });
+          const ok = response.ok;
+          const size = ok ? (await response.text()).length : 0;
+          const contentType = response.headers.get('content-type') || 'unknown';
+
+          html += `
+            <div class="${ok ? 'pass' : 'fail'}" style="margin: 10px 0; padding: 10px; background: ${ok ? '#064e3b' : '#7f1d1d'}; border-radius: 5px;">
+              <div>${ok ? '✅' : '❌'} ${test.name}</div>
+              <div style="font-size: 12px; opacity: 0.8;">
+                状态：${response.status} | 大小：${size} 字节 | 类型：${contentType}
+              </div>
+            </div>
+          `;
+        } catch (e) {
+          html += `
+            <div class="fail" style="margin: 10px 0; padding: 10px; background: #7f1d1d; border-radius: 5px;">
+              <div>❌ ${test.name}</div>
+              <div style="font-size: 12px;">错误：${e.message}</div>
+            </div>
+          `;
+        }
+      }
+
+      resultsDiv.innerHTML = html;
+    }
+
+    // 页面加载时自动测试
+    testResources();
+  </script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>动画效果测试</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/theme-tom-jerry.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <style>
+    body {
+      padding: 40px;
+      background: var(--bg-primary);
+    }
+    .test-section {
+      margin-bottom: 40px;
+      padding: 20px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+    .test-section h2 {
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+    .test-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .test-card {
+      padding: 20px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎨 动画效果测试中心</h1>
+
+  <!-- 庆祝动画测试 -->
+  <div class="test-section">
+    <h2>🎉 庆祝动画</h2>
+    <div class="test-grid">
+      <div class="test-card">
+        <h3>完成按钮</h3>
+        <button id="test-complete-btn" class="complete-btn" style="width: 100%; margin-top: 10px;">
+          标记为完成
+        </button>
+        <p style="margin-top: 10px; font-size: 14px; color: var(--text-secondary);">
+          点击按钮查看庆祝动画
+        </p>
+      </div>
+      <div class="test-card">
+        <h3>彩带效果</h3>
+        <button id="test-confetti-btn" class="btn btn-primary" style="margin-top: 10px;">
+          触发彩带
+        </button>
+      </div>
+      <div class="test-card">
+        <h3>星星爆炸</h3>
+        <button id="test-stars-btn" class="btn btn-success" style="margin-top: 10px;">
+          触发星星
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 卡通按钮测试 -->
+  <div class="test-section">
+    <h2>🎮 卡通按钮效果</h2>
+    <div class="test-grid">
+      <div class="test-card">
+        <button class="btn-cartoon">默认按钮</button>
+      </div>
+      <div class="test-card">
+        <button class="btn-cartoon success">成功按钮</button>
+      </div>
+      <div class="test-card">
+        <button class="btn-cartoon warning">警告按钮</button>
+      </div>
+      <div class="test-card">
+        <button class="btn-cartoon danger">危险按钮</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast 测试 -->
+  <div class="test-section">
+    <h2>📬 Toast 提示</h2>
+    <div class="test-grid">
+      <div class="test-card">
+        <button id="test-toast-normal" class="btn btn-primary">普通 Toast</button>
+      </div>
+      <div class="test-card">
+        <button id="test-toast-success" class="btn btn-success">成功 Toast</button>
+      </div>
+      <div class="test-card">
+        <button id="test-toast-achievement" class="btn" style="background: var(--cheese-yellow);">成就 Toast</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 连续学习火焰测试 -->
+  <div class="test-section">
+    <h2>🔥 连续学习火焰效果</h2>
+    <div class="test-grid">
+      <div class="test-card">
+        <div class="info-card streak" style="margin: 0 auto; max-width: 200px;">
+          <div class="info-icon">🔥</div>
+          <div class="info-content">
+            <div class="info-value">3 天</div>
+            <div class="info-label">连续学习</div>
+          </div>
+        </div>
+        <p style="margin-top: 10px; font-size: 14px; color: var(--text-secondary);">
+          不足 7 天（无火焰）
+        </p>
+      </div>
+      <div class="test-card">
+        <div class="info-card streak streak-fire" style="margin: 0 auto; max-width: 200px;">
+          <div class="info-icon">🔥</div>
+          <div class="info-content">
+            <div class="info-value">7 天</div>
+            <div class="info-label">连续学习</div>
+          </div>
+        </div>
+        <p style="margin-top: 10px; font-size: 14px; color: var(--text-secondary);">
+          达到 7 天（有火焰）
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 成就徽章测试 -->
+  <div class="test-section">
+    <h2>🏆 成就徽章</h2>
+    <div class="test-grid">
+      <div class="test-card">
+        <div class="achievement-badge" style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--bg-tertiary); border-radius: 20px;">
+          <span style="font-size: 24px;">🎯</span>
+          <span style="font-weight: 600;">首次学习</span>
+        </div>
+      </div>
+      <div class="test-card">
+        <div class="achievement-badge" style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--bg-tertiary); border-radius: 20px;">
+          <span style="font-size: 24px;">🔥</span>
+          <span style="font-weight: 600;">连续学习</span>
+        </div>
+      </div>
+      <div class="test-card">
+        <div class="achievement-badge" style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--bg-tertiary); border-radius: 20px;">
+          <span style="font-size: 24px;">📚</span>
+          <span style="font-weight: 600;">完成 10 课</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 进度条测试 -->
+  <div class="test-section">
+    <h2>📊 进度条动画</h2>
+    <div class="test-grid">
+      <div class="test-card">
+        <h3>线性进度条</h3>
+        <div class="progress-bar" style="margin: 10px 0;">
+          <div class="progress-bar-fill" id="test-progress-linear" style="width: 0%;"></div>
+        </div>
+        <button id="test-progress-btn" class="btn btn-primary" style="margin-top: 10px;">
+          增加进度
+        </button>
+      </div>
+      <div class="test-card">
+        <h3>圆形进度条</h3>
+        <svg viewBox="0 0 120 120" style="width: 120px; height: 120px; margin: 10px auto;">
+          <circle class="progress-circle-bg" cx="60" cy="60" r="52" fill="none" stroke="var(--border-light)" stroke-width="8"/>
+          <circle class="progress-circle-fill" cx="60" cy="60" r="52" fill="none" stroke="var(--primary)" stroke-width="8"
+                  stroke-linecap="round"
+                  style="stroke-dasharray: 326.7; stroke-dashoffset: 163.4; transition: stroke-dashoffset 1s;"/>
+          <text x="60" y="65" text-anchor="middle" font-size="20" font-weight="600" fill="var(--text-primary)">50%</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- 知识树节点动画测试 -->
+  <div class="test-section">
+    <h2>🌳 知识树节点动画</h2>
+    <div class="test-grid">
+      <div class="test-card" style="grid-column: 1 / -1;">
+        <div class="mindmap-node expanded" style="max-width: 400px; margin: 0 auto;">
+          <div class="node-content">
+            <button class="node-toggle expanded" style="background: none; border: none; cursor: pointer; font-size: 18px; color: var(--primary);">
+              <span class="toggle-icon">›</span>
+            </button>
+            <div class="node-body" style="display: inline-block; padding: 10px 16px; background: var(--bg-tertiary); border-radius: 10px;">
+              <span class="node-icon">📚</span>
+              <div class="node-info" style="display: inline-block; margin-left: 8px;">
+                <div class="node-title" style="font-weight: 600;">第一章</div>
+                <div class="node-subtitle" style="font-size: 12px; color: var(--text-secondary);">5 节课</div>
+              </div>
+            </div>
+          </div>
+          <div class="node-children active" style="margin-top: 16px; padding-left: 20px;">
+            <div class="mindmap-node" style="margin: 8px 0;">
+              <div class="node-body" style="padding: 8px 12px; background: var(--bg-secondary); border-radius: 8px;">
+                <span class="node-icon">○</span>
+                <span style="margin-left: 8px; font-size: 14px;">第一课</span>
+              </div>
+            </div>
+            <div class="mindmap-node" style="margin: 8px 0;">
+              <div class="node-body" style="padding: 8px 12px; background: var(--bg-secondary); border-radius: 8px;">
+                <span class="node-icon">◐</span>
+                <span style="margin-left: 8px; font-size: 14px;">第二课</span>
+              </div>
+            </div>
+            <div class="mindmap-node" style="margin: 8px 0;">
+              <div class="node-body" style="padding: 8px 12px; background: var(--bg-secondary); border-radius: 8px;">
+                <span class="node-icon">✓</span>
+                <span style="margin-left: 8px; font-size: 14px;">第三课</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p style="margin-top: 10px; font-size: 14px; color: var(--text-secondary);">
+          点击箭头展开/收起查看动画
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="../js/celebration.js"></script>
+  <script>
+    // 完成按钮测试
+    document.getElementById('test-complete-btn')?.addEventListener('click', function() {
+      this.textContent = '已完成 ✓';
+      this.classList.add('completed');
+      CelebrationEffect.createConfetti();
+    });
+
+    // 彩带测试
+    document.getElementById('test-confetti-btn')?.addEventListener('click', function() {
+      CelebrationEffect.createConfetti();
+    });
+
+    // 星星测试
+    document.getElementById('test-stars-btn')?.addEventListener('click', function() {
+      const rect = this.getBoundingClientRect();
+      CelebrationEffect.createStars(
+        rect.left + rect.width / 2,
+        rect.top
+      );
+    });
+
+    // Toast 测试
+    document.getElementById('test-toast-normal')?.addEventListener('click', function() {
+      const toast = document.getElementById('toast');
+      toast.className = 'toast';
+      toast.textContent = '这是一条普通消息';
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 2000);
+    });
+
+    document.getElementById('test-toast-success')?.addEventListener('click', function() {
+      const toast = document.getElementById('toast');
+      toast.className = 'toast success';
+      toast.textContent = '操作成功！✓';
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 2000);
+    });
+
+    document.getElementById('test-toast-achievement')?.addEventListener('click', function() {
+      const toast = document.getElementById('toast');
+      toast.className = 'toast achievement';
+      toast.innerHTML = '<span style="font-size: 20px; margin-right: 8px;">🏆</span> 成就解锁：连续学习 7 天！';
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        CelebrationEffect.createStars(
+          toast.getBoundingClientRect().left + toast.getBoundingClientRect().width / 2,
+          toast.getBoundingClientRect().top
+        );
+      }, 200);
+      setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.className = 'toast';
+      }, 4000);
+    });
+
+    // 进度条测试
+    let progress = 0;
+    document.getElementById('test-progress-btn')?.addEventListener('click', function() {
+      progress = (progress + 10) % 110;
+      document.getElementById('test-progress-linear').style.width = progress + '%';
+    });
+
+    // 知识树节点展开/收起测试
+    document.querySelector('.node-toggle')?.addEventListener('click', function() {
+      const nodeEl = this.closest('.mindmap-node');
+      const childrenEl = nodeEl.querySelector('.node-children');
+
+      this.classList.toggle('expanded');
+      childrenEl.classList.toggle('active');
+
+      // 更新箭头方向
+      if (this.classList.contains('expanded')) {
+        this.style.transform = 'rotate(90deg)';
+      } else {
+        this.style.transform = 'rotate(0deg)';
+      }
+    });
+  </script>
+</body>
+</html>

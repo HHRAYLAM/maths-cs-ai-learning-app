@@ -50,13 +50,14 @@ const Content = {
 
   // 获取课程索引
   getLessonIndex(lessonId) {
-    let index = 0;
-    for (const chapter of this.chapters) {
-      for (let i = 0; i < (chapter.lessons?.length || 0); i++) {
-        if (chapter.lessons[i].id === lessonId) {
-          return { chapterIndex: index, lessonIndex: i, globalIndex: index };
+    let globalIndex = 0;
+    for (let chapterIndex = 0; chapterIndex < this.chapters.length; chapterIndex++) {
+      const chapter = this.chapters[chapterIndex];
+      for (let lessonIndex = 0; lessonIndex < (chapter.lessons?.length || 0); lessonIndex++) {
+        if (chapter.lessons[lessonIndex].id === lessonId) {
+          return { chapterIndex, lessonIndex, globalIndex };
         }
-        index++;
+        globalIndex++;
       }
     }
     return null;
@@ -70,6 +71,9 @@ const Content = {
     const { chapterIndex, lessonIndex } = location;
     const chapter = this.chapters[chapterIndex];
 
+    // 检查 chapter 是否存在
+    if (!chapter) return null;
+
     // 同章节内的前一课
     if (lessonIndex > 0) {
       return chapter.lessons[lessonIndex - 1];
@@ -78,6 +82,7 @@ const Content = {
     // 前一章节的最后一课
     if (chapterIndex > 0) {
       const prevChapter = this.chapters[chapterIndex - 1];
+      if (!prevChapter) return null;
       const lessons = prevChapter.lessons || [];
       return lessons[lessons.length - 1] || null;
     }
@@ -93,6 +98,9 @@ const Content = {
     const { chapterIndex, lessonIndex } = location;
     const chapter = this.chapters[chapterIndex];
 
+    // 检查 chapter 是否存在
+    if (!chapter) return null;
+
     // 同章节内的下一课
     if (lessonIndex < (chapter.lessons?.length || 0) - 1) {
       return chapter.lessons[lessonIndex + 1];
@@ -101,6 +109,7 @@ const Content = {
     // 下一章节的第一课
     if (chapterIndex < this.chapters.length - 1) {
       const nextChapter = this.chapters[chapterIndex + 1];
+      if (!nextChapter) return null;
       const lessons = nextChapter.lessons || [];
       return lessons[0] || null;
     }
@@ -141,6 +150,15 @@ const Content = {
     }).length;
 
     return Math.round((completed / lessons.length) * 100);
+  },
+
+  // 获取课程所属章节
+  getChapterByLesson(lessonId) {
+    for (const chapter of this.chapters) {
+      const lesson = chapter.lessons?.find(l => l.id === lessonId);
+      if (lesson) return chapter;
+    }
+    return null;
   },
 
   // 检查先修条件

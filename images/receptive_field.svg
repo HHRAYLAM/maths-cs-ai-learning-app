@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" width="400" height="200">
+  <title>receptive field</title>
+  <rect width="400" height="200" fill="#16213e"/>
+  <rect x="20" y="20" width="360" height="160" fill="#1a1a2e" stroke="#4A90D9" stroke-width="2" stroke-dasharray="8"/>
+  <text x="200" y="90" text-anchor="middle" fill="#4A90D9" font-size="14" font-weight="bold">📊 receptive field</text>
+  <text x="200" y="120" text-anchor="middle" fill="#666" font-size="11">示意图</text>
+  <text x="200" y="145" text-anchor="middle" fill="#888" font-size="10">Diagram Placeholder</text>
+</svg>

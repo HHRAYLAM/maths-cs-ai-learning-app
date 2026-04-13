@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>诊断工具 - 数学/计算机/AI 学习</title>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #eee; }
+    h1 { color: #4A90D9; }
+    .ok { color: #58CC02; }
+    .error { color: #FF4B4B; }
+    .warning { color: #FFC800; }
+    pre { background: #2a2a2a; padding: 10px; border-radius: 8px; overflow-x: auto; }
+    .section { margin: 20px 0; padding: 15px; background: #2a2a2a; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h1>🔍 诊断工具</h1>
+  <p>此页面用于诊断应用无法打开的问题</p>
+
+  <div class="section">
+    <h2>1. 脚本加载状态</h2>
+    <div id="load-status">检查中...</div>
+  </div>
+
+  <div class="section">
+    <h2>2. 全局对象检查</h2>
+    <div id="global-status">检查中...</div>
+  </div>
+
+  <div class="section">
+    <h2>3. 控制台错误</h2>
+    <pre id="console-errors">暂无错误</pre>
+  </div>
+
+  <div class="section">
+    <h2>4. 测试功能</h2>
+    <button onclick="testOpenLesson()">测试打开课程</button>
+    <button onclick="testStorage()">测试存储功能</button>
+    <button onclick="testQuiz()">测试练习题</button>
+    <div id="test-results" style="margin-top: 10px;"></div>
+  </div>
+
+  <script>
+    const errors = [];
+    const loadStatus = [];
+
+    // 捕获错误
+    window.addEventListener('error', (e) => {
+      errors.push({
+        message: e.message,
+        filename: e.filename,
+        lineno: e.lineno,
+        colno: e.colno
+      });
+      updateErrorDisplay();
+    });
+
+    function updateErrorDisplay() {
+      const el = document.getElementById('console-errors');
+      if (errors.length > 0) {
+        el.innerHTML = errors.map(e =>
+          `<span class="error">${e.message}</span> @ ${e.filename}:${e.lineno}:${e.colno}`
+        ).join('\n');
+      }
+    }
+
+    function checkLoadStatus() {
+      const modules = [
+        { name: 'Storage', obj: window.Storage },
+        { name: 'Content', obj: window.Content },
+        { name: 'QuizData', obj: window.QuizData },
+        { name: 'ContentEnhancer', obj: window.ContentEnhancer },
+        { name: 'ProgressManager', obj: window.ProgressManager },
+        { name: 'LessonViewer', obj: window.LessonViewer },
+        { name: 'App', obj: window.App },
+        { name: 'SkillTree', obj: window.SkillTree }
+      ];
+
+      const el = document.getElementById('load-status');
+      let html = '';
+      modules.forEach(m => {
+        const status = m.obj ? '<span class="ok">✓ 已加载</span>' : '<span class="error">✗ 未加载</span>';
+        html += `<div>${m.name}: ${status}</div>`;
+        loadStatus.push({ name: m.name, loaded: !!m.obj });
+      });
+      el.innerHTML = html;
+    }
+
+    function checkGlobalStatus() {
+      const el = document.getElementById('global-status');
+      const checks = [
+        { name: 'localStorage', test: () => typeof localStorage !== 'undefined' },
+        { name: 'marked 库', test: () => typeof marked !== 'undefined' },
+        { name: 'KaTeX 库', test: () => typeof katex !== 'undefined' }
+      ];
+
+      let html = '';
+      checks.forEach(c => {
+        let result = '未知';
+        let cls = '';
+        try {
+          if (c.test()) {
+            result = '✓ 可用';
+            cls = 'ok';
+          } else {
+            result = '✗ 不可用';
+            cls = 'error';
+          }
+        } catch (e) {
+          result = '✗ 错误：' + e.message;
+          cls = 'error';
+        }
+        html += `<div>${c.name}: <span class="${cls}">${result}</span></div>`;
+      });
+      el.innerHTML = html;
+    }
+
+    // 测试功能
+    function testOpenLesson() {
+      const results = document.getElementById('test-results');
+      try {
+        if (!window.LessonViewer) {
+          results.innerHTML = '<span class="error">LessonViewer 未加载</span>';
+          return;
+        }
+        if (!window.Content) {
+          results.innerHTML = '<span class="error">Content 未加载，无法获取课程</span>';
+          return;
+        }
+        const chapters = Content.getChapters();
+        if (!chapters || chapters.length === 0) {
+          results.innerHTML = '<span class="error">没有可用的章节</span>';
+          return;
+        }
+        const firstLesson = chapters[0]?.lessons?.[0];
+        if (!firstLesson) {
+          results.innerHTML = '<span class="error">第一课不存在</span>';
+          return;
+        }
+        results.innerHTML = '<span class="ok">✓ 可以访问第一课：' + firstLesson.title + '</span>';
+      } catch (e) {
+        results.innerHTML = '<span class="error">错误：' + e.message + '</span>';
+      }
+    }
+
+    function testStorage() {
+      const results = document.getElementById('test-results');
+      try {
+        if (!window.Storage) {
+          results.innerHTML = '<span class="error">Storage 未加载</span>';
+          return;
+        }
+        const progress = Storage.getProgress();
+        results.innerHTML = '<span class="ok">✓ Storage 正常工作，进度数据：' + Object.keys(progress).length + ' 条记录</span>';
+      } catch (e) {
+        results.innerHTML = '<span class="error">错误：' + e.message + '</span>';
+      }
+    }
+
+    function testQuiz() {
+      const results = document.getElementById('test-results');
+      try {
+        if (!window.QuizData) {
+          results.innerHTML = '<span class="error">QuizData 未加载</span>';
+          return;
+        }
+        QuizData.init();
+        const quizCount = Object.keys(QuizData._quizzes).length;
+        results.innerHTML = '<span class="ok">✓ QuizData 正常工作，题库：' + quizCount + ' 个课程</span>';
+      } catch (e) {
+        results.innerHTML = '<span class="error">错误：' + e.message + '</span>';
+      }
+    }
+
+    // 页面加载完成后检查
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        checkLoadStatus();
+        checkGlobalStatus();
+
+        // 自动显示诊断结果
+        const unloaded = loadStatus.filter(s => !s.loaded);
+        if (unloaded.length > 0) {
+          alert('发现 ' + unloaded.length + ' 个模块未加载：' + unloaded.map(s => s.name).join(', '));
+        }
+      }, 1000);
+    });
+  </script>
+
+  <!-- 加载应用脚本 -->
+  <script src="js/storage.js"></script>
+  <script src="js/quiz-data.js"></script>
+  <script src="js/content.js"></script>
+  <script src="js/content-enhancer.js"></script>
+  <script src="js/image-viewer.js"></script>
+  <script src="js/progress.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/skill-tree.js"></script>
+  <script src="js/dependency.js"></script>
+  <script src="js/lesson.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@
   position: fixed;
   inset: 0;
   background: var(--bg-secondary);
-  z-index: 500;
+  z-index: 1500; /* 确保高于其他内容，低于弹窗 */
   display: flex;
   flex-direction: column;
 }
@@ -23,10 +23,23 @@
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--border-light);
+  min-height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 10; /* 确保头部在内容之上 */
 }
 
 [data-theme="dark"] .lesson-header {
   background: rgba(28, 28, 30, 0.72);
+}
+
+/* 头部左侧：返回按钮 + 标题 */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0; /* 允许文本截断 */
 }
 
 .back-btn {
@@ -39,6 +52,8 @@
   border-radius: 20px;
   font-weight: 500;
   transition: all 0.2s var(--ease-apple);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .back-btn:active {
@@ -46,20 +61,31 @@
   background: rgba(118, 118, 128, 0.2);
 }
 
-.lesson-nav {
-  display: flex;
-  gap: 8px;
+.lesson-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.nav-btn {
-  width: 38px;
-  height: 38px;
+/* 头部右侧：功能按钮 */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
   background: rgba(118, 118, 128, 0.12);
   border: none;
-  width: 38px;
-  height: 38px;
   border-radius: 50%;
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
   transition: all 0.2s var(--ease-apple);
   display: flex;
@@ -67,12 +93,55 @@
   justify-content: center;
 }
 
+.icon-btn:hover {
+  background: rgba(0, 122, 255, 0.15);
+  transform: scale(1.05);
+}
+
+.icon-btn:active {
+  transform: scale(0.92);
+}
+
+/* 课程导航栏：独立一行 */
+.lesson-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-light);
+  position: sticky;
+  top: 56px; /* 紧跟在 header 后面 */
+  z-index: 10; /* 确保导航在内容之上 */
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: rgba(118, 118, 128, 0.12);
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s var(--ease-apple);
+}
+
+.nav-btn .icon {
+  font-size: 12px;
+}
+
 .nav-btn:not(:disabled):hover {
   background: rgba(0, 122, 255, 0.15);
+  transform: translateY(-1px);
 }
 
 .nav-btn:not(:disabled):active {
-  transform: scale(0.92);
+  transform: translateY(0) scale(0.98);
 }
 
 .nav-btn:disabled {
@@ -80,14 +149,29 @@
   cursor: not-allowed;
 }
 
+/* 课程进度计数器 */
+.lesson-progress {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 60px;
+  text-align: center;
+}
+
+/* 课程阅读器激活时隐藏主底部导航 */
+.lesson-viewer:not(.hidden) ~ .bottom-nav {
+  display: none !important;
+}
+
 /* 课程内容区 */
 .lesson-content {
   flex: 1;
   overflow-y: auto;
   padding: 24px 20px;
-  padding-bottom: 80px; /* 为移动端底部导航留空间 */
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
+  /* 确保内容不被 header 和 navigation 遮挡 */
+  scroll-padding-top: 120px;
 }
 
 .lesson-content img {
@@ -106,16 +190,22 @@
   padding-bottom: calc(16px + env(safe-area-inset-bottom, 0));
 }
 
-/* 移动端适配：桌面端显示 footer，移动端隐藏 */
+/* 移动端适配：移动端也显示 footer，但调整样式 */
 @media (min-width: 769px) {
   .lesson-footer {
-    display: block;
+    padding: 20px;
   }
 }
 
 @media (max-width: 768px) {
   .lesson-footer {
-    display: none !important;
+    padding: 12px 16px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0));
+  }
+
+  .complete-btn {
+    padding: 14px;
+    font-size: 15px;
   }
 }
 
@@ -482,7 +572,6 @@
 @media (max-width: 768px) {
   .lesson-content {
     padding: 16px 14px;
-    padding-bottom: 100px; /* 为移动端底部导航留空间 */
   }
 
   .lesson-content h1 {
@@ -493,64 +582,42 @@
     font-size: 20px;
   }
 
-  /* 移动端底部导航栏 - 覆盖在 lesson-footer 上面 */
-  .mobile-lesson-nav {
-    display: flex !important;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--bg-secondary) !important;
-    border-top: 1px solid var(--border-light);
+  .lesson-header {
+    padding: 10px 12px;
+  }
+
+  .lesson-title {
+    font-size: 15px;
+  }
+
+  .back-btn {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .lesson-navigation {
+    padding: 10px 12px;
+    gap: 12px;
+  }
+
+  .nav-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .lesson-progress {
+    font-size: 13px;
+    min-width: 50px;
+  }
+
+  .lesson-footer {
     padding: 12px 16px;
     padding-bottom: calc(12px + env(safe-area-inset-bottom, 0));
-    gap: 12px;
-    z-index: 1000 !important;
-    pointer-events: auto;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-  }
-
-  .mobile-nav-btn {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 16px 24px;
-    background: var(--bg-tertiary) !important;
-    border: none;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text-primary) !important;
-    cursor: pointer;
-    transition: all 0.2s var(--ease-apple);
-    pointer-events: auto;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .mobile-nav-btn:not(:disabled):active {
-    background: var(--primary) !important;
-    color: white !important;
-    transform: scale(0.98);
-  }
-
-  .mobile-nav-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
-
-  .mobile-nav-btn.prev {
-    background: var(--bg-tertiary) !important;
-  }
-
-  .mobile-nav-btn.next {
-    background: var(--primary) !important;
-    color: white !important;
-  }
-
-  /* 桌面端隐藏移动端导航 */
-  .mobile-lesson-nav {
-    display: none !important;
   }
 }

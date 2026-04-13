@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug 测试</title>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #1a1a2e; color: #eee; }
+    .test { margin: 10px 0; padding: 10px; background: #16213e; border-radius: 5px; }
+    .pass { color: #4ade80; }
+    .fail { color: #f87171; }
+    pre { background: #0f0f23; padding: 10px; overflow: auto; }
+  </style>
+</head>
+<body>
+  <h1>🔍 Debug 测试页面</h1>
+  <div id="results"></div>
+
+  <script>
+    const results = document.getElementById('results');
+
+    async function runTests() {
+      const tests = [
+        { name: 'chapters.json', url: 'content/math-cs-ai/chapters.json' },
+        { name: '系统设计基础', url: 'content/math-cs-ai/01. systems design fundamentals.md' },
+        { name: 'CSS main.css', url: 'css/main.css' },
+        { name: 'JS app.js', url: 'js/app.js' }
+      ];
+
+      for (const test of tests) {
+        const div = document.createElement('div');
+        div.className = 'test';
+
+        try {
+          const response = await fetch(test.url + '?t=' + Date.now());
+          const ok = response.ok;
+          const size = ok ? (await response.text()).length : 0;
+
+          div.innerHTML = `
+            <div class="${ok ? 'pass' : 'fail'}">
+              ${ok ? '✅' : '❌'} ${test.name}
+            </div>
+            <div>状态：${response.status} ${ok ? 'OK' : 'FAIL'}</div>
+            <div>大小：${size} 字节</div>
+            ${!ok ? '<pre>' + JSON.stringify(await response.json().catch(() => ({}))) + '</pre>' : ''}
+          `;
+        } catch (e) {
+          div.innerHTML = `
+            <div class="fail">❌ ${test.name}</div>
+            <div>错误：${e.message}</div>
+          `;
+        }
+
+        results.appendChild(div);
+      }
+
+      // 测试 Content API
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'test';
+      contentDiv.innerHTML = '<h3>Content.load() 测试</h3>';
+      results.appendChild(contentDiv);
+
+      try {
+        await Content.load('math-cs-ai');
+        contentDiv.innerHTML += '<div class="pass">✅ Content 加载成功</div>';
+        contentDiv.innerHTML += '<div>章节数：' + Content.chapters.length + '</div>';
+
+        // 测试加载课程设计基础
+        const ch18 = Content.chapters.find(c => c.id === 'ch18');
+        if (ch18 && ch18.lessons[0]) {
+          const markdown = await Content.loadLessonContent(ch18.lessons[0]);
+          contentDiv.innerHTML += '<div class="pass">✅ 课程内容加载成功</div>';
+          contentDiv.innerHTML += '<div>内容大小：' + markdown.length + ' 字节</div>';
+          contentDiv.innerHTML += '<pre>' + markdown.substring(0, 200) + '...</pre>';
+        }
+      } catch (e) {
+        contentDiv.innerHTML += '<div class="fail">❌ Content 加载失败：' + e.message + '</div>';
+      }
+    }
+
+    runTests();
+  </script>
+
+  <!-- 加载应用的脚本 -->
+  <script src="js/storage.js"></script>
+  <script src="js/content.js"></script>
+</body>
+</html>

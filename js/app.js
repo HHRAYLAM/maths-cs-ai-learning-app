@@ -4,6 +4,9 @@ const App = {
   // 当前页面
   currentPage: 'skill-tree',
 
+  // 设置状态管理（用于取消/关闭时恢复）
+  settingsOriginalState: null,
+
   // 初始化
   async init() {
     console.log('应用初始化...');
@@ -91,16 +94,84 @@ const App = {
 
   // 绑定弹窗
   bindModals() {
-    // 设置按钮
+    // 临时状态管理（用于取消/保存功能）
+    const originalSettings = {
+      theme: Storage.getTheme(),
+      language: Storage.getLanguage()
+    };
+    let tempSettings = { ...originalSettings };
+
+    // 设置按钮 - 打开时保存原始状态
     document.getElementById('settings-btn')?.addEventListener('click', () => {
-      document.getElementById('settings-modal')?.classList.remove('hidden');
+      // 保存原始状态用于取消时恢复
+      originalSettings.theme = Storage.getTheme();
+      originalSettings.language = Storage.getLanguage();
+      tempSettings = { ...originalSettings };
+
+      // 保存到全局状态，供关闭按钮使用
+      App.settingsOriginalState = { ...originalSettings };
+
+      const modal = document.getElementById('settings-modal');
+      modal?.classList.remove('hidden');
+
+      // 更新按钮状态
+      this.updateSettingsButtonState(originalSettings, tempSettings);
+    });
+
+    // 取消按钮
+    document.getElementById('settings-cancel')?.addEventListener('click', () => {
+      // 清除原始状态
+      App.settingsOriginalState = null;
+
+      // 关闭弹窗
+      document.getElementById('settings-modal')?.classList.add('hidden');
+      // 恢复原始状态
+      Storage.setTheme(originalSettings.theme);
+      Storage.setLanguage(originalSettings.language);
+      Storage.applyTheme(originalSettings.theme);
+      document.documentElement.lang = originalSettings.language;
+      showToast('已取消更改');
+    });
+
+    // 保存按钮
+    document.getElementById('settings-save')?.addEventListener('click', () => {
+      if (!tempSettings) return;
+
+      // 应用更改
+      Storage.setTheme(tempSettings.theme);
+      Storage.setLanguage(tempSettings.language);
+      Storage.applyTheme(tempSettings.theme);
+      document.documentElement.lang = tempSettings.language;
+
+      // 清除原始状态（已保存）
+      App.settingsOriginalState = null;
+
+      // 关闭弹窗
+      document.getElementById('settings-modal')?.classList.add('hidden');
+
+      // 如果语言改变了，需要重新加载内容
+      if (tempSettings.language !== originalSettings.language) {
+        const contentPack = tempSettings.language === 'en-US' ? 'en' : 'math-cs-ai';
+        Content.load(contentPack).then(() => {
+          this.refreshCurrentPage();
+          if (LessonViewer.currentLesson) {
+            LessonViewer.refresh();
+          }
+        });
+        showToast('语言已更改，内容已刷新');
+      } else {
+        showToast('设置已保存');
+      }
+
+      // 重置临时状态
+      tempSettings = null;
     });
 
     // 语言选择器
-    this.bindLanguageSelector();
+    this.bindLanguageSelector(tempSettings);
 
     // 主题选择器
-    this.bindThemeSelector();
+    this.bindThemeSelector(tempSettings);
 
     // 内容包按钮（在设置里面）
     document.getElementById('content-pack-btn')?.addEventListener('click', () => {
@@ -119,6 +190,15 @@ const App = {
     document.getElementById('search-btn')?.addEventListener('click', () => {
       this.showSearchModal();
     });
+  },
+
+  // 更新设置按钮状态（检测是否有更改）
+  updateSettingsButtonState(original, temp) {
+    const saveBtn = document.getElementById('settings-save');
+    if (!saveBtn) return;
+
+    const hasChanges = JSON.stringify(original) !== JSON.stringify(temp);
+    saveBtn.disabled = !hasChanges;
   },
 
   // 导航到指定页面
@@ -271,13 +351,16 @@ const App = {
               <div class="info-label">总学习时长</div>
             </div>
           </div>
-          <div class="info-card streak">
-            <div class="info-icon">🔥</div>
-            <div class="info-content">
-              <div class="info-value">${Storage.getLearningStreak()} 天</div>
-              <div class="info-label">连续学习</div>
-            </div>
-          </div>
+          ${(() => {
+            const streak = Storage.getLearningStreak();
+            return `<div class="info-card streak${streak >= 7 ? ' streak-fire' : ''}">
+              <div class="info-icon">🔥</div>
+              <div class="info-content">
+                <div class="info-value">${streak} 天</div>
+                <div class="info-label">连续学习</div>
+              </div>
+            </div>`;
+          })()}
         </div>
 
         <!-- 待复习课程 -->
@@ -484,99 +567,324 @@ const App = {
   renderProgress(container) {
     const stats = Storage.getStats();
     const chapters = Content.getChapters();
+    const weeklyData = this.getWeeklyLearningData();
+    const domainStats = this.getDomainStats(chapters);
+    const recommendedLessons = this.getRecommendedLessons(chapters);
 
     container.innerHTML = `
-      <div class="dashboard-container">
-        <!-- 总体进度 -->
-        <div class="dashboard-section">
-          <h2 class="dashboard-section-title">总体进度</h2>
-          <div class="card">
-            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
-              <div style="flex: 1;">
-                <div class="progress-bar" style="height: 12px;">
-                  <div class="progress-bar-fill" style="width: ${stats.completionRate}%"></div>
-                </div>
-              </div>
-              <div style="font-size: 24px; font-weight: 700; color: var(--primary);">
-                ${stats.completionRate}%
-              </div>
+      <div class="progress-page-container">
+        <!-- 总体进度概览 -->
+        <div class="progress-section">
+          <h2 class="progress-section-title">📊 学习概览</h2>
+          <div class="progress-overview-grid">
+            <div class="progress-stat-card">
+              <div class="progress-stat-icon">📚</div>
+              <div class="progress-stat-value">${stats.completed + stats.mastered}</div>
+              <div class="progress-stat-label">已完成课程</div>
+              <div class="progress-stat-sub">${stats.totalLessons} 节总数</div>
             </div>
-            <div style="display: flex; justify-content: space-between; color: var(--text-secondary); font-size: 14px;">
-              <span>已完成：${stats.completed + stats.mastered}</span>
-              <span>总计：${stats.totalLessons}</span>
+            <div class="progress-stat-card">
+              <div class="progress-stat-icon">⏱️</div>
+              <div class="progress-stat-value">${ProgressManager.formatTime(stats.totalTimeSeconds)}</div>
+              <div class="progress-stat-label">学习时长</div>
+              <div class="progress-stat-sub">累计投入</div>
             </div>
-          </div>
-        </div>
-
-        <!-- 章节进度 -->
-        <div class="dashboard-section">
-          <h2 class="dashboard-section-title">章节进度</h2>
-          ${chapters.map(chapter => {
-            const progress = Content.getChapterProgress(chapter);
-            return `
-              <div class="card" style="padding: 12px 16px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                  <span style="font-weight: 600;">${chapter.order}. ${chapter.title}</span>
-                  <span style="color: var(--primary); font-weight: 600;">${progress}%</span>
-                </div>
-                <div class="progress-bar">
-                  <div class="progress-bar-fill" style="width: ${progress}%"></div>
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-
-        <!-- 掌握度分布 -->
-        <div class="dashboard-section">
-          <h2 class="dashboard-section-title">掌握度分布</h2>
-          <div class="stats-grid">
-            <div class="stat-card" style="background: var(--bg-tertiary);">
-              <div class="stat-value" style="color: var(--text-tertiary);">${stats.notStarted}</div>
-              <div class="stat-label">未开始</div>
+            <div class="progress-stat-card">
+              <div class="progress-stat-icon">🏆</div>
+              <div class="progress-stat-value">${stats.mastered}</div>
+              <div class="progress-stat-label">已精通课程</div>
+              <div class="progress-stat-sub">深度学习</div>
             </div>
-            <div class="stat-card" style="background: var(--primary);">
-              <div class="stat-value">${stats.learning}</div>
-              <div class="stat-label">学习中</div>
-            </div>
-            <div class="stat-card green">
-              <div class="stat-value">${stats.completed}</div>
-              <div class="stat-label">已完成</div>
-            </div>
-            <div class="stat-card orange">
-              <div class="stat-value">${stats.mastered}</div>
-              <div class="stat-label">已精通</div>
+            <div class="progress-stat-card">
+              <div class="progress-stat-icon">🔥</div>
+              <div class="progress-stat-value">${this.getCurrentStreak()}</div>
+              <div class="progress-stat-label">连续学习天数</div>
+              <div class="progress-stat-sub">坚持不懈</div>
             </div>
           </div>
         </div>
 
-        <!-- 学习时长 -->
-        <div class="dashboard-section">
-          <h2 class="dashboard-section-title">学习时长</h2>
-          <div class="card">
-            <div style="text-align: center;">
-              <div style="font-size: 32px; font-weight: 700; color: var(--primary);">
-                ${ProgressManager.formatTime(stats.totalTimeSeconds)}
+        <!-- 总体进度条 -->
+        <div class="progress-section">
+          <h2 class="progress-section-title">📈 总体进度</h2>
+          <div class="card progress-main-card">
+            <div class="progress-main-content">
+              <div class="progress-circle-container">
+                <svg viewBox="0 0 120 120" class="progress-circle">
+                  <circle class="progress-circle-bg" cx="60" cy="60" r="52" />
+                  <circle class="progress-circle-fill" cx="60" cy="60" r="52"
+                          style="stroke-dasharray: ${2 * Math.PI * 52}; stroke-dashoffset: ${2 * Math.PI * 52 * (1 - stats.completionRate / 100)}" />
+                  <text class="progress-circle-text" x="60" y="60">${stats.completionRate}%</text>
+                </svg>
               </div>
-              <div style="color: var(--text-secondary); margin-top: 8px;">累计学习时长</div>
+              <div class="progress-main-info">
+                <div class="progress-main-title">课程完成度</div>
+                <div class="progress-main-desc">
+                  已完成 <span class="highlight">${stats.completed + stats.mastered}</span> 节，
+                  还剩 <span class="highlight">${stats.totalLessons - stats.completed - stats.mastered}</span> 节
+                </div>
+                <div class="progress-bar-container">
+                  <div class="progress-bar">
+                    <div class="progress-bar-fill" style="width: ${stats.completionRate}%"></div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- 复习次数 -->
-        <div class="dashboard-section">
-          <h2 class="dashboard-section-title">复习统计</h2>
-          <div class="card">
-            <div style="text-align: center;">
-              <div style="font-size: 32px; font-weight: 700; color: var(--primary);">
-                ${stats.totalReviews}
+        <!-- 分领域进度 -->
+        <div class="progress-section">
+          <h2 class="progress-section-title">📚 分领域进度</h2>
+          <div class="domain-progress-grid">
+            ${Object.entries(domainStats).map(([domain, data]) => `
+              <div class="domain-card domain-${domain}">
+                <div class="domain-header">
+                  <span class="domain-icon">${data.icon}</span>
+                  <span class="domain-name">${data.name}</span>
+                </div>
+                <div class="domain-progress-bar">
+                  <div class="domain-progress-fill" style="width: ${data.percent}%"></div>
+                </div>
+                <div class="domain-footer">
+                  <span>${data.completed}/${data.total} 完成</span>
+                  <span class="domain-percent">${data.percent}%</span>
+                </div>
               </div>
-              <div style="color: var(--text-secondary); margin-top: 8px;">累计复习次数</div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- 学习时间趋势 -->
+        <div class="progress-section">
+          <h2 class="progress-section-title">📅 学习时间趋势</h2>
+          <div class="card">
+            <div class="weekly-chart">
+              ${weeklyData.map((day, index) => `
+                <div class="weekly-bar-container">
+                  <div class="weekly-bar" style="height: ${day.percent}%"></div>
+                  <div class="weekly-label">${day.label}</div>
+                  <div class="weekly-value">${day.minutes}m</div>
+                </div>
+              `).join('')}
             </div>
+          </div>
+        </div>
+
+        <!-- 推荐学习 -->
+        <div class="progress-section">
+          <h2 class="progress-section-title">💡 推荐学习</h2>
+          ${recommendedLessons.length > 0 ? `
+            <div class="recommendation-list">
+              ${recommendedLessons.map((lesson, index) => `
+                <div class="recommendation-item" data-lesson-id="${lesson.id}">
+                  <div class="recommendation-rank">#${index + 1}</div>
+                  <div class="recommendation-info">
+                    <div class="recommendation-title">${lesson.title}</div>
+                    <div class="recommendation-chapter">${lesson.chapterTitle}</div>
+                  </div>
+                  <div class="recommendation-reason">${lesson.reason}</div>
+                  <button class="recommendation-btn">开始学习</button>
+                </div>
+              `).join('')}
+            </div>
+          ` : `
+            <div class="card">
+              <div class="empty-state-small">
+                <div class="empty-icon">🎉</div>
+                <div class="empty-title">太棒了！</div>
+                <div class="empty-description">你已经完成了所有课程，继续保持复习哦~</div>
+              </div>
+            </div>
+          `}
+        </div>
+
+        <!-- 章节进度详情 -->
+        <div class="progress-section">
+          <h2 class="progress-section-title">📖 章节进度详情</h2>
+          <div class="chapter-progress-list">
+            ${chapters.map(chapter => {
+              const progress = Content.getChapterProgress(chapter);
+              return `
+                <div class="chapter-progress-item">
+                  <div class="chapter-info">
+                    <div class="chapter-number">第${chapter.order}章</div>
+                    <div class="chapter-title">${chapter.title}</div>
+                  </div>
+                  <div class="chapter-progress-right">
+                    <div class="chapter-progress-percent">${progress}%</div>
+                    <div class="chapter-progress-bar">
+                      <div class="chapter-progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
           </div>
         </div>
       </div>
     `;
+
+    // 绑定推荐学习点击事件
+    this.bindRecommendationEvents(container);
+  },
+
+  // 获取每周学习数据
+  getWeeklyLearningData() {
+    const days = ['日', '一', '二', '三', '四', '五', '六'];
+    const today = new Date();
+    const weeklyData = [];
+    let maxMinutes = 1; // 防止除以 0
+
+    // 获取过去 7 天的数据
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      const dayIndex = date.getDay();
+      const minutes = Storage.getDayLearningTime(dateStr) || 0;
+
+      if (minutes > maxMinutes) maxMinutes = minutes;
+
+      weeklyData.push({
+        label: days[dayIndex],
+        minutes: minutes,
+        percent: 0, // 稍后计算
+        date: dateStr
+      });
+    }
+
+    // 计算百分比
+    weeklyData.forEach(day => {
+      day.percent = Math.round((day.minutes / maxMinutes) * 100);
+    });
+
+    return weeklyData;
+  },
+
+  // 获取分领域统计
+  getDomainStats(chapters) {
+    const domains = {
+      'math': { id: 'math', name: '数学基础', icon: '📐', completed: 0, total: 0 },
+      'ai': { id: 'ai', name: '人工智能', icon: '🤖', completed: 0, total: 0 },
+      'cs': { id: 'cs', name: '计算机科学', icon: '💻', completed: 0, total: 0 },
+      'system': { id: 'system', name: '系统工程', icon: '⚙️', completed: 0, total: 0 }
+    };
+
+    for (const chapter of chapters) {
+      const domain = this.getChapterDomain(chapter);
+      if (domains[domain]) {
+        const lessons = chapter.lessons || [];
+        domains[domain].total += lessons.length;
+        domains[domain].completed += lessons.filter(l => {
+          const p = Storage.getLessonProgress(l.id);
+          return p && (p.status === 'completed' || p.status === 'mastered');
+        }).length;
+      }
+    }
+
+    // 计算百分比
+    Object.values(domains).forEach(d => {
+      d.percent = d.total > 0 ? Math.round((d.completed / d.total) * 100) : 0;
+    });
+
+    return domains;
+  },
+
+  // 获取章节所属领域
+  getChapterDomain(chapter) {
+    const id = chapter.id || '';
+    const title = (chapter.title || '').toLowerCase();
+
+    if (id.match(/ch0[1-5]/) || title.includes('向量') || title.includes('矩阵') ||
+        title.includes('微积分') || title.includes('统计') || title.includes('概率')) {
+      return 'math';
+    }
+    if (id.match(/ch0[6-9]|ch1[0-8]|ch19|ch20/) || title.includes('机器学习') ||
+        title.includes('NLP') || title.includes('视觉') || title.includes('音频') ||
+        title.includes('多模态') || title.includes('AI')) {
+      return 'ai';
+    }
+    if (id.match(/ch1[1-5]/) || title.includes('图网络') || title.includes('算法')) {
+      return 'cs';
+    }
+    return 'system';
+  },
+
+  // 获取推荐课程
+  getRecommendedLessons(chapters) {
+    const recommendations = [];
+
+    // 优先级 1：学习中的课程
+    for (const chapter of chapters) {
+      for (const lesson of (chapter.lessons || [])) {
+        const progress = Storage.getLessonProgress(lesson.id);
+        if (progress?.status === 'learning') {
+          recommendations.push({
+            id: lesson.id,
+            title: lesson.title,
+            chapterTitle: chapter.title,
+            reason: '继续学习',
+            priority: 1
+          });
+        }
+      }
+    }
+
+    // 优先级 2：未开始的基础课程（第 1-2 章）
+    if (recommendations.length === 0) {
+      for (const chapter of chapters.filter(c => c.order <= 2)) {
+        for (const lesson of (chapter.lessons || [])) {
+          const progress = Storage.getLessonProgress(lesson.id);
+          if (!progress || progress.status === 'not-started') {
+            recommendations.push({
+              id: lesson.id,
+              title: lesson.title,
+              chapterTitle: chapter.title,
+              reason: '基础课程',
+              priority: 2
+            });
+          }
+        }
+      }
+    }
+
+    // 优先级 3：需要复习的课程（超过 7 天未学习）
+    const dueLessons = Storage.getLessonsDueForReview();
+    dueLessons.slice(0, 3).forEach(lessonId => {
+      const lesson = Content.getLesson(lessonId);
+      if (lesson && !recommendations.find(r => r.id === lessonId)) {
+        recommendations.push({
+          id: lesson.id,
+          title: lesson.title,
+          chapterTitle: lesson.chapter || '未知章节',
+          reason: '需要复习',
+          priority: 3
+        });
+      }
+    });
+
+    return recommendations.slice(0, 5);
+  },
+
+  // 获取当前连续学习天数
+  getCurrentStreak() {
+    const stats = Storage.getStats();
+    return stats.streak || 0;
+  },
+
+  // 绑定推荐事件
+  bindRecommendationEvents(container) {
+    container.querySelectorAll('.recommendation-item, .recommendation-btn').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const item = el.closest('.recommendation-item');
+        const lessonId = item?.dataset.lessonId;
+        if (lessonId) {
+          window.SkillTree?.openLesson(lessonId);
+        }
+      });
+    });
   },
 
   // 显示内容包选择弹窗
@@ -596,49 +904,44 @@ const App = {
     modal?.classList.remove('hidden');
   },
 
-  // 绑定语言选择器
-  bindLanguageSelector() {
+  // 绑定语言选择器（使用临时状态）
+  bindLanguageSelector(tempSettingsRef) {
     const buttons = document.querySelectorAll('.language-btn');
-    const currentLang = Storage.getLanguage();
+    // 从临时状态读取当前语言（支持取消后重新打开时显示正确状态）
+    const currentLang = tempSettingsRef?.language || Storage.getLanguage();
 
-    // 更新 HTML lang 属性
-    document.documentElement.lang = currentLang;
+    // 更新 HTML lang 属性（只在保存时真正修改）
+    if (!tempSettingsRef) {
+      document.documentElement.lang = currentLang;
+    }
 
     buttons.forEach(btn => {
       if (btn.dataset.lang === currentLang) {
         btn.classList.add('active');
       }
-      btn.addEventListener('click', async () => {
+      btn.addEventListener('click', () => {
         const newLang = btn.dataset.lang;
-        Storage.setLanguage(newLang);
 
-        // 更新 HTML lang 属性
-        document.documentElement.lang = newLang;
+        // 更新临时状态而不是直接应用
+        if (tempSettingsRef) {
+          tempSettingsRef.language = newLang;
+          this.updateSettingsButtonState({ language: Storage.getLanguage(), theme: Storage.getTheme() }, tempSettingsRef);
+        }
 
-        // 更新激活状态
+        // 更新激活状态（视觉反馈）
         buttons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
-        // 根据语言重新加载内容
-        const contentPack = newLang === 'en-US' ? 'en' : 'math-cs-ai';
-        await Content.load(contentPack);
-
-        // 刷新当前页面
-        this.refreshCurrentPage();
-        // 刷新课程内容
-        if (LessonViewer.currentLesson) {
-          LessonViewer.refresh();
-        }
-
-        showToast(`语言已切换为：${newLang === 'zh-CN' ? '中文' : 'English'}`);
+        showToast(`语言已选择：${newLang === 'zh-CN' ? '中文' : 'English'}（需保存才生效）`);
       });
     });
   },
 
-  // 绑定主题选择器
-  bindThemeSelector() {
+  // 绑定主题选择器（使用临时状态）
+  bindThemeSelector(tempSettingsRef) {
     const buttons = document.querySelectorAll('.theme-btn');
-    const currentTheme = Storage.getTheme();
+    // 从临时状态读取当前主题（支持取消后重新打开时显示正确状态）
+    const currentTheme = tempSettingsRef?.theme || Storage.getTheme();
 
     buttons.forEach(btn => {
       if (btn.dataset.theme === currentTheme) {
@@ -646,21 +949,29 @@ const App = {
       }
       btn.addEventListener('click', () => {
         const newTheme = btn.dataset.theme;
-        Storage.setTheme(newTheme);
-        Storage.applyTheme(newTheme);
 
-        // 更新激活状态
+        // 更新临时状态而不是直接应用
+        if (tempSettingsRef) {
+          tempSettingsRef.theme = newTheme;
+          this.updateSettingsButtonState({ language: Storage.getLanguage(), theme: Storage.getTheme() }, tempSettingsRef);
+        }
+
+        // 更新激活状态（视觉反馈）
         buttons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
         const themeNames = { 'light': '浅色', 'dark': '暗色', 'auto': '跟随系统' };
-        showToast(`主题已切换为：${themeNames[newTheme] || '自动'}`);
+        showToast(`主题已选择：${themeNames[newTheme] || '自动'}（需保存才生效）`);
       });
     });
 
-    // 监听系统主题变化（当设置为自动时）
+    // 监听系统主题变化（当设置为自动时，只在设置内预览，不立即应用）
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-      if (currentTheme === 'auto') {
+      // 设置打开时不响应系统主题变化，避免干扰用户预览
+      if (!document.getElementById('settings-modal')?.classList.contains('hidden')) {
+        return;
+      }
+      if (Storage.getTheme() === 'auto') {
         Storage.applyTheme('auto');
       }
     });
@@ -810,6 +1121,22 @@ function showToast(message) {
   }
 }
 
+// 关闭设置弹窗（"完成"按钮 - 放弃未保存的更改）
+function closeSettingsModal() {
+  const modal = document.getElementById('settings-modal');
+  if (modal) {
+    // 如果用户没有保存更改，关闭时恢复原始状态
+    // 这允许用户"只是看看"而不做永久更改
+    if (App.settingsOriginalState) {
+      // 恢复主题和语言到原始状态
+      Storage.applyTheme(App.settingsOriginalState.theme);
+      document.documentElement.lang = App.settingsOriginalState.language;
+      App.settingsOriginalState = null;
+    }
+    modal.classList.add('hidden');
+  }
+}
+
 function closeModal(modalId) {
   document.getElementById(modalId)?.classList.add('hidden');
 }
@@ -818,6 +1145,7 @@ function closeModal(modalId) {
 function showAchievementToast(achievement) {
   const toast = document.getElementById('toast');
   if (toast) {
+    toast.className = 'toast achievement'; // 使用成就样式
     toast.innerHTML = `
       <div style="display: flex; align-items: center; gap: 8px;">
         <span style="font-size: 24px;">${achievement.icon}</span>
@@ -828,8 +1156,21 @@ function showAchievementToast(achievement) {
       </div>
     `;
     toast.classList.remove('hidden');
+
+    // 创建星星爆炸效果
+    if (window.CelebrationEffect) {
+      setTimeout(() => {
+        const toastRect = toast.getBoundingClientRect();
+        CelebrationEffect.createStars(
+          toastRect.left + toastRect.width / 2,
+          toastRect.top
+        );
+      }, 200);
+    }
+
     setTimeout(() => {
       toast.classList.add('hidden');
+      toast.className = 'toast'; // 恢复默认样式
     }, 4000);
   }
 }

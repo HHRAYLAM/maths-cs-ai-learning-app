@@ -217,8 +217,8 @@ const Storage = {
       }, 0);
     }
 
-    // 如果都无法获取，返回 0
-    return 0;
+    // 如果都无法获取，返回默认值 100（避免除以零）
+    return 100;
   },
 
   // 重置所有进度
@@ -227,31 +227,34 @@ const Storage = {
     window.dispatchEvent(new CustomEvent('progress-reset'));
   },
 
-  // 获取需要复习的课程
-  getLessonsDueForReview() {
-    const progress = this.getProgress();
-    const now = Date.now();
-    const dueLessons = [];
+  // 获取每日学习时长（分钟）
+  getDayLearningTime(dateStr) {
+    const dailyTimes = localStorage.getItem('app-daily-times');
+    if (!dailyTimes) return 0;
 
-    Object.entries(progress).forEach(([lessonId, data]) => {
-      if (data.status === 'completed' || data.status === 'mastered') {
-        const daysSinceReview = data.lastReviewedAt
-          ? (now - data.lastReviewedAt) / (1000 * 60 * 60 * 24)
-          : 999;
+    const times = JSON.parse(dailyTimes);
+    return times[dateStr] || 0;
+  },
 
-        // 简单间隔：7 天、14 天、30 天...
-        const reviewInterval = 7 * Math.pow(2, data.reviewCount || 0);
+  // 记录每日学习时间
+  recordDailyLearningTime(minutes) {
+    const dailyTimes = localStorage.getItem('app-daily-times');
+    const times = dailyTimes ? JSON.parse(dailyTimes) : {};
+    const today = new Date().toISOString().split('T')[0];
 
-        if (daysSinceReview >= reviewInterval) {
-          dueLessons.push({
-            lessonId,
-            daysOverdue: (daysSinceReview - reviewInterval).toFixed(1)
-          });
-        }
-      }
-    });
+    times[today] = (times[today] || 0) + minutes;
+    localStorage.setItem('app-daily-times', JSON.stringify(times));
+  },
 
-    return dueLessons;
+  // 获取当前活跃的内容包
+  getActivePack() {
+    const pack = localStorage.getItem('app-content-pack');
+    return pack || 'math-cs-ai';
+  },
+
+  // 设置活跃的内容包
+  setActivePack(packId) {
+    localStorage.setItem('app-content-pack', packId);
   },
 
   // 语言设置

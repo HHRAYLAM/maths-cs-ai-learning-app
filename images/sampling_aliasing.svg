@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 250" width="500" height="250">
+  <title>信号的正确采样与采样率过低的混叠采样</title>
+  <!-- 正确采样 -->
+  <rect x="0" y="0" width="500" height="120" fill="#064e3b" opacity="0.3"/>
+  <text x="10" y="20" fill="#4ade80" font-size="14">✓ 正确采样 (f_s > 2f_max)</text>
+  <!-- 原始信号 -->
+  <path d="M 20 60 Q 45 20, 70 60 T 120 60 T 170 60 T 220 60 T 270 60"
+        fill="none" stroke="#4ade80" stroke-width="2"/>
+  <!-- 采样点 -->
+  <circle cx="20" cy="60" r="5" fill="#4ade80"/>
+  <circle cx="45" cy="35" r="5" fill="#4ade80"/>
+  <circle cx="70" cy="60" r="5" fill="#4ade80"/>
+  <circle cx="95" cy="85" r="5" fill="#4ade80"/>
+  <circle cx="120" cy="60" r="5" fill="#4ade80"/>
+  <circle cx="145" cy="35" r="5" fill="#4ade80"/>
+  <circle cx="170" cy="60" r="5" fill="#4ade80"/>
+  <!-- 采样垂直线 -->
+  <line x1="45" y1="20" x2="45" y2="100" stroke="#4ade80" stroke-width="1" stroke-dasharray="3"/>
+  <text x="200" y="50" fill="#4ade80" font-size="12">采样点足够密</text>
+  <text x="200" y="70" fill="#4ade80" font-size="12">可以完美重建</text>
+  <!-- 混叠采样 -->
+  <rect x="0" y="130" width="500" height="120" fill="#7f1d1d" opacity="0.3"/>
+  <text x="10" y="150" fill="#f87171" font-size="14">✗ 混叠 (f_s < 2f_max)</text>
+  <!-- 原始高频信号 -->
+  <path d="M 20 190 Q 35 150, 50 190 T 80 190 T 110 190 T 140 190 T 170 190 T 200 190 T 230 190"
+        fill="none" stroke="#f87171" stroke-width="2" opacity="0.5"/>
+  <!-- 采样点（太少） -->
+  <circle cx="20" cy="190" r="5" fill="#fbbf24"/>
+  <circle cx="50" cy="190" r="5" fill="#fbbf24"/>
+  <circle cx="80" cy="190" r="5" fill="#fbbf24"/>
+  <circle cx="110" cy="190" r="5" fill="#fbbf24"/>
+  <circle cx="140" cy="190" r="5" fill="#fbbf24"/>
+  <circle cx="170" cy="190" r="5" fill="#fbbf24"/>
+  <!-- 感知到的错误低频信号 -->
+  <path d="M 20 190 L 50 190 L 80 190 L 110 190 L 140 190 L 170 190"
+        fill="none" stroke="#fbbf24" stroke-width="3" stroke-dasharray="8"/>
+  <text x="250" y="180" fill="#fbbf24" font-size="12">采样点太少</text>
+  <text x="250" y="200" fill="#fbbf24" font-size="12">感知到错误的低频</text>
+  <text x="250" y="220" fill="#f87171" font-size="11">f_alias = |f_s - f_signal|</text>
+</svg>
